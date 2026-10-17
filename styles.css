@@ -967,3 +967,7 @@ body.fold-flex .holocall-footer{padding:6px 10px}
  .story-interrupt-choice{grid-template-columns:26px minmax(0,1fr)}
  .story-interrupt-check{grid-column:2}
 }
+
+/* v9.3.1 — dedicated Rovan portrait composition */
+.hero img[src="assets/rovan.jpg"]{object-position:center 28%}
+.story-speaker-portrait img[src="assets/rovan.jpg"]{object-position:center 24%}
