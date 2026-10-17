@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "9.3.7",
-    "campaign": "Deadlock \u2014 Louder Orchestral Mix",
+    "version": "9.4.0",
+    "campaign": "Deadlock \u2014 Guided Hunt Loop",
     "note": "Established story facts are filled in. Mechanical values that were never firmly established remain editable.",
     "rulesNote": "Combat and dogfight numeric formulas are dashboard mechanics, not story canon. Edit them in GM Controls."
   },
@@ -544,7 +544,7 @@
     "sceneNumber": 1,
     "location": "The Raven",
     "sceneType": "Downtime / open thread",
-    "objective": "Choose Deadlock's next move.",
+    "objective": "Turn scattered information into one reliable direction on Marr.",
     "danger": 32,
     "currentSpeaker": "Narrator",
     "currentNpc": "dren",
@@ -739,37 +739,42 @@
     ],
     "choices": [
       {
-        "id": "choice_1",
-        "label": "Review Marr's recovery contract and isolate the weakest lead.",
-        "intent": "contracts",
-        "skill": "Investigation",
-        "dc": 12,
+        "id": "choice_hunt_1",
+        "label": "Compare Marr's known trail against recent underworld traffic.",
+        "intent": "investigate",
         "contractId": "marr",
-        "actionType": "contract_review"
-      },
-      {
-        "id": "choice_2",
-        "label": "Open an encrypted channel to Dren Voss.",
-        "intent": "dialogue",
-        "npcId": "dren",
-        "skill": "Negotiation",
-        "dc": 12,
-        "actionType": "contact"
-      },
-      {
-        "id": "choice_3",
-        "label": "Run a combat-readiness diagnostic on The Raven.",
-        "intent": "ship",
-        "skill": "Technical",
-        "dc": 11,
-        "actionType": "diagnostic"
-      },
-      {
-        "id": "choice_4",
-        "label": "Scan the underworld network for a better-paying opportunity.",
-        "intent": "bounty",
         "skill": "Investigation",
-        "dc": 13
+        "dc": 12,
+        "purpose": "GAIN INTEL"
+      },
+      {
+        "id": "choice_hunt_2",
+        "label": "Ask Dren to verify which lead he considers real.",
+        "intent": "dialogue",
+        "actionType": "intel_contact",
+        "npcId": "dren",
+        "contractId": "marr",
+        "skill": "Negotiation",
+        "dc": 11,
+        "purpose": "WORK CONTACT"
+      },
+      {
+        "id": "choice_hunt_3",
+        "label": "Shadow the strongest lead before it cools off.",
+        "intent": "action",
+        "contractId": "marr",
+        "skill": "Survival",
+        "dc": 12,
+        "purpose": "PRESS LEAD"
+      },
+      {
+        "id": "choice_hunt_4",
+        "label": "Leak a false sighting and watch who reacts to it.",
+        "intent": "deception",
+        "contractId": "marr",
+        "skill": "Deception",
+        "dc": 13,
+        "purpose": "BAIT NETWORK"
       }
     ],
     "localSceneIndex": 0,
@@ -1205,7 +1210,8 @@
       "recentTopics": [],
       "npcTurns": {},
       "lastAnalysis": null
-    }
+    },
+    "missionLoopVersion": 1
   },
   "holonet": {
     "mode": "OFFLINE LOCAL SIMULATION",

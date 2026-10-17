@@ -986,3 +986,19 @@ body.fold-flex .holocall-footer{padding:6px 10px}
  body.fold-unfolded button,body.fold-unfolded input,body.fold-unfolded select,body.fold-unfolded textarea{touch-action:manipulation}
  body.fold-unfolded .story-transcript,body.fold-unfolded .log,body.fold-unfolded .modal-body{touch-action:pan-y;-webkit-overflow-scrolling:touch}
 }
+
+
+/* ===== v9.4 GUIDED HUNT LOOP ===== */
+.mission-brief{border:1px solid #1d6677;border-radius:10px;background:linear-gradient(180deg,#07171e,#041014);padding:11px;margin-bottom:12px;box-shadow:inset 0 0 26px #00e9ff09}
+.mission-brief-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.mission-title{font-size:16px;font-weight:950;color:#e4fbff}.mission-reward{font-size:15px;font-weight:950;color:#ffd36a;white-space:nowrap}
+.mission-stage-name{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding:7px 9px;border:1px solid #194957;border-radius:7px;background:#061219}.mission-stage-name span{font-size:9px;color:#6faab6;letter-spacing:1px}.mission-stage-name b{font-size:11px;color:#7df4ff;letter-spacing:.8px;text-align:right}
+.mission-stage-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:9px 0}.mission-stage-strip span{height:8px;border-radius:99px;background:#0a232c;border:1px solid #153d48;position:relative}.mission-stage-strip span.done{background:#1d725e;border-color:#40bd93}.mission-stage-strip span.current{background:#0fb8d0;border-color:#70f5ff;box-shadow:0 0 11px #00e9ff55}.mission-stage-strip i{position:absolute;opacity:0;font-style:normal}
+.mission-now{padding:9px 10px;border-left:3px solid var(--cyan);background:#06141a;margin:9px 0}.mission-now span{display:block;font-size:8px;color:#6d9ca6;letter-spacing:1.3px}.mission-now b{display:block;font-size:12px;line-height:1.35;margin-top:3px;color:#e8fcff}
+.mission-confidence{margin:10px 0}.mission-confidence>.row{margin:0}.mission-confidence>.row span{font-size:9px;color:#7ca9b2;letter-spacing:1px}.mission-confidence>.row b{color:#dffcff}
+.mission-help{margin-top:9px;border-top:1px solid #143c46;padding-top:7px}.mission-help summary{cursor:pointer;color:#8ccbd5;font-size:10px;font-weight:800}.mission-help p{font-size:10px;line-height:1.45;color:#8aaeb6;margin:7px 0 0}
+.mission-intel{margin-top:10px}.mission-intel ul{margin:5px 0 0;padding-left:17px}.mission-intel li{font-size:9px;color:#94b7bf;margin:4px 0;line-height:1.35}
+.mission-choice-guide{margin:-4px 0 8px}.choice-copy{display:flex;flex-direction:column;gap:3px;min-width:0}.choice-purpose{font-size:8px;font-weight:950;letter-spacing:1px;color:#5fe7f4}.choice-outcome{font-size:9px;line-height:1.3;color:#6e99a2;font-weight:500}.story-choice{grid-template-columns:34px minmax(0,1fr) auto;align-items:start}.story-choice .choice-num{margin-top:4px}
+.mission-contract{padding:14px 0}.mission-contract.active-contract{border-left:3px solid var(--cyan);padding-left:10px}.mission-contract-progress{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:9px;color:#7ca9b2}.mission-contract-progress b{color:#dffcff}
+.story-thread-card{display:none}
+@media(max-width:700px){.mission-brief-head{align-items:center}.mission-stage-name{align-items:flex-start;flex-direction:column}.mission-stage-name b{text-align:left}.story-choice{grid-template-columns:32px minmax(0,1fr)}.choice-check{grid-column:2}.mission-reward{font-size:13px}}
+body.fold-unfolded[data-page="Story"] .mission-brief{padding:8px}body.fold-unfolded[data-page="Story"] .mission-intel li{font-size:8px}body.fold-unfolded[data-page="Story"] .choice-outcome{font-size:8px}

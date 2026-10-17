@@ -295,7 +295,7 @@ function migrateOfflineData(current,defaults){
  s.activeContractId=s.activeContractId||"marr";
  const marrChoice=(s.choices||[]).find(c=>/marr/i.test(c.label||""));
  if(marrChoice){marrChoice.contractId="marr";marrChoice.actionType=marrChoice.actionType||"contract_review";}
- current.meta.version="9.3.3";
+ current.meta.version="9.4.0";
  return current;
 }
 
@@ -331,6 +331,7 @@ async function load(){
  const defaults=await fetch("character-data.json").then(r=>r.json());
  const local=localStorage.getItem(STORAGE_KEY);
  DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);
+ ensureMissionLoopState();
  uiSound=DATA.settings.sound!==false;
  save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");
  if($("#soundBtn"))$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;
@@ -655,7 +656,10 @@ function pageShip(){
  <div class="schematic-caption"><div><div class="schematic-title">THE RAVEN // SYSTEM MAP</div><div class="schematic-code">HOLOGRAPHIC DIAGNOSTIC // TAP NODES FOR CONTROL</div></div><button class="btn" onclick="render('Dogfight')">FLIGHT HUD</button></div></div></div>
  </div>`
 }
-function contractHTML(c){return `<div class="contract"><div class="contract-top"><div><b>${esc(c.title)}</b><div class="small muted">${esc(c.objective)}</div></div><div class="reward">${money(c.reward)}</div><div class="${c.status==='Completed'?'good-text':c.status==='Failed'?'danger-text':'cyan'}">${c.status}</div></div>${meter(c.progress)}<div class="controls"><button class="btn" data-contract="${c.id}:progress">+10%</button>${c.status!=="Completed"?`<button class="btn good" data-contract="${c.id}:complete">Complete</button>`:""}<button class="btn" data-contract="${c.id}:edit">Details</button></div></div>`}
+function contractHTML(c){
+ const st=contractStageInfo(c),active=DATA.story?.activeContractId===c.id,p=Number(c.progress||0),confidence=contractConfidenceLabel(c);
+ return `<div class="contract mission-contract ${active?"active-contract":""}"><div class="contract-top"><div><b>${esc(c.title)}</b><div class="small cyan">STAGE ${st.index}/6 // ${esc(st.title)}</div><div class="small muted">${esc(st.goal)}</div></div><div class="reward">${money(c.reward)}</div><div class="${c.status==='Completed'?'good-text':c.status==='Failed'?'danger-text':'cyan'}">${c.status}</div></div>${missionStageStripHTML(c)}<div class="mission-contract-progress"><span>${confidence}</span><b>${p}%</b></div>${meter(p)}<div class="controls">${c.status==="Active"?`<button class="btn ${active?'good':''}" data-contract="${c.id}:track">${active?'TRACKING':'TRACK THIS JOB'}</button>`:""}${p>=100&&c.status==="Active"?`<button class="btn good" data-contract="${c.id}:turnin">TURN IN</button>`:""}<button class="btn" data-contract="${c.id}:story">OPEN IN STORY</button><button class="btn" data-contract="${c.id}:edit">Details</button></div></div>`
+}
 function pageContracts(){return `<div class="card"><div class="row"><h3>Contract Board</h3><button class="btn" data-open="newContract">New Contract</button></div>${DATA.contracts.map(contractHTML).join("")}</div>`}
 function pageContacts(){return `<div class="card"><div class="row"><h3>Contacts</h3><button class="btn" data-open="newContact">Add Contact</button></div><div class="tile-grid">${DATA.contacts.map(c=>`<div class="tile" data-contact="${c.id}"><div class="name">${esc(c.name)}</div><div class="sub">${esc(c.role)}</div>${meter(c.trust)}<p>${esc(c.notes)}</p></div>`).join("")}</div></div>`}
 function pageInventory(){return `<div class="card"><div class="row"><h3>Inventory</h3><button class="btn" data-open="newItem">Add Item</button></div><div class="tile-grid">${DATA.inventory.map(i=>`<div class="tile no-click"><div class="name">${esc(i.name)}</div><div class="sub">${esc(i.category)}</div><div class="kpi"><b>${i.qty}</b><span>/ ${i.max}</span></div><p>${esc(i.notes)}</p><div class="controls"><button class="btn step" data-item="${i.id}:-1">-</button><button class="btn step" data-item="${i.id}:1">+</button></div></div>`).join("")}</div></div>`}
@@ -783,11 +787,13 @@ function dogCommand(cmd){
 }
 function dogEnemyAction(spec){let[id,act]=spec.split(":"),e=DATA.dogfight.enemies.find(x=>x.id===id);if(!e)return;if(act==="remove"){DATA.dogfight.enemies=DATA.dogfight.enemies.filter(x=>x.id!==id);save();return render()}if(act==="damage"){openModal(`Damage ${e.name}`,`<div class="field"><label>Damage</label><input id="shipDmg" type="number" value="10"></div><button class="btn" id="applyShipDmg">Apply</button>`);setTimeout(()=>$("#applyShipDmg").onclick=()=>{e.hp=clamp(e.hp-Number($("#shipDmg").value||0),0,e.hpMax);save();$("#modal").close();render()},0)}}
 function handleContract(spec){
- let[id,act]=spec.split(":"),c=DATA.contracts.find(x=>x.id===id);
+ let[id,act]=spec.split(":"),c=DATA.contracts.find(x=>x.id===id);if(!c)return;
+ if(act==="track"){setActiveContract(c);DATA.story.objective=contractStageInfo(c).goal;DATA.story.choices=missionChoices(c);save();toast(`Tracking ${c.title}`);return render("Contracts")}
+ if(act==="story"){setActiveContract(c);DATA.story.objective=contractStageInfo(c).goal;DATA.story.choices=missionChoices(c);save();return render("Story")}
+ if(act==="turnin"){turnInContract(c);save();return render("Story")}
  if(act==="progress"){c.progress=clamp(c.progress+10,0,100);save();return render()}
- if(act==="complete"){if(!confirm(`Complete "${c.title}" and add ${money(c.reward)}?`))return;c.status="Completed";c.progress=100;DATA.character.credits+=Number(c.reward||0);DATA.journal.push({id:uid("j"),ts:new Date().toLocaleString(),title:`Contract completed: ${c.title}`,text:`Reward received: ${money(c.reward)}.`});
- floatNumber("+"+money(c.reward),"credits",window.innerWidth*.78,window.innerHeight*.3);eventBanner("CONTRACT COMPLETE");addNotification(`Contract completed: ${c.title}. Reward ${money(c.reward)}.`,"info");save();toast("Contract completed");return render()}
- if(act==="edit")openModal(c.title,`<div class="field"><label>Objective</label><textarea id="cObj">${esc(c.objective)}</textarea></div><div class="field"><label>Notes</label><textarea id="cNotes">${esc(c.notes)}</textarea></div><div class="field"><label>Reward</label><input id="cReward" type="number" value="${c.reward}"></div><div class="field"><label>Status</label><select id="cStatus">${["Available","Active","Completed","Failed"].map(s=>`<option ${s===c.status?"selected":""}>${s}</option>`).join("")}</select></div><button class="btn" id="saveContract">Save</button>`),setTimeout(()=>$("#saveContract").onclick=()=>{c.objective=$("#cObj").value;c.notes=$("#cNotes").value;c.reward=Number($("#cReward").value);c.status=$("#cStatus").value;save();$("#modal").close();render()},0)
+ if(act==="complete"){if(!confirm(`Complete "${c.title}" and add ${money(c.reward)}?`))return;c.status="Completed";c.progress=100;DATA.character.credits+=Number(c.reward||0);DATA.journal.push({id:uid("j"),ts:new Date().toLocaleString(),title:`Contract completed: ${c.title}`,text:`Reward received: ${money(c.reward)}.`});floatNumber("+"+money(c.reward),"credits",window.innerWidth*.78,window.innerHeight*.3);eventBanner("CONTRACT COMPLETE");addNotification(`Contract completed: ${c.title}. Reward ${money(c.reward)}.`,"info");save();toast("Contract completed");return render()}
+ if(act==="edit")openModal(c.title,`<div class="field"><label>Objective</label><textarea id="cObj">${esc(c.objective)}</textarea></div><div class="field"><label>Notes</label><textarea id="cNotes">${esc(c.notes)}</textarea></div><div class="field"><label>Reward</label><input id="cReward" type="number" value="${c.reward}"></div><div class="field"><label>Status</label><select id="cStatus">${["Available","Active","Completed","Failed"].map(s=>`<option ${s===c.status?"selected":""}>${s}</option>`).join("")}</select></div><p class="small muted">Advanced editing only. Normal gameplay progress is handled in Story Mode.</p><button class="btn" id="saveContract">Save</button>`),setTimeout(()=>$("#saveContract").onclick=()=>{c.objective=$("#cObj").value;c.notes=$("#cNotes").value;c.reward=Number($("#cReward").value);c.status=$("#cStatus").value;save();$("#modal").close();render()},0)
 }
 function openWeapon(id){let w=DATA.weapons.find(x=>x.id===id);openModal(w.name,`<div class="cyan">${w.type}</div><p>${esc(w.description)}</p><ul>${w.features.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`)}
 function openGear(id){let g=DATA.gear.find(x=>x.id===id);openModal(g.name,`<div class="cyan">${g.slot}</div><p>${esc(g.notes)}</p><div class="field"><label>Condition</label><input id="editGearCond" type="number" value="${g.condition}" min="0" max="100"></div><div class="row"><span>Equipped</span><input id="editGearEq" type="checkbox" ${g.equipped?'checked':''} style="width:auto"></div><button class="btn" id="saveGear">Save</button>`);setTimeout(()=>$("#saveGear").onclick=()=>{g.condition=clamp(Number($("#editGearCond").value),0,100);g.equipped=$("#editGearEq").checked;save();$("#modal").close();render()},0)}
@@ -913,12 +919,11 @@ function choiceEffectHint(c){
  return "";
 }
 function storyChoiceButtons(){
- return (DATA.story.choices||[]).slice(0,5).map((c,i)=>`<button class="story-choice" data-storychoice="${c.id}">
+ return (DATA.story.choices||[]).slice(0,5).map((c,i)=>{const meta=missionChoiceMeta(c),purpose=c.purpose||meta.purpose;return `<button class="story-choice" data-storychoice="${c.id}">
    <span class="choice-num">${i+1}</span>
-   <span class="choice-main">${esc(c.label)}</span>
+   <span class="choice-copy"><span class="choice-purpose">${esc(purpose)}</span><span class="choice-main">${esc(c.label)}</span><span class="choice-outcome">${esc(meta.outcome)}</span></span>
    ${c.skill?`<span class="choice-check">${esc(c.skill)}${c.dc!=null?` DC ${c.dc}`:""}</span>`:""}
-   ${choiceEffectHint(c)?`<span class="choice-effect-hint">${esc(choiceEffectHint(c))}</span>`:""}
- </button>`).join("");
+ </button>`}).join("");
 }
 function storyInterruptionButtons(){
  return (DATA.story.interruptions||[]).map(it=>{
@@ -987,6 +992,8 @@ const STORY_EVENT_VISUALS={
  informant_offer:{title:"INFORMANT OFFER",sub:"Paid intelligence channel opened",icon:"◆",tone:"warning"},
  new_intel:{title:"NEW INTEL",sub:"Campaign information updated",icon:"◆",tone:""},
  target_located:{title:"TARGET LOCATED",sub:"Target trail resolved",icon:"⌖",tone:"danger"},
+ target_secured:{title:"TARGET SECURED",sub:"Contract objective resolved — turn-in available",icon:"✓",tone:""},
+ mission_phase:{title:"MISSION PHASE ADVANCED",sub:"A new hunt phase is available",icon:"◆",tone:""},
  betrayal:{title:"BETRAYAL",sub:"Relationship state compromised",icon:"⚠",tone:"danger"},
  hyperspace:{title:"HYPERSPACE ARRIVAL",sub:"The Raven has entered a new operational zone",icon:"✦",tone:""}
 };
@@ -1043,7 +1050,8 @@ function pageStory(){
     <div class="card span4">
       ${consequenceActiveThreadHTML()}
       ${(s.interruptions||[]).length?`<h3>Active Interruptions</h3><div class="story-interruptions">${storyInterruptionButtons()}</div>`:""}
-      <h3>Your Current Choices</h3>
+      <h3>Choose Your Approach</h3>
+      <div class="small muted mission-choice-guide">Each option tells you what it is trying to accomplish. You can also ignore them and type any action.</div>
       <div class="story-choices">${storyChoiceButtons()}</div>
       <h3 style="margin-top:18px">Dialogue Focus</h3>
       <select id="storyNpcSelect">
@@ -1165,7 +1173,7 @@ function startNewStoryScene(){
 }
 function wireStory(){
  if($("#storySend"))$("#storySend").onclick=()=>{const v=$("#storyInput").value.trim();if(v)storySubmit(v,null)};
- if($("#storyContinue"))$("#storyContinue").onclick=()=>storySubmit("",null);
+ if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){DATA.story.objective=contractStageInfo(c).goal;DATA.story.choices=missionChoices(c);storyPush("narration","Narrator",`Deadlock refocuses on the job. ${contractStageInfo(c).goal}`);save();render("Story")}else storySubmit("Continue from the current situation.",null)};
  if($("#storyRollBtn"))$("#storyRollBtn").onclick=openStoryRoll;
  $$("[data-storychoice]").forEach(b=>b.onclick=()=>{const c=DATA.story.choices.find(x=>x.id===b.dataset.storychoice);if(c)storySubmit("",c)});
  $$("[data-storyinterrupt]").forEach(b=>b.onclick=()=>{const [iid,cid]=b.dataset.storyinterrupt.split(":");const it=interruptionById(iid);const c=it?.choices?.find(x=>x.id===cid);if(c)storySubmit("",c)});
@@ -1193,6 +1201,177 @@ function chance(p){return Math.random()<p}
 function contractById(id){return (DATA.contracts||[]).find(c=>c.id===id)||null}
 function shipSystemById(id){return (DATA.ship?.systems||[]).find(s=>s.id===id)||null}
 function targetById(id){return (DATA.targets||[]).find(t=>t.id===id)||null}
+
+
+function contractStageInfo(contract){
+ const p=clamp(Number(contract?.progress||0),0,100),target=targetById(contract?.targetId),isHunt=!!target;
+ if(contract?.status==="Completed")return {index:6,key:"complete",title:"CONTRACT COMPLETE",goal:"This contract is closed. Choose the next job or follow up on unresolved relationships.",nextTitle:"NONE",nextAt:100,start:100,end:100,isHunt};
+ const huntStages=[
+  {index:1,key:"lead",title:"LEAD GATHERING",goal:`Find a credible starting lead on ${target?.name||"the target"}.`,nextTitle:"BUILD THE TRAIL",nextAt:25,start:0,end:25},
+  {index:2,key:"trail",title:"BUILD THE TRAIL",goal:`Turn scattered information into one reliable direction on ${target?.name||"the target"}.`,nextTitle:"TRAIL NARROWED",nextAt:50,start:25,end:50},
+  {index:3,key:"narrow",title:"TRAIL NARROWED",goal:`Confirm where ${target?.name||"the target"} is moving and rule out bad leads.`,nextTitle:"SEARCH WINDOW",nextAt:75,start:50,end:75},
+  {index:4,key:"window",title:"SEARCH WINDOW",goal:`Close the distance before ${target?.name||"the target"} moves again.`,nextTitle:"TARGET LOCATED",nextAt:90,start:75,end:90},
+  {index:5,key:"located",title:"TARGET LOCATED",goal:`Choose how Deadlock will secure ${target?.name||"the target"} and satisfy the contract terms.`,nextTitle:"TARGET SECURED",nextAt:100,start:90,end:100},
+  {index:6,key:"secured",title:"TARGET SECURED",goal:`Deliver ${target?.name||"the target"} and collect the contract payout.`,nextTitle:"TURN-IN",nextAt:100,start:100,end:100}
+ ];
+ const opStages=[
+  {index:1,key:"brief",title:"BRIEFING",goal:"Establish the contract terms and identify a usable starting angle.",nextTitle:"BUILD LEVERAGE",nextAt:25,start:0,end:25},
+  {index:2,key:"leverage",title:"BUILD LEVERAGE",goal:"Gather enough leverage or intelligence to make the job actionable.",nextTitle:"OPERATIONAL PICTURE",nextAt:50,start:25,end:50},
+  {index:3,key:"picture",title:"OPERATIONAL PICTURE",goal:"Confirm the strongest path forward and eliminate weak assumptions.",nextTitle:"ACTION WINDOW",nextAt:75,start:50,end:75},
+  {index:4,key:"actionwindow",title:"ACTION WINDOW",goal:"Act while the contract conditions are favorable.",nextTitle:"RESOLUTION READY",nextAt:90,start:75,end:90},
+  {index:5,key:"resolution",title:"RESOLUTION READY",goal:"Resolve the contract terms and prepare the handoff.",nextTitle:"TERMS SATISFIED",nextAt:100,start:90,end:100},
+  {index:6,key:"satisfied",title:"TERMS SATISFIED",goal:"Complete the handoff and collect the payout.",nextTitle:"TURN-IN",nextAt:100,start:100,end:100}
+ ];
+ const stages=isHunt?huntStages:opStages;
+ let st=p>=100?stages[5]:stages.find(x=>p>=x.start&&p<x.end)||stages[0];
+ return {...st,isHunt,target};
+}
+function contractConfidenceLabel(contract){return contract?.targetId?"TRAIL CONFIDENCE":"OPERATION CONFIDENCE"}
+function missionStageStripHTML(contract){
+ const st=contractStageInfo(contract);
+ return `<div class="mission-stage-strip">${Array.from({length:6},(_,i)=>{const n=i+1,cls=n<st.index?"done":n===st.index?"current":"";return `<span class="${cls}" title="Stage ${n}"><i>${n<st.index?"✓":n}</i></span>`}).join("")}</div>`;
+}
+function missionKnownIntelHTML(contract){
+ const t=targetById(contract?.targetId),items=[];
+ if(contract?.objective)items.push(contract.objective);
+ for(const x of (t?.intel||[]))if(x&&!items.includes(x))items.push(x);
+ if(contract?.notes&&!items.includes(contract.notes))items.push(contract.notes);
+ return items.slice(0,4).map(x=>`<li>${esc(x)}</li>`).join("")||"<li>No reliable intel recorded yet.</li>";
+}
+function missionBriefHTML(contract){
+ if(!contract)return '<div class="small muted">No active contract. Open Contracts and choose a job to track.</div>';
+ const st=contractStageInfo(contract),p=clamp(Number(contract.progress||0),0,100),confidence=contractConfidenceLabel(contract);
+ const remaining=Math.max(0,Number(st.nextAt||100)-p),target=targetById(contract.targetId);
+ const req=target?.status?.includes("Wanted Alive")?"ALIVE REQUIRED":target?"RECOVERY TERMS ACTIVE":"CONTRACT TERMS ACTIVE";
+ return `<div class="mission-brief">
+  <div class="mission-brief-head"><div><div class="micro">${st.isHunt?"ACTIVE HUNT":"ACTIVE CONTRACT"}</div><div class="mission-title">${esc(contract.title)}</div></div><div class="mission-reward">${money(contract.reward)}</div></div>
+  <div class="mission-stage-name"><span>STAGE ${st.index} / 6</span><b>${esc(st.title)}</b></div>
+  ${missionStageStripHTML(contract)}
+  <div class="mission-now"><span>WHAT YOU'RE DOING NOW</span><b>${esc(st.goal)}</b></div>
+  <div class="mission-confidence"><div class="row"><span>${confidence}</span><b>${p}%</b></div>${meter(p,100,statusClass(p,100))}<div class="small muted">${p>=100?"The objective is resolved. Turn-in is available.":`Next unlock: ${esc(st.nextTitle)}${remaining?` in ${remaining} confidence point${remaining===1?"":"s"}`:""}.`}</div></div>
+  <div class="pills"><span class="pill cyan">${esc(req)}</span><span class="pill">${esc(contract.status)}</span></div>
+  <details class="mission-help"><summary>What does ${p}% mean?</summary><p><b>${confidence}</b> measures how much reliable, actionable information Deadlock has for this job. It is not XP. Successful field actions can raise it; failures can raise danger instead. Crossing 25 / 50 / 75 / 90 unlocks new mission phases, and 100 means the contract objective is resolved and ready for turn-in.</p></details>
+  <div class="mission-intel"><div class="micro">ESTABLISHED INTEL / TERMS</div><ul>${missionKnownIntelHTML(contract)}</ul></div>
+ </div>`;
+}
+function missionChoiceMeta(choice){
+ const intent=choice?.intent||"action";
+ if(intent==="turnin")return {purpose:"COMPLETE CONTRACT",outcome:"Closes the job and pays the listed gross reward."};
+ if(intent==="resolve")return {purpose:"RESOLVE ENCOUNTER",outcome:"Success secures the objective and unlocks turn-in."};
+ if(choice?.actionType==="intel_contact")return {purpose:"WORK THE CONTACT",outcome:"Success can improve the relationship and confirm usable intel."};
+ if(intent==="investigate"||choice?.actionType==="contract_review")return {purpose:"GAIN INTEL",outcome:"Success advances the current mission stage."};
+ if(intent==="deception")return {purpose:"BAIT / MISDIRECT",outcome:"Higher risk; success can advance the hunt without a direct approach."};
+ if(intent==="dialogue")return {purpose:"RELATIONSHIP",outcome:"Changes trust/respect and may open better information later."};
+ if(intent==="ship")return {purpose:"PREP THE RAVEN",outcome:"Changes ship readiness, not contract progress."};
+ if(intent==="bounty")return {purpose:"NEW WORK",outcome:"Looks for another opportunity instead of advancing this job."};
+ return {purpose:"PRESS THE LEAD",outcome:"Success can advance the job; failure can increase danger."};
+}
+function missionChoices(contract){
+ if(!contract)return [];
+ const s=DATA.story,st=contractStageInfo(contract),t=targetById(contract.targetId),name=t?.name||"the objective",cid=contract.id;
+ if(contract.status==="Completed")return [
+  {id:uid("choice"),label:"Review the next active contract.",intent:"bounty",purpose:"NEXT JOB"},
+  {id:uid("choice"),label:"Check The Raven before taking more work.",intent:"ship",actionType:"diagnostic",skill:"Technical",dc:10,purpose:"SHIP PREP"}
+ ];
+ if(Number(contract.progress||0)>=100)return [
+  {id:uid("choice"),label:t?`Deliver ${name} and complete the handoff.`:"Complete the contract handoff and collect the payout.",intent:"turnin",contractId:cid,purpose:"TURN IN"},
+  ...(cid==="marr"?[{id:uid("choice"),label:"Call Dren before the handoff and acknowledge that his share still has to be settled.",intent:"dialogue",npcId:"dren",contractId:cid,purpose:"RELATIONSHIP"}]:[]),
+  {id:uid("choice"),label:"Run a final Raven readiness check before departure.",intent:"ship",actionType:"diagnostic",skill:"Technical",dc:10,purpose:"SHIP PREP"}
+ ].slice(0,5);
+ if(st.index===5&&t)return [
+  {id:uid("choice"),label:`Cut off ${name}'s escape route and force a controlled surrender.`,intent:"resolve",actionType:"contain",contractId:cid,skill:"Survival",dc:13,purpose:"SECURE TARGET"},
+  {id:uid("choice"),label:`Shadow ${name} until there is a clean, isolated capture window.`,intent:"resolve",actionType:"shadow_capture",contractId:cid,skill:"Stealth",dc:13,purpose:"SECURE TARGET"},
+  {id:uid("choice"),label:`Approach ${name} under a cover identity and get close before revealing the contract.`,intent:"resolve",actionType:"cover_capture",contractId:cid,skill:"Deception",dc:14,purpose:"SECURE TARGET"},
+  {id:uid("choice"),label:"Call Dren and coordinate the recovery before making the move.",intent:"dialogue",actionType:"intel_contact",npcId:"dren",contractId:cid,skill:"Negotiation",dc:11,purpose:"WORK CONTACT"}
+ ];
+ if(st.index===5&&!t)return [
+  {id:uid("choice"),label:"Execute the final contract terms exactly as agreed.",intent:"resolve",actionType:"close_terms",contractId:cid,skill:"Survival",dc:13,purpose:"RESOLVE CONTRACT"},
+  {id:uid("choice"),label:"Audit the final terms for a trap before committing to the handoff.",intent:"resolve",actionType:"verify_terms",contractId:cid,skill:"Investigation",dc:13,purpose:"VERIFY TERMS"},
+  {id:uid("choice"),label:"Close the final handoff terms directly with Nera Kade.",intent:"resolve",actionType:"negotiate_terms",contractId:cid,skill:"Negotiation",dc:13,purpose:"CLOSE TERMS"},
+  {id:uid("choice"),label:"Prepare The Raven for a fast exit if the handoff turns ugly.",intent:"ship",actionType:"diagnostic",skill:"Technical",dc:11,purpose:"SHIP PREP"}
+ ];
+ if(st.index===4)return [
+  {id:uid("choice"),label:`Shadow the strongest lead and close the distance on ${name}.`,intent:"investigate",contractId:cid,skill:"Survival",dc:13,purpose:"CLOSE DISTANCE"},
+  {id:uid("choice"),label:"Cross-reference the search window against recent contact traffic.",intent:"investigate",contractId:cid,skill:"Investigation",dc:12,purpose:"CONFIRM LOCATION"},
+  {id:uid("choice"),label:"Feed a false route into the network and watch who reacts.",intent:"deception",contractId:cid,skill:"Deception",dc:14,purpose:"BAIT NETWORK"},
+  {id:uid("choice"),label:"Ask Dren to verify one detail before committing The Raven.",intent:"dialogue",actionType:"intel_contact",npcId:"dren",contractId:cid,skill:"Negotiation",dc:11,purpose:"VERIFY INTEL"}
+ ];
+ if(st.index===3)return [
+  {id:uid("choice"),label:`Compare the narrowed trail against known movements tied to ${name}.`,intent:"investigate",contractId:cid,skill:"Investigation",dc:12,purpose:"CONFIRM TRAIL"},
+  {id:uid("choice"),label:"Follow the strongest lead before it goes cold.",intent:"action",contractId:cid,skill:"Survival",dc:12,purpose:"PRESS LEAD"},
+  {id:uid("choice"),label:"Ask Dren which part of the trail he actually trusts.",intent:"dialogue",actionType:"intel_contact",npcId:"dren",contractId:cid,skill:"Negotiation",dc:11,purpose:"VERIFY INTEL"},
+  {id:uid("choice"),label:"Seed a controlled lie and trace who passes it along.",intent:"deception",contractId:cid,skill:"Deception",dc:13,purpose:"TRACE NETWORK"}
+ ];
+ if(st.index===2)return [
+  {id:uid("choice"),label:`Compare ${name}'s known trail against recent underworld traffic.`,intent:"investigate",contractId:cid,skill:"Investigation",dc:12,purpose:"GAIN INTEL"},
+  {id:uid("choice"),label:"Ask Dren to verify which lead he considers real.",intent:"dialogue",actionType:"intel_contact",npcId:"dren",contractId:cid,skill:"Negotiation",dc:11,purpose:"WORK CONTACT"},
+  {id:uid("choice"),label:"Shadow the strongest lead before it cools off.",intent:"action",contractId:cid,skill:"Survival",dc:12,purpose:"PRESS LEAD"},
+  {id:uid("choice"),label:"Leak a false sighting and watch who reacts to it.",intent:"deception",contractId:cid,skill:"Deception",dc:13,purpose:"BAIT NETWORK"}
+ ];
+ return [
+  {id:uid("choice"),label:`Review ${contract.title} and isolate the first credible lead.`,intent:"investigate",actionType:"contract_review",contractId:cid,skill:"Investigation",dc:11,purpose:"FIND LEAD"},
+  {id:uid("choice"),label:"Search the underworld network for a corroborating trace.",intent:"investigate",contractId:cid,skill:"Investigation",dc:12,purpose:"FIND LEAD"},
+  {id:uid("choice"),label:"Call the most relevant contact and test what they know.",intent:"dialogue",actionType:"intel_contact",npcId:s.currentNpc||"dren",contractId:cid,skill:"Negotiation",dc:11,purpose:"WORK CONTACT"},
+  {id:uid("choice"),label:"Prepare The Raven before committing to the trail.",intent:"ship",actionType:"diagnostic",skill:"Technical",dc:10,purpose:"SHIP PREP"}
+ ];
+}
+function ensureMissionLoopState(){
+ const s=DATA?.story;if(!s)return;
+ const c=contractById(s.activeContractId)||activeContracts?.()[0]||null;
+ if(!c)return;
+ if(Number(s.missionLoopVersion||0)<1){
+  s.missionLoopVersion=1;
+  s.activeContractId=c.id;
+  s.objective=contractStageInfo(c).goal;
+  s.choices=missionChoices(c);
+ }
+}
+function resolveContractEncounter(contract,choice,roll){
+ const s=DATA.story,st=contractStageInfo(contract),target=targetById(contract?.targetId);
+ if(!contract)return false;
+ if(st.index<5){storyPush("system","Mission Guidance",`The objective is not ready for final resolution yet. Current phase: ${st.title}. ${st.goal}`);s.choices=missionChoices(contract);return true}
+ if(!roll){s.choices=missionChoices(contract);return true}
+ if(roll.success){
+  const before=Number(contract.progress||0);contract.progress=100;
+  if(target){
+   target.status=target.status?.includes("Wanted Alive")?"Secured Alive":"Secured";
+   addFlag(`${contract.id.toUpperCase()}_TARGET_SECURED`);
+   addConsequence(`${target.name} secured`,`Contract objective resolved. Turn-in is now available.`,"good",{contractId:contract.id,targetId:target.id});
+   storyPush("narration","Narrator",`The hunt stops being a search. Deadlock controls the outcome, and ${target.name} is secured under the contract terms. The only required step left is the handoff.`);
+   setTimeout(()=>storyCinematic("target_secured",`${target.name} // TURN-IN READY`),55);
+  }else{
+   addFlag(`${contract.id.toUpperCase()}_TERMS_SATISFIED`);
+   addConsequence(`${contract.title}: terms satisfied`,`The contract objective is resolved. Turn-in is now available.`,"good",{contractId:contract.id});
+   storyPush("narration","Narrator",`The final requirement clears. ${contract.title} is no longer an active operation; the remaining step is the handoff and payout.`);
+   setTimeout(()=>storyCinematic("target_secured",`${contract.title} // TURN-IN READY`),55);
+  }
+  storyPush("system","Mission Guidance",`${contractConfidenceLabel(contract)} ${before}% → 100%. OBJECTIVE RESOLVED. Turn-in unlocked.`);
+  s.objective=contractStageInfo(contract).goal;s.choices=missionChoices(contract);
+ }else{
+  s.danger=clamp(Number(s.danger||0)+8,0,100);s.director.tension=clamp(Number(s.director.tension||0)+6,0,100);
+  const subject=target?.name||contract.title;
+  addConsequence(`${subject}: resolution attempt failed`,`The objective remains actionable, but danger increased. Choose a different approach or try again.`,"danger",{contractId:contract.id,targetId:target?.id||null});
+  storyPush("narration","Narrator",`The final approach breaks down before Deadlock can close the job. The objective is still within reach, but the next attempt happens under more pressure.`);
+  s.objective=`Recover control and resolve ${contract.title}.`;s.choices=missionChoices(contract);
+ }
+ return true;
+}
+function turnInContract(contract){
+ if(!contract)return false;
+ if(Number(contract.progress||0)<100){const st=contractStageInfo(contract);storyPush("system","Mission Guidance",`Turn-in is locked. ${st.goal}`);DATA.story.objective=st.goal;DATA.story.choices=missionChoices(contract);return false}
+ if(contract.status==="Completed")return true;
+ contract.status="Completed";contract.progress=100;DATA.character.credits+=Number(contract.reward||0);
+ const target=targetById(contract.targetId);if(target)target.status=target.status?.includes("Alive")?"Recovered Alive":"Recovered";
+ const splitNote=contract.id==="marr"?" Gross payout recorded; the planned split with Dren remains to be settled because no percentage has been established.":"";
+ DATA.journal.push({id:uid("j"),ts:new Date().toLocaleString(),title:`Contract completed: ${contract.title}`,text:`Gross reward received: ${money(contract.reward)}.${splitNote}`});
+ addConsequence(`${contract.title} completed`,`${money(contract.reward)} gross payout received.${splitNote}`,"good",{contractId:contract.id});
+ storyPush("narration","Narrator",`The handoff clears. ${money(contract.reward)} hits Deadlock's account, and ${contract.title} closes as completed.${splitNote}`);
+ eventBanner("CONTRACT COMPLETE");showBountyCinematic({name:contract.title,status:"CONTRACT COMPLETE",reward:contract.reward});
+ DATA.story.objective="Choose the next job or settle any loose ends from the completed contract.";
+ const next=activeContracts().find(c=>c.id!==contract.id);if(next){setActiveContract(next);DATA.story.objective=`Next available job: ${next.title}. ${contractStageInfo(next).goal}`;DATA.story.choices=[{id:uid("choice"),label:`Review ${next.title}.`,intent:"contracts",contractId:next.id,actionType:"contract_review",skill:"Investigation",dc:11,purpose:"NEXT JOB"},...(contract.id==="marr"?[{id:uid("choice"),label:"Call Dren and settle the unresolved payout share.",intent:"dialogue",npcId:"dren",purpose:"LOOSE END"}]:[]),{id:uid("choice"),label:"Check The Raven before the next contract.",intent:"ship",actionType:"diagnostic",skill:"Technical",dc:10,purpose:"SHIP PREP"}];}
+ else DATA.story.choices=missionChoices(contract);
+ return true;
+}
 function addConsequence(title,detail="",tone="info",extra={}){
  const s=DATA.story;
  s.consequences=s.consequences||{version:1,recent:[],flags:[],reputation:{reliability:50,mercy:50,intimidation:35,underworld:40},lastSystemId:null,lastContractId:null};
@@ -1229,13 +1408,14 @@ function setActiveContract(contract){
 }
 function contractProgress(contract,delta,reason,tone="good"){
  if(!contract||!Number.isFinite(Number(delta)))return 0;
- const before=Number(contract.progress||0);
+ const before=Number(contract.progress||0),beforeStage=contractStageInfo({...contract,progress:before});
  const max=contract.status==="Active"?95:100;
  contract.progress=clamp(before+Number(delta),0,max);
  const applied=contract.progress-before;
  if(applied!==0){
-  addConsequence(`${contract.title}: ${applied>0?"+":""}${applied}%`,reason,tone,{contractId:contract.id});
-  storyPush("system","Consequence",`${contract.title} progress ${before}% → ${contract.progress}%. ${reason}`);
+  const label=contractConfidenceLabel(contract);
+  addConsequence(`${contract.title}: ${applied>0?"+":""}${applied} confidence`,reason,tone,{contractId:contract.id});
+  storyPush("system","Mission Result",`${label} ${before}% → ${contract.progress}%. ${reason}`);
   if(applied>0)changeReputation("reliability",1);
  }
  const target=targetById(contract.targetId);
@@ -1252,8 +1432,15 @@ function contractProgress(contract,delta,reason,tone="good"){
   if(contract.progress>=90){
     target.status=target.status.includes("Wanted Alive")?"Located / Wanted Alive":"Located";
     addFlag(`${contract.id.toUpperCase()}_TARGET_LOCATED`);
-    setTimeout(()=>storyCinematic("target_located",`${target.name} // trail confidence ${contract.progress}%`),60);
+    setTimeout(()=>storyCinematic("target_located",`${target.name} // CAPTURE OPTIONS UNLOCKED`),60);
   }
+ }
+ const afterStage=contractStageInfo(contract);
+ if(afterStage.index>beforeStage.index){
+  DATA.story.objective=afterStage.goal;
+  addConsequence(`Phase advanced: ${afterStage.title}`,afterStage.goal,"good",{contractId:contract.id});
+  storyPush("narration","Narrator",`The job changes shape. ${afterStage.title}. ${afterStage.goal}`);
+  setTimeout(()=>storyCinematic("mission_phase",`${contract.title} // ${afterStage.title}`),90);
  }
  return applied;
 }
@@ -1318,11 +1505,11 @@ function applyContractRollConsequence(contract,choice,roll){
    reason=roll.natural===20?"Critical breakthrough produced high-confidence intelligence.":"The chosen approach produced usable intelligence.";
    contractProgress(contract,delta,reason,"good");
  }else{
-   reason="No reliable progress was gained; the opposition has more room to react.";
+   reason="No actionable intel was gained. Danger rises, but the hunt is not lost; choose a different approach or press the same lead again.";
    DATA.story.danger=clamp(Number(DATA.story.danger||0)+4,0,100);
    DATA.story.director.tension=clamp(Number(DATA.story.director.tension||0)+3,0,100);
    addConsequence(`${contract.title}: stalled`,reason,"warn",{contractId:contract.id});
-   storyPush("system","Consequence",`${contract.title} remains at ${contract.progress}%. ${reason}`);
+   storyPush("system","Mission Result",`${contractConfidenceLabel(contract)} stays at ${contract.progress}%. ${reason}`);
  }
 }
 function interruptionById(id){return (DATA.story.interruptions||[]).find(x=>x.id===id)||null}
@@ -1360,8 +1547,7 @@ function applyInterruptionConsequence(choice,roll){
 
 function consequenceActiveThreadHTML(){
  const c=contractById(DATA.story.activeContractId);
- if(!c)return '<div class="small muted">No contract thread selected.</div>';
- return `<div class="story-thread-card"><div class="story-thread-head"><div><div class="micro">ACTIVE CONTRACT THREAD</div><div class="story-thread-title">${esc(c.title)}</div></div><b>${Math.round(c.progress||0)}%</b></div>${meter(c.progress||0,100,statusClass(c.progress||0,100))}<div class="story-thread-meta">${esc(c.objective)} // ${money(c.reward)}</div></div>`
+ return missionBriefHTML(c);
 }
 
 function activeContracts(){return DATA.contracts.filter(c=>c.status==="Active")}
@@ -1807,6 +1993,8 @@ function inferIntent(text=""){
  }
  if(/\bmarr\b/.test(t))return {intent:"contracts",contractId:"marr",...analysis};
  if(/\bkade\b|\bnera\b/.test(t))return {intent:"contracts",contractId:"kade",...analysis};
+ if(/turn[ -]?in|handoff|collect (the )?payout|deliver .*client/.test(t))return {intent:"turnin",...analysis};
+ if(/capture|secure|confront|force .*surrender|cut off .*escape|take .*alive/.test(t))return {intent:"resolve",...analysis};
  if(/repair|fix|patch/.test(t))return {intent:"ship",actionType:"repair",...analysis};
  if(/raven|ship|engine|thruster|hyperdrive|diagnostic/.test(t))return {intent:"ship",actionType:"diagnostic",...analysis};
  if(/contract|bounty/.test(t))return {intent:"contracts",...analysis};
@@ -1851,10 +2039,21 @@ function reactToPlayerAction(action,choice,roll){
    setTimeout(()=>uiBeep(430,.035,.015),20);
    if(!roll)applyFreeformSocialReaction(npc,analysis);
    applyNpcChoiceConsequence(npc,inferred,roll);
+   if(inferred.actionType==="intel_contact"&&inferred.contractId&&roll?.success){
+    const linked=contractById(inferred.contractId);
+    if(linked)contractProgress(linked,4+Math.floor(Math.random()*3),`${npc.name} confirmed a useful piece of the trail.`,"good");
+   }
    s.choices=dialogueChoicesForNpc(npc,analysis.topic,playerText,analysis);
    s.objective=`Continue the conversation with ${npc.name}, or act on what was said.`;
    return;
   }
+ }
+
+ if(intent==="turnin"){
+  const contract=resolveContractFromAction(action,inferred,true);if(contract){turnInContract(contract);return}
+ }
+ if(intent==="resolve"){
+  const contract=resolveContractFromAction(action,inferred,true);if(contract&&resolveContractEncounter(contract,inferred,roll))return
  }
 
  if(intent==="ship"){
@@ -1898,18 +2097,11 @@ function reactToPlayerAction(action,choice,roll){
   if(contract){
    setActiveContract(contract);
    applyContractRollConsequence(contract,inferred,roll);
-   storyPush("narration","Narrator",`Deadlock keeps ${contract.title} pinned to the tactical display. Reward: ${money(contract.reward)}. Current progress: ${contract.progress}%.`);
-   setTimeout(()=>storyCinematic("new_intel",`${contract.title} // ${contract.progress}%`),35);
-   const choices=[
-    {id:uid("choice"),label:`Identify the weakest piece of ${contract.title}'s trail.`,intent:"investigate",contractId:contract.id,skill:"Investigation",dc:13},
-    {id:uid("choice"),label:"Contact a known associate and compare intelligence.",intent:"dialogue",npcId:s.currentNpc||"dren",contractId:contract.id,skill:"Negotiation",dc:12},
-    {id:uid("choice"),label:"Move immediately before another hunter closes the gap.",intent:"action",contractId:contract.id,skill:"Survival",dc:12},
-    {id:uid("choice"),label:"Seed false information into the network and watch the reaction.",intent:"deception",contractId:contract.id,skill:"Deception",dc:14}
-   ];
-   if(contract.progress>=50)choices.splice(1,0,{id:uid("choice"),label:"Cross-reference the narrowed trail against contact traffic.",intent:"investigate",contractId:contract.id,skill:"Investigation",dc:12});
-   if(contract.progress>=75)choices.unshift({id:uid("choice"),label:"Act on the narrowed search window before it closes.",intent:"action",contractId:contract.id,skill:"Survival",dc:13});
-   s.choices=choices.slice(0,5);
-   s.objective=`Advance ${contract.title}.`;
+   const stage=contractStageInfo(contract);
+   storyPush("narration","Narrator",`Deadlock keeps ${contract.title} pinned to the tactical display. ${stage.title}. ${stage.goal}`);
+   setTimeout(()=>storyCinematic("new_intel",`${contract.title} // ${stage.title}`),35);
+   s.choices=missionChoices(contract);
+   s.objective=stage.goal;
    return;
   }
  }

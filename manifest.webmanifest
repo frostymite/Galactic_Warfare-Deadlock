@@ -1,7 +1,7 @@
 {
-  "name": "Deadlock v9.3.7 \u2014 Direct Music Volume",
-  "short_name": "Deadlock 9.3.7",
-  "description": "Offline-first bounty hunter RPG with procedural GM dialogue, an original adaptive cinematic orchestral score, device TTS character voices, persistent consequences, and foldable support.",
+  "name": "Deadlock v9.4 \u2014 Guided Hunt Loop",
+  "short_name": "Deadlock 9.4",
+  "description": "Offline-first bounty hunter RPG with clear hunt stages, mission guidance, procedural GM dialogue, cinematic orchestral score, character voices, persistent consequences, and foldable support.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

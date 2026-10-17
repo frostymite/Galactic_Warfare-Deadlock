@@ -1,3 +1,16 @@
+# Deadlock Tactical OS v9.4 — Guided Hunt Loop
+
+The gameplay clarity update. Contract percentages are now explained as **Trail / Operation Confidence**, while the playable loop is organized into concrete mission phases: lead gathering, trail building, narrowed search, search window, target located, target secured, and turn-in.
+
+## What changed
+- Active mission brief explains the current stage, goal, next unlock, reward, and established intel.
+- Choices state their purpose and what success is expected to accomplish.
+- Contract milestones change the available actions instead of only filling a bar.
+- At 90% on a target recovery, capture approaches unlock. A successful resolution secures the target and unlocks turn-in.
+- Turn-in closes the contract and pays the listed gross reward. Marr's planned Dren split remains unresolved because no percentage is established in campaign canon.
+- Contracts page no longer exposes the confusing +10% gameplay button.
+- Existing procedural GM, fold scrolling, orchestral score, TTS voices, consequences, and offline support remain intact.
+
 # Deadlock Tactical OS v9.3.3 — Tabletop Dialogue
 
 Latest build adds one-finger unfolded scrolling and more personable offline tabletop dialogue while preserving the v9.3 consequence layer.
