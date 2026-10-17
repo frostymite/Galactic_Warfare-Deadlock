@@ -50,8 +50,9 @@ function uiBeep(freq=440,dur=.05,vol=.025,type="sine"){
 function audioPrefs(){return DATA?.settings||{}}
 function ambientGainTarget(){
  const v=clamp(Number(audioPrefs().musicVolume??55),0,100)/100;
- // Phone-speaker mix: a perceptual curve keeps low settings usable while allowing a much stronger ceiling.
- return v<=0?0:.78*Math.sqrt(v);
+ // Direct volume mapping: the Music Volume slider is the sole music-level control.
+ // 100% slider = unity gain, 50% = 0.5, 0% = silent.
+ return v;
 }
 function midiFreq(n){return 440*Math.pow(2,(Number(n)-69)/12)}
 function scoreProfile(){
