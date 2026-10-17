@@ -248,6 +248,138 @@ function parseDice(expr){
 function logCombat(text){DATA.combat.log.unshift({ts:new Date().toLocaleTimeString(),text});DATA.combat.log=DATA.combat.log.slice(0,100)}
 function logDogfight(text){DATA.dogfight.log.unshift({ts:new Date().toLocaleTimeString(),text});DATA.dogfight.log=DATA.dogfight.log.slice(0,100)}
 
+/* ===== v10.1 FORCED ENCOUNTER ENGINE ===== */
+function ensureEncounterState(){
+ const c=DATA.combat||(DATA.combat={});
+ c.active=!!c.active;c.round=Number(c.round||0);c.turnIndex=Number(c.turnIndex||0);c.log=c.log||[];c.participants=c.participants||[];
+ let r=c.participants.find(x=>x.id==="rovan");
+ if(!r){r={id:"rovan",name:"Rovan Kes",side:"Ally",initiative:0,initiativeBonus:0,hp:DATA.character.health,hpMax:DATA.character.healthMax,conditions:[]};c.participants.unshift(r)}
+ r.name="Rovan Kes";r.side="Ally";r.hpMax=DATA.character.healthMax;r.hp=clamp(Number(DATA.character.health||r.hp||1),0,r.hpMax);r.conditions=r.conditions||[];
+ c.forced=!!c.forced;c.source=c.source||null;c.reason=c.reason||null;c.objective=c.objective||null;c.returnPage=c.returnPage||"Story";c.escapeDC=Number(c.escapeDC||12);c.context=c.context||null;c.resolved=!!c.resolved;
+ const d=DATA.dogfight||(DATA.dogfight={active:false,round:0,enemyIndex:0,log:[],enemies:[]});
+ d.enemies=d.enemies||[];d.log=d.log||[];d.forced=!!d.forced;d.source=d.source||null;d.reason=d.reason||null;d.returnPage=d.returnPage||"Galaxy";d.escapeDC=Number(d.escapeDC||13);d.context=d.context||null;
+}
+function liveCombatEnemies(){return (DATA.combat?.participants||[]).filter(x=>x.side==="Enemy"&&Number(x.hp||0)>0)}
+function liveDogfightEnemies(){return (DATA.dogfight?.enemies||[]).filter(x=>Number(x.hp||0)>0)}
+function forcedEncounterPage(){
+ if(DATA?.combat?.active&&DATA.combat.forced&&liveCombatEnemies().length)return "Combat";
+ if(DATA?.dogfight?.active&&DATA.dogfight.forced&&liveDogfightEnemies().length)return "Dogfight";
+ return null;
+}
+function threatBand(value=0){const d=Number(value||0);return d>=85?"COMBAT IMMINENT":d>=65?"HIGH THREAT":d>=40?"ACTIVE THREAT":"LOW THREAT"}
+function threatClass(value=0){const d=Number(value||0);return d>=65?"danger":d>=40?"warn":"good"}
+function skillBonus(name){return Math.round(Number(DATA.character.skills?.[name]||50)/10)}
+function groundDefense(){return 10+Math.max(0,Math.floor((Number(DATA.character.attributes?.Agility||10)-10)/2))}
+function syncRovanCombatant(){
+ const c=DATA.combat;let r=c.participants.find(x=>x.id==="rovan");if(!r)return;
+ r.hp=clamp(Number(DATA.character.health||r.hp),0,DATA.character.healthMax);r.hpMax=DATA.character.healthMax;r.conditions=r.conditions||[];
+}
+function encounterEnemyTemplates(source="danger"){
+ const table={
+  rival_hunter:["Rival Hunter","Hunter Gunhand","Contract Spotter"],
+  patrol_scan:["Security Enforcer","Patrol Trooper","Patrol Specialist"],
+  target_capture:["Target Escort","Armed Lookout","Recovery Blocker"],
+  local_ambush:["Local Gunman","Ambusher","Street Enforcer"],
+  player_attack:["Armed Opposition","Hostile Gunhand","Security Response"],
+  danger:["Hostile Gunman","Armed Pursuer","Contract Muscle"]
+ };
+ return table[source]||table.danger;
+}
+function makeGroundEnemies(source="danger",danger=50,count=null){
+ const names=encounterEnemyTemplates(source),n=count??(danger>=80?3:danger>=55?2:1),out=[];
+ for(let i=0;i<n;i++){
+  const threat=clamp(1+Math.floor(danger/25)+(i===0&&danger>=70?1:0),1,5);
+  out.push({id:uid("enemy"),name:names[i%names.length]+(i>=names.length?` ${i+1}`:""),side:"Enemy",initiative:0,initiativeBonus:Math.max(0,threat-2),hp:22+threat*8,hpMax:22+threat*8,conditions:[],defense:10+threat,attackMod:1+threat,damage:threat>=4?"1d10+3":threat>=2?"1d8+2":"1d6+1",threat});
+ }
+ return out;
+}
+function startForcedCombat(ctx={}){
+ ensureEncounterState();const c=DATA.combat;if(c.active&&liveCombatEnemies().length)return false;
+ const danger=clamp(Number(ctx.danger??DATA.story?.danger??50),0,100),source=ctx.source||"danger";
+ syncRovanCombatant();const rovan=c.participants.find(x=>x.id==="rovan");
+ c.participants=[rovan,...(ctx.enemies||makeGroundEnemies(source,danger,ctx.count))];
+ c.participants.forEach(p=>p.initiative=rollDie(20)+Number(p.initiativeBonus||0));c.participants.sort((a,b)=>b.initiative-a.initiative);
+ c.active=true;c.forced=true;c.resolved=false;c.round=1;c.turnIndex=0;c.source=source;c.reason=ctx.reason||"Hostile contact has escalated beyond dialogue.";c.objective=ctx.objective||"Neutralize the threat or break contact.";c.returnPage=ctx.returnPage||"Story";c.escapeDC=Number(ctx.escapeDC||12)+Math.floor(danger/30);c.context=ctx;
+ selectedCombatTarget=liveCombatEnemies()[0]?.id||null;
+ DATA.story.danger=clamp(Math.max(Number(DATA.story.danger||0),danger)+5,0,100);
+ storyPush("system","TACTICAL ALERT",`COMBAT INITIATED — ${c.reason}`);storyPush("narration","Narrator",ctx.narration||"Weapons clear holsters and the situation goes loud. Deadlock no longer has the luxury of treating this as conversation.");
+ logCombat(`FORCED ENCOUNTER: ${c.reason}`);addNotification(`Combat initiated: ${c.reason}`,"danger");eventBanner("COMBAT INITIATED");navigator.vibrate?.([60,35,80]);save();
+ setTimeout(()=>{render("Combat");autoEnemyTurns()},80);return true;
+}
+function finishForcedCombat(outcome="victory"){
+ const c=DATA.combat,ctx=c.context||{},returnPage=c.returnPage||"Story";
+ c.active=false;c.forced=false;c.resolved=true;c.turnIndex=0;c.round=0;
+ if(outcome==="victory"){
+  DATA.story.danger=clamp(Number(DATA.story.danger||0)-14,0,100);addConsequence("Hostile encounter won",c.reason||"Threat neutralized.","good",{source:c.source});storyPush("narration","Narrator","The last immediate threat drops out of the fight. Deadlock has control of the scene again.");
+  if(ctx.contractId&&ctx.source==="target_capture"){
+   const contract=contractById(ctx.contractId),target=targetById(contract?.targetId);if(contract&&Number(contract.progress||0)>=90){contract.progress=100;if(target)target.status=target.status?.includes("Wanted Alive")?"Secured Alive":"Secured";addFlag(`${contract.id.toUpperCase()}_TARGET_SECURED`);DATA.story.objective=contractStageInfo(contract).goal;DATA.story.choices=missionChoices(contract);storyPush("system","Mission Guidance",`${contract.title}: target secured through combat. Turn-in unlocked.`)}
+  }
+ }else if(outcome==="escape"){
+  DATA.story.danger=clamp(Number(DATA.story.danger||0)+4,0,100);addConsequence("Broke contact",`Deadlock escaped ${c.reason||"the encounter"}, but the threat remains active.`,"warn",{source:c.source});storyPush("narration","Narrator","Deadlock breaks line of fire and gets clear, but the opposition is still out there.");
+ }else{
+  DATA.character.health=Math.max(1,Math.round(DATA.character.healthMax*.15));syncRovanCombatant();DATA.story.danger=clamp(Number(DATA.story.danger||0)+16,0,100);addConsequence("Forced retreat",`Deadlock was overwhelmed and escaped injured.`,"danger",{source:c.source});storyPush("narration","Narrator","The fight turns against Deadlock. An emergency retreat keeps the campaign alive, but the price is blood, lost momentum, and a hotter situation.");
+ }
+ c.context=null;save();eventBanner(outcome==="victory"?"THREAT NEUTRALIZED":outcome==="escape"?"CONTACT BROKEN":"FORCED RETREAT");render(returnPage);
+}
+function checkCombatResolution(){
+ if(!DATA.combat.active)return true;
+ if(Number(DATA.character.health||0)<=0){finishForcedCombat("defeat");return true}
+ if(!liveCombatEnemies().length){finishForcedCombat("victory");return true}
+ return false;
+}
+function enemyCombatAttack(enemy){
+ if(!enemy||enemy.hp<=0||!DATA.combat.active)return;
+ const natural=rollDie(20),attack=natural+Number(enemy.attackMod||1),def=groundDefense();let dmg=0;
+ if(natural===20||attack>=def){dmg=parseDice(enemy.damage||"1d6+1").total;const r=DATA.combat.participants.find(x=>x.id==="rovan");const guarded=r?.conditions?.includes("Guarded");if(guarded){dmg=Math.max(1,Math.floor(dmg/2));r.conditions=r.conditions.filter(x=>x!=="Guarded")};DATA.character.health=clamp(DATA.character.health-dmg,0,DATA.character.healthMax);if(r)r.hp=DATA.character.health;fx("hit");floatNumber("-"+dmg,"damage");logCombat(`${enemy.name} attack ${attack} vs DEF ${def}: HIT for ${dmg}.`);addNotification(`${enemy.name} hit Rovan for ${dmg}.`,"danger")}
+ else logCombat(`${enemy.name} attack ${attack} vs DEF ${def}: MISS.`);
+}
+function advanceCombatTurn(){
+ const c=DATA.combat;if(!c.active||checkCombatResolution())return;
+ c.turnIndex++;if(c.turnIndex>=c.participants.length){c.turnIndex=0;c.round++}
+ save();setTimeout(()=>autoEnemyTurns(),120);
+}
+function autoEnemyTurns(){
+ const c=DATA.combat;if(!c.active||checkCombatResolution())return;
+ const current=c.participants[c.turnIndex];if(!current||current.hp<=0){advanceCombatTurn();return}
+ if(current.side!=="Enemy"){save();if(currentPage!=="Combat")render("Combat");else render("Combat");return}
+ enemyCombatAttack(current);if(checkCombatResolution())return;save();setTimeout(()=>advanceCombatTurn(),360);
+}
+function combatPlayerGuard(){
+ const c=DATA.combat,current=c.participants[c.turnIndex];if(!c.active||current?.id!=="rovan")return toast("Wait for Rovan's turn");const r=c.participants.find(x=>x.id==="rovan");if(!r.conditions.includes("Guarded"))r.conditions.push("Guarded");logCombat("Rovan takes cover. Next incoming hit is reduced.");DATA.character.stamina=clamp(Number(DATA.character.stamina||0)+3,0,DATA.character.staminaMax);save();advanceCombatTurn();
+}
+function attemptCombatFlee(){
+ const c=DATA.combat,current=c.participants[c.turnIndex];if(!c.active||current?.id!=="rovan")return toast("Wait for Rovan's turn");const total=rollDie(20)+skillBonus("Survival"),dc=Number(c.escapeDC||13);logCombat(`Break contact: ${total} vs DC ${dc}.`);if(total>=dc){finishForcedCombat("escape");return}addNotification("Escape failed — hostiles get another opening.","danger");DATA.story.danger=clamp(Number(DATA.story.danger||0)+3,0,100);save();advanceCombatTurn();
+}
+function hostileTravelEncounter(e){return ["rival_hunter","pirate_probe"].includes(e?.id)}
+function makeDogfightEnemies(source="travel",risk=40){
+ const n=risk>=65?3:risk>=35?2:1,names=source==="rival_hunter"?["Hunter Interceptor","Contract Wingman","Pursuit Craft"]:["Pirate Interceptor","Raider Wingman","Cutthroat Fighter"],out=[];
+ for(let i=0;i<n;i++){const threat=clamp(1+Math.floor(risk/25),1,5),hp=24+threat*10;out.push({id:uid("ship"),name:names[i%names.length],hp,hpMax:hp,attackMod:1+threat,damage:threat>=4?"1d12+4":"1d10+2",threat})}return out;
+}
+function startForcedDogfight(ctx={}){
+ ensureEncounterState();const d=DATA.dogfight;if(d.active&&liveDogfightEnemies().length)return false;const risk=clamp(Number(ctx.risk??ctx.danger??50),0,100);
+ d.active=true;d.forced=true;d.round=1;d.enemyIndex=0;d.source=ctx.source||"travel";d.reason=ctx.reason||"Hostile craft have weapons lock.";d.returnPage=ctx.returnPage||"Galaxy";d.escapeDC=Number(ctx.escapeDC||12)+Math.floor(risk/30);d.context=ctx;d.enemies=ctx.enemies||makeDogfightEnemies(d.source,risk);
+ logDogfight(`FORCED DOGFIGHT: ${d.reason}`);storyPush("system","Raven Tactical",`DOGFIGHT INITIATED — ${d.reason}`);addNotification(`Dogfight initiated: ${d.reason}`,"danger");eventBanner("DOGFIGHT");navigator.vibrate?.([70,30,70]);save();setTimeout(()=>render("Dogfight"),60);return true;
+}
+function enemyDogfightVolley(){
+ const d=DATA.dogfight,s=DATA.ship;if(!d.active)return;
+ for(const e of liveDogfightEnemies()){
+  const attack=rollDie(20)+Number(e.attackMod||1),evade=12+Math.round(Number(DATA.character.skills?.Piloting||50)/25);if(attack<evade){logDogfight(`${e.name} attack ${attack} vs EVADE ${evade}: MISS.`);continue}
+  let dmg=parseDice(e.damage||"1d10+2").total;if(s.shields>0){const absorbed=Math.min(s.shields,dmg);s.shields-=absorbed;dmg-=absorbed}if(dmg>0)s.hull=clamp(s.hull-dmg,0,s.hullMax);logDogfight(`${e.name} scores a hit. Raven shields ${s.shields}/${s.shieldsMax}, hull ${s.hull}/${s.hullMax}.`);fx("hit");
+ }
+ if(s.hull<=0){finishForcedDogfight("defeat");return}d.round++;save();render("Dogfight");
+}
+function finishForcedDogfight(outcome="victory"){
+ const d=DATA.dogfight,ctx=d.context||{},returnPage=d.returnPage||"Galaxy";d.active=false;d.forced=false;
+ const g=galaxyState();if(ctx.travelEncounter&&g.transit)g.transit.encounterResolved=true;
+ if(outcome==="victory"){DATA.story.danger=clamp(Number(DATA.story.danger||0)-8,0,100);storyPush("narration","Narrator","The last hostile craft falls off the Raven's scope. The route is clear again.");addConsequence("Dogfight won",d.reason||"Hostile craft neutralized.","good")}
+ else if(outcome==="escape"){DATA.story.danger=clamp(Number(DATA.story.danger||0)+3,0,100);storyPush("narration","Narrator","The Raven breaks weapons lock and disappears back into the route.");addConsequence("Broke pursuit",d.reason||"Hostiles left behind.","warn")}
+ else{DATA.ship.hull=Math.max(1,Math.round(DATA.ship.hullMax*.2));DATA.story.danger=clamp(Number(DATA.story.danger||0)+14,0,100);storyPush("narration","Narrator","The Raven takes a brutal beating and limps clear under emergency power. The route survives, but the ship needs attention.");addConsequence("Raven forced retreat","Ship combat ended with heavy damage.","danger")}
+ d.context=null;save();eventBanner(outcome==="victory"?"SPACE CLEAR":outcome==="escape"?"PURSUIT BROKEN":"RAVEN DAMAGED");render(returnPage);
+}
+function attemptDogfightEscape(){
+ const d=DATA.dogfight,total=rollDie(20)+skillBonus("Piloting"),dc=Number(d.escapeDC||13);logDogfight(`Break pursuit: ${total} vs DC ${dc}.`);if(total>=dc)return finishForcedDogfight("escape");addNotification("Could not shake pursuit.","danger");enemyDogfightVolley();
+}
+
 function migrateOfflineData(current,defaults){
  if(!current)return defaults;
  current.story=current.story||structuredClone(defaults.story);
@@ -396,10 +528,13 @@ function beginLivingTravel(){
 }
 function resolveTravelEncounter(mode){
  const g=galaxyState(),t=g.transit,e=t?.encounter;if(!t||!e)return;
- const skill=mode==="evade"?"Piloting":mode==="investigate"?"Investigation":"Survival";const score=Math.round(Number(DATA.character.skills?.[skill]||50)/10);const total=rollDie(20)+score,dc=10+Math.round(Number(e.danger||0)/4);const ok=mode==="ignore"?true:total>=dc;
- if(!ok){DATA.story.danger=clamp(Number(DATA.story.danger||0)+4,0,100);if(mode==="evade")DATA.ship.shields=clamp(DATA.ship.shields-8,0,DATA.ship.shieldsMax);g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${e.name}: ${skill} check ${total} vs ${dc} failed.`});}
- else{g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${e.name}: ${mode} resolved (${total}${mode==="ignore"?"":" vs "+dc}).`});}
- storyPush("narration","Narrator",ok?`The Raven clears the ${e.name.toLowerCase()} without losing the route.`:`The ${e.name.toLowerCase()} complicates the crossing before the Raven breaks free.`);t.encounterResolved=true;save();render("Galaxy");
+ const skill=mode==="evade"?"Piloting":mode==="investigate"?"Investigation":"Survival",score=skillBonus(skill),total=rollDie(20)+score,dc=10+Math.round(Number(e.danger||0)/4),ok=mode==="ignore"?!hostileTravelEncounter(e):total>=dc;
+ if(hostileTravelEncounter(e)&&(!ok||mode==="ignore")){
+  g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${e.name}: contact escalated to weapons lock.`});DATA.story.danger=clamp(Number(DATA.story.danger||0)+6,0,100);save();startForcedDogfight({source:e.id,risk:Math.max(Number(g.route?.risk||0),Number(e.danger||0)*5),reason:`${e.name} has the Raven under weapons lock.`,returnPage:"Galaxy",travelEncounter:true});return render("Dogfight")
+ }
+ if(!ok){DATA.story.danger=clamp(Number(DATA.story.danger||0)+4,0,100);if(mode==="evade")DATA.ship.shields=clamp(DATA.ship.shields-8,0,DATA.ship.shieldsMax);g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${e.name}: ${skill} check ${total} vs ${dc} failed.`})}
+ else g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${e.name}: ${mode} resolved (${total}${mode==="ignore"?"":" vs "+dc}).`});
+ storyPush("narration","Narrator",ok?`The Raven clears the ${e.name.toLowerCase()} without losing the route.`:`The ${e.name.toLowerCase()} complicates the crossing before the Raven breaks free.`);t.encounterResolved=true;save();render("Galaxy")
 }
 function continueLivingTravel(){
  const g=galaxyState(),t=g.transit,r=g.route;if(!t||!r||r.phase!=="transit")return;
@@ -419,7 +554,9 @@ function performLocalAction(action){
 function startLocalSite(siteName){
  const g=galaxyState(),l=currentGalaxyLocation();if(!l)return toast("No current location");if(!["docked","surface"].includes(g.phase))return toast(`Dock or land at ${l.name} first`);
  DATA.story.sceneNumber=Number(DATA.story.sceneNumber||1)+1;DATA.story.currentSceneId=uid("scene");DATA.story.location=`${l.name} — ${siteName}`;DATA.story.objective=`Operate at ${siteName}.`;
- storyPush("narration","Narrator",`The Raven's local operation shifts to ${siteName} on ${l.name}. The location is now part of the active scene.`);g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Local operation opened: ${l.name} / ${siteName}.`});save();eventBanner(String(siteName).toUpperCase());render("Story");
+ storyPush("narration","Narrator",`The Raven's local operation shifts to ${siteName} on ${l.name}. The location is now part of the active scene.`);g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Local operation opened: ${l.name} / ${siteName}.`});
+ const d=clamp(Number(l.danger||0),0,100),ambushChance=d<35?0:d<55?.12:d<75?.24:.38;if(l.id!==g.homeId&&chance(ambushChance)){save();startForcedCombat({source:"local_ambush",danger:d,reason:`Hostile contact at ${siteName}, ${l.name}.`,objective:`Survive the ambush at ${siteName} or break contact.`,returnPage:"Story",narration:`The moment Deadlock enters ${siteName}, movement turns into muzzle flashes. Someone was waiting.`});return render("Combat")}
+ save();eventBanner(String(siteName).toUpperCase());render("Story")
 }
 function handleWorldService(service){
  const s=String(service||"").toLowerCase();if(/bounty/.test(s))return render("Bounties");if(/repair|parts|salvage/.test(s))return render("Ship");if(/black market|market|trade|broker/.test(s))return render("Inventory");if(/medical/.test(s))return render("Character");if(/research|information|forged|smuggler/.test(s)){const l=currentGalaxyLocation();DATA.story.objective=`Gather local intelligence on ${l?.name||"the current world"}.`;storyPush("system","Local Network",`Deadlock opens a local intelligence channel through ${service}.`);save();return render("Story")};return toast(`${service}: local hook ready`)
@@ -441,7 +578,7 @@ async function load(){
  const [defaults,galaxy,assets]=await Promise.all([fetch("character-data.json").then(r=>r.json()),fetch("galaxy-data.json").then(r=>r.json()),fetch("asset-manifest.json").then(r=>r.json())]);
  GALAXY=galaxy;ASSET_MANIFEST=assets;
  const local=localStorage.getItem(STORAGE_KEY);
- DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);ensureGalaxyState();ensureMissionLoopState();
+ DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);ensureGalaxyState();ensureMissionLoopState();ensureEncounterState();
  uiSound=DATA.settings.sound!==false;
  save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");
  if($("#soundBtn"))$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;
@@ -452,6 +589,7 @@ function buildNav(){
  pages.forEach(p=>{let b=document.createElement("button");b.textContent=p;b.dataset.short=p.replace(/\s/g,"").slice(0,3).toUpperCase();b.onclick=()=>render(p);$("#nav").appendChild(b)})
 }
 function render(page=currentPage){
+ const locked=forcedEncounterPage();if(locked&&page!==locked){page=locked;}
  currentPage=page;document.body.dataset.page=page;let activeNav=null;$$('#nav button').forEach(b=>{const active=b.textContent===page;b.classList.toggle("active",active);if(active)activeNav=b});
  if(activeNav)requestAnimationFrame(()=>activeNav.scrollIntoView({block:"nearest",inline:"nearest"}));
  $("#title").textContent=page;$("#crumb").textContent=`DEADLOCK // ${page.toUpperCase()}`;
@@ -479,35 +617,18 @@ function pageOverview(){
  </div>`
 }
 function pageCombat(){
- let c=DATA.combat;
- c.participants.sort((a,b)=>b.initiative-a.initiative);
- let active=c.participants[c.turnIndex]||null;
- let enemies=c.participants.filter(x=>x.side==="Enemy");
- if(enemies.length&&!selectedCombatTarget)selectedCombatTarget=enemies[0].id;
- const selectedW=DATA.weapons.find(x=>x.id===selectedCombatWeapon)||DATA.weapons[0];
+ let c=DATA.combat;ensureEncounterState();c.participants.sort((a,b)=>b.initiative-a.initiative);c.turnIndex=clamp(c.turnIndex,0,Math.max(0,c.participants.length-1));
+ let active=c.participants[c.turnIndex]||null,enemies=liveCombatEnemies();if(enemies.length&&!enemies.some(x=>x.id===selectedCombatTarget))selectedCombatTarget=enemies[0].id;
+ const selectedW=DATA.weapons.find(x=>x.id===selectedCombatWeapon)||DATA.weapons[0],forced=c.active&&c.forced;
  return `<div class="grid">
- <div class="card full"><h3>Initiative Timeline</h3><div class="initiative-timeline">${c.participants.map((p,i)=>`<div class="init-chip ${p.side==="Enemy"?"enemy":"ally"} ${c.active&&i===c.turnIndex?"active":""}"><div class="init-order">${i===0?"NEXT / LEAD":`ORDER ${i+1}`}</div><div class="init-name">${esc(p.name)}</div><div class="small muted">${p.hp}/${p.hpMax} HP</div><div class="init-value">${p.initiative}</div></div>`).join("")}</div></div>
- <div class="card full"><div class="row"><h3>Encounter Roster</h3><span class="pill ${c.active?'cyan':''}">${c.active?`ROUND ${c.round}`:"IDLE"}</span></div>
- <div class="encounter-cards">${c.participants.map((p,i)=>`<div class="enemy-portrait-card ${p.side==="Enemy"?"enemy-card":"ally-card"} ${c.active&&i===c.turnIndex?"active":""}" data-combatcard="${p.id}">
-   <div class="enemy-holo">${esc((p.name||"?").slice(0,1))}</div>
-   <div class="enemy-card-body"><div class="enemy-threat">${p.side==="Enemy"?"HOSTILE // THREAT":"ALLY // FRIENDLY"}</div><div class="name">${esc(p.name)}</div><div class="sub">INIT ${p.initiative} • ${p.hp}/${p.hpMax} HP</div>${meter(p.hp,p.hpMax,statusClass(p.hp,p.hpMax))}<div>${(p.conditions||[]).map(x=>`<span class="condition">${esc(x)}</span>`).join("")}</div></div>
- </div>`).join("")}</div>
- <div class="combat-toolbar">
-   <button class="btn" data-combatcmd="add">Add Combatant</button><button class="btn" data-combatcmd="rollinit">Roll Initiative</button><button class="btn good" data-combatcmd="start">${c.active?"Restart Encounter":"Start Encounter"}</button><button class="btn" data-combatcmd="next">Next Turn</button><button class="btn danger" data-combatcmd="end">End</button>
- </div></div>
- <div class="card span8"><h3>Combatants</h3><div class="initiative-list">${c.participants.map((p,i)=>`<div class="combatant ${p.side==="Enemy"?"enemy":"ally"} ${c.active&&i===c.turnIndex?"active-turn":""}">
- <div class="init-num">${p.initiative}</div><div><b>${esc(p.name)}</b><div class="small muted">${p.side} • Init +${p.initiativeBonus}</div><div>${(p.conditions||[]).map(x=>`<span class="condition">${esc(x)}</span>`).join("")}</div></div>
- <div class="hpbar"><div class="small">${p.hp}/${p.hpMax} HP</div>${meter(p.hp,p.hpMax,statusClass(p.hp,p.hpMax))}</div>
- <div class="combat-actions controls"><button class="btn" data-combat="${p.id}:damage">Damage</button><button class="btn good" data-combat="${p.id}:heal">Heal</button><button class="btn" data-combat="${p.id}:cond">Condition</button>${p.id!=="rovan"?`<button class="btn danger" data-combat="${p.id}:remove">×</button>`:""}</div>
- </div>`).join("")}</div></div>
- <div class="card span4"><h3>Deadlock Fire Control</h3>${active?`<div class="big-number">${esc(active.name)}</div><div class="muted">Current Turn // Round ${c.round}</div>`:"<p class='muted'>No active encounter.</p>"}
- <div class="reticle"><div class="lock"></div></div>
- <div class="field"><label>Target</label><select id="combatTarget" class="target-select">${enemies.map(e=>`<option value="${e.id}" ${e.id===selectedCombatTarget?"selected":""}>${esc(e.name)} // ${e.hp} HP</option>`).join("")||'<option value="">No enemy target</option>'}</select></div>
- <div class="weapon-readout">${selectedW.name} // ${selectedW.mode}</div>
- <div class="controls"><button class="btn" id="openWeaponWheelBtn">Weapon Wheel</button><button class="btn good" id="quickFireBtn">Fire ${selectedW.name}</button></div>
- <p class="small muted">Natural 20 triggers the cinematic critical-hit effect. Damage rules remain editable under GM Controls.</p></div>
- <div class="card full"><h3>Combat Log</h3><div class="log">${c.log.map(x=>`<div>${x.ts} — ${esc(x.text)}</div>`).join("")||"No combat events yet."}</div></div>
- </div>`
+ ${forced?`<div class="card full forced-encounter-banner"><div><div class="micro">STORY FLOW LOCKED // FORCED ENCOUNTER</div><h3>${esc(c.reason||"HOSTILE CONTACT")}</h3><p>${esc(c.objective||"Neutralize the threat or break contact.")}</p></div><div class="forced-threat"><span>ESCAPE DC</span><b>${c.escapeDC}</b></div></div>`:""}
+ <div class="card full"><div class="row"><h3>Initiative Timeline</h3><span class="pill ${c.active?'danger':'cyan'}">${c.active?`ROUND ${c.round}`:"IDLE"}</span></div><div class="initiative-timeline">${c.participants.map((p,i)=>`<div class="init-chip ${p.side==="Enemy"?"enemy":"ally"} ${c.active&&i===c.turnIndex?"active":""}"><div class="init-order">${c.active&&i===c.turnIndex?"CURRENT":`ORDER ${i+1}`}</div><div class="init-name">${esc(p.name)}</div><div class="small muted">${p.hp}/${p.hpMax} HP${p.defense?` // DEF ${p.defense}`:""}</div><div class="init-value">${p.initiative}</div></div>`).join("")}</div></div>
+ <div class="card full"><div class="row"><h3>Encounter Roster</h3><span class="pill ${c.active?'danger':''}">${forced?"NO SAFE EXIT":c.active?"LIVE":"MANUAL"}</span></div>
+ <div class="encounter-cards">${c.participants.map((p,i)=>`<div class="enemy-portrait-card ${p.side==="Enemy"?"enemy-card":"ally-card"} ${c.active&&i===c.turnIndex?"active":""}" data-combatcard="${p.id}"><div class="enemy-holo">${esc((p.name||"?").slice(0,1))}</div><div class="enemy-card-body"><div class="enemy-threat">${p.side==="Enemy"?`HOSTILE // THREAT ${p.threat||1}`:"DEADLOCK // PLAYER"}</div><div class="name">${esc(p.name)}</div><div class="sub">INIT ${p.initiative} • ${p.hp}/${p.hpMax} HP</div>${meter(p.hp,p.hpMax,statusClass(p.hp,p.hpMax))}<div>${(p.conditions||[]).map(x=>`<span class="condition">${esc(x)}</span>`).join("")}</div></div></div>`).join("")}</div>
+ <div class="combat-toolbar">${forced?`<button class="btn good" data-combat-action="guard">Take Cover / End Turn</button><button class="btn warn" data-combat-action="flee">Break Contact</button>`:`<button class="btn" data-combatcmd="add">Add Combatant</button><button class="btn" data-combatcmd="rollinit">Roll Initiative</button><button class="btn good" data-combatcmd="start">${c.active?"Restart Encounter":"Start Encounter"}</button><button class="btn" data-combatcmd="next">Next Turn</button><button class="btn danger" data-combatcmd="end">End</button>`}</div></div>
+ <div class="card span8"><h3>Combatants</h3><div class="initiative-list">${c.participants.map((p,i)=>`<div class="combatant ${p.side==="Enemy"?"enemy":"ally"} ${c.active&&i===c.turnIndex?"active-turn":""}"><div class="init-num">${p.initiative}</div><div><b>${esc(p.name)}</b><div class="small muted">${p.side} • ${p.side==="Enemy"?`DEF ${p.defense||11} • ${esc(p.damage||"")}`:`DEF ${groundDefense()}`}</div><div>${(p.conditions||[]).map(x=>`<span class="condition">${esc(x)}</span>`).join("")}</div></div><div class="hpbar"><div class="small">${p.hp}/${p.hpMax} HP</div>${meter(p.hp,p.hpMax,statusClass(p.hp,p.hpMax))}</div>${forced?"":`<div class="combat-actions controls"><button class="btn" data-combat="${p.id}:damage">Damage</button><button class="btn good" data-combat="${p.id}:heal">Heal</button><button class="btn" data-combat="${p.id}:cond">Condition</button>${p.id!=="rovan"?`<button class="btn danger" data-combat="${p.id}:remove">×</button>`:""}</div>`}</div>`).join("")}</div></div>
+ <div class="card span4"><h3>Deadlock Fire Control</h3>${active?`<div class="big-number">${esc(active.name)}</div><div class="muted">${active.id==="rovan"?"YOUR TURN":active.side==="Enemy"?"HOSTILE ACTING":"ALLY ACTING"} // Round ${c.round}</div>`:"<p class='muted'>No active encounter.</p>"}<div class="reticle"><div class="lock"></div></div><div class="field"><label>Target</label><select id="combatTarget" class="target-select">${enemies.map(e=>`<option value="${e.id}" ${e.id===selectedCombatTarget?"selected":""}>${esc(e.name)} // ${e.hp} HP // DEF ${e.defense||11}</option>`).join("")||'<option value="">No enemy target</option>'}</select></div><div class="weapon-readout">${selectedW.name} // ${selectedW.mode}</div><div class="controls"><button class="btn" id="openWeaponWheelBtn" ${active?.id!=="rovan"?"disabled":""}>Weapon Wheel</button><button class="btn good" id="quickFireBtn" ${!c.active||active?.id!=="rovan"?"disabled":""}>Fire ${selectedW.name}</button></div><p class="small muted">Enemy turns resolve automatically. A miss costs the turn. Take Cover halves the next incoming hit; Break Contact rolls Survival against the encounter's escape DC.</p></div>
+ <div class="card full"><h3>Combat Log</h3><div class="log">${c.log.map(x=>`<div>${x.ts} — ${esc(x.text)}</div>`).join("")||"No combat events yet."}</div></div></div>`
 }
 function targetCard(t){
  return `<div class="tile target-card ${currentTargetLock===t.id?"locked":""}" data-target="${t.id}"><div class="row"><div style="display:flex;gap:10px;align-items:center"><div class="holo-avatar">${esc((t.name||"?").slice(0,1))}</div><div><div class="name">${esc(t.name)}</div><div class="sub">${esc(t.status)}</div></div></div><span class="reward">${money(t.reward)}</span></div>
@@ -749,12 +870,12 @@ function pageHQ(){
  <div class="card span4"><h3>Blackglass Status</h3><div class="row"><span class="muted">Home Base</span><b>BLACKGLASS</b></div><div class="row"><span class="muted">Raven</span><b>${atHome?"DOCKED":"AWAY"}</b></div><div class="row"><span class="muted">Active Contracts</span><b>${activeContracts().length}</b></div><div class="row"><span class="muted">Known Systems</span><b>${g.discovered.length}/${GALAXY.locations.length}</b></div><div class="controls">${atHome?'<button class="btn good" onclick="render(\'Ship\')">Board The Raven</button>':'<button class="btn" onclick="galaxyState().selectedLocationId=galaxyState().homeId;save();render(\'Galaxy\')">Plot Course Home</button>'}<button class="btn" onclick="render('Contracts')">Contract Board</button></div><div class="holonet-mini"><div class="small muted">HQ CANON</div><p class="small">Blackglass Station is Deadlock's established headquarters. Interior details are gameplay defaults and remain editable as the campaign develops.</p></div></div></div>`
 }
 function pageDogfight(){
- let s=DATA.ship,d=DATA.dogfight;
- return `<div class="grid"><div class="card span7"><div class="row"><h3>The Raven — Dogfight HUD</h3><span class="pill ${d.active?'cyan':''}">${d.active?`ROUND ${d.round}`:"STANDBY"}</span></div>
+ let s=DATA.ship,d=DATA.dogfight;ensureEncounterState();const forced=d.active&&d.forced;
+ return `<div class="grid">${forced?`<div class="card full forced-encounter-banner"><div><div class="micro">NAVIGATION LOCKED // FORCED DOGFIGHT</div><h3>${esc(d.reason||"HOSTILE CRAFT")}</h3><p>Destroy the attackers or break pursuit before travel can continue.</p></div><div class="forced-threat"><span>ESCAPE DC</span><b>${d.escapeDC}</b></div></div>`:""}<div class="card span7"><div class="row"><h3>The Raven — Dogfight HUD</h3><span class="pill ${d.active?'danger':''}">${d.active?`ROUND ${d.round}`:"STANDBY"}</span></div>
  <div class="ship-layout">${ravenVisual("flight","The Raven") }<div><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="row"><span>Fuel</span><b>${s.fuel}/${s.fuelMax}</b></div>${meter(s.fuel,s.fuelMax,statusClass(s.fuel,s.fuelMax))}</div></div>
- <div class="controls"><button class="btn good" data-dogcmd="start">${d.active?"Restart":"Start Dogfight"}</button><button class="btn" data-dogcmd="fire">Fire Forward Cannons</button><button class="btn" data-dogcmd="evade">Evasive Maneuvers</button><button class="btn warn" data-dogcmd="boost">Boost</button><button class="btn" data-dogcmd="overcharge">Shield Overcharge</button><button class="btn danger" data-dogcmd="end">End</button></div></div>
- <div class="card span5"><h3>Tactical Radar</h3><div class="reticle"><div class="lock"></div></div><div class="radar"><div class="ship-blip"></div>${d.enemies.map((e,i)=>`<div class="blip" style="left:${28+(i*19)%55}%;top:${24+(i*27)%58}%" title="${esc(e.name)}"></div>`).join("")}</div><div class="controls"><button class="btn" data-open="newEnemyShip">Add Enemy Ship</button></div></div>
- <div class="card span6"><h3>Hostiles</h3>${d.enemies.map(e=>`<div class="tile no-click"><div class="row"><b>${esc(e.name)}</b><span>${e.hp}/${e.hpMax}</span></div>${meter(e.hp,e.hpMax,statusClass(e.hp,e.hpMax))}<div class="controls"><button class="btn" data-dogenemy="${e.id}:damage">Damage</button><button class="btn danger" data-dogenemy="${e.id}:remove">Remove</button></div></div>`).join("")||"<p class='muted'>No hostile craft tracked.</p>"}</div>
+ <div class="controls">${forced?`<button class="btn good" data-dogcmd="fire">Fire Forward Cannons</button><button class="btn" data-dogcmd="evade">Evasive Maneuvers</button><button class="btn warn" data-dogcmd="boost">Boost</button><button class="btn" data-dogcmd="overcharge">Shield Overcharge</button><button class="btn warn" data-dogcmd="escape">Break Pursuit</button>`:`<button class="btn good" data-dogcmd="start">${d.active?"Restart":"Start Dogfight"}</button><button class="btn" data-dogcmd="fire">Fire Forward Cannons</button><button class="btn" data-dogcmd="evade">Evasive Maneuvers</button><button class="btn warn" data-dogcmd="boost">Boost</button><button class="btn" data-dogcmd="overcharge">Shield Overcharge</button><button class="btn danger" data-dogcmd="end">End</button>`}</div></div>
+ <div class="card span5"><h3>Tactical Radar</h3><div class="reticle"><div class="lock"></div></div><div class="radar"><div class="ship-blip"></div>${d.enemies.filter(e=>e.hp>0).map((e,i)=>`<div class="blip" style="left:${28+(i*19)%55}%;top:${24+(i*27)%58}%" title="${esc(e.name)}"></div>`).join("")}</div>${!forced?'<div class="controls"><button class="btn" data-open="newEnemyShip">Add Enemy Ship</button></div>':""}</div>
+ <div class="card span6"><h3>Hostiles</h3>${d.enemies.map(e=>`<div class="tile no-click"><div class="row"><b>${esc(e.name)}</b><span>${e.hp}/${e.hpMax}</span></div>${meter(e.hp,e.hpMax,statusClass(e.hp,e.hpMax))}<div class="small muted">THREAT ${e.threat||1} // ${esc(e.damage||"unknown weapons")}</div>${!forced?`<div class="controls"><button class="btn" data-dogenemy="${e.id}:damage">Damage</button><button class="btn danger" data-dogenemy="${e.id}:remove">Remove</button></div>`:""}</div>`).join("")||"<p class='muted'>No hostile craft tracked.</p>"}</div>
  <div class="card span6"><h3>Flight Log</h3><div class="log">${d.log.map(x=>`<div>${x.ts} — ${esc(x.text)}</div>`).join("")||"No dogfight events yet."}</div></div></div>`
 }
 function pageCharacter(){
@@ -840,6 +961,7 @@ function wire(){
  $$("[data-mission]").forEach(el=>el.onclick=()=>openMission(el.dataset.mission));
  $$("[data-open]").forEach(el=>el.onclick=()=>openForm(el.dataset.open));
  $$("[data-combatcmd]").forEach(b=>b.onclick=()=>combatCommand(b.dataset.combatcmd));
+ $$("[data-combat-action]").forEach(b=>b.onclick=()=>{if(b.dataset.combatAction==="guard")combatPlayerGuard();if(b.dataset.combatAction==="flee")attemptCombatFlee()});
  $$("[data-combatcard]").forEach(el=>el.onclick=()=>{let p=DATA.combat.participants.find(x=>x.id===el.dataset.combatcard);if(p?.side==="Enemy"){selectedCombatTarget=p.id;toast(`Target selected: ${p.name}`);render("Combat")}});
  if($("#combatTarget"))$("#combatTarget").onchange=e=>{selectedCombatTarget=e.target.value};
  if($("#openWeaponWheelBtn"))$("#openWeaponWheelBtn").onclick=openWeaponWheel;
@@ -881,8 +1003,8 @@ function combatCommand(cmd){
  if(cmd==="add")return openForm("newCombatant");
  if(cmd==="rollinit"){c.participants.forEach(p=>p.initiative=rollDie(20)+Number(p.initiativeBonus||0));c.participants.sort((a,b)=>b.initiative-a.initiative);c.turnIndex=0;logCombat("Initiative rolled.");save();return render()}
  if(cmd==="start"){c.active=true;c.round=1;c.turnIndex=0;c.participants.sort((a,b)=>b.initiative-a.initiative);logCombat("Encounter started.");save();return render()}
- if(cmd==="next"){if(!c.active)return toast("Start the encounter first");c.turnIndex++;if(c.turnIndex>=c.participants.length){c.turnIndex=0;c.round++}save();return render()}
- if(cmd==="end"){c.active=false;c.round=0;c.turnIndex=0;logCombat("Encounter ended.");save();return render()}
+ if(cmd==="next"){if(!c.active)return toast("Start the encounter first");if(c.forced)return advanceCombatTurn();c.turnIndex++;if(c.turnIndex>=c.participants.length){c.turnIndex=0;c.round++}save();return render()}
+ if(cmd==="end"){if(c.forced)return toast("Forced encounter: win the fight or break contact");c.active=false;c.round=0;c.turnIndex=0;logCombat("Encounter ended.");save();return render()}
 }
 function combatantAction(spec){
  let[id,act]=spec.split(":"),p=DATA.combat.participants.find(x=>x.id===id);if(!p)return;
@@ -893,28 +1015,29 @@ function combatantAction(spec){
  if(act==="cond"){openModal(`Condition — ${p.name}`,`<div class="field"><label>Condition</label><input id="condName" placeholder="Stunned, restrained..."></div><button class="btn" id="addCond">Add</button><div class="pills">${(p.conditions||[]).map((x,i)=>`<button class="pill" data-remcond="${i}">${esc(x)} ×</button>`).join("")}</div>`);setTimeout(()=>{$("#addCond").onclick=()=>{let v=$("#condName").value.trim();if(v)(p.conditions||(p.conditions=[])).push(v);save();$("#modal").close();render()};$$("[data-remcond]").forEach(b=>b.onclick=()=>{p.conditions.splice(Number(b.dataset.remcond),1);save();$("#modal").close();render()})},0)}
 }
 function weaponAttack(id,targetId=null){
- let w=DATA.weapons.find(x=>x.id===id),c=DATA.combat,enemies=c.participants.filter(x=>x.side==="Enemy"&&x.hp>0);
- if(!enemies.length)return toast("Add an enemy combatant first");
- let target=c.participants.find(x=>x.id===(targetId||selectedCombatTarget))||enemies[0];
- let natural=rollDie(20),attack=natural+Number(w.combat.attackMod||0),dmg=parseDice(w.combat.damage),isCrit=natural===20;
+ let w=DATA.weapons.find(x=>x.id===id),c=DATA.combat,enemies=liveCombatEnemies();if(!enemies.length)return toast("No hostile combatants");
+ const current=c.participants[c.turnIndex];if(c.active&&current?.id!=="rovan")return toast("Wait for Rovan's turn");
+ let target=c.participants.find(x=>x.id===(targetId||selectedCombatTarget))||enemies[0],natural=rollDie(20),attack=natural+skillBonus("Marksmanship")+Number(w.combat.attackMod||0),def=Number(target.defense||11),dmg=parseDice(w.combat.damage),isCrit=natural===20,hit=isCrit||attack>=def;
  if(isCrit){criticalFx();addNotification(`CRITICAL opportunity with ${w.name} against ${target.name}.`,"warn")}
- openModal(`${w.name} // ${isCrit?"CRITICAL ":""}ATTACK`, `<div class="big-number">${attack}</div><p>${isCrit?'<b class="warn-text">NATURAL 20 // CRITICAL</b><br>':""}Attack roll against <b>${esc(target.name)}</b>.</p><p>Damage roll: <b>${dmg.total}</b> (${esc(w.combat.damage)})</p><div class="field"><label>Target</label><select id="attackTarget">${enemies.map(e=>`<option value="${e.id}" ${e.id===target.id?"selected":""}>${esc(e.name)}</option>`).join("")}</select></div><div class="controls"><button class="btn good" id="applyAttackDamage">Apply ${dmg.total} Damage</button>${isCrit?`<button class="btn warn" id="applyCritDamage">Apply Critical ×2 (${dmg.total*2})</button>`:""}<button class="btn" id="noDamage">Log Only</button></div><p class="small muted">${esc(w.combat.note||"")}</p>`);
+ openModal(`${w.name} // ${isCrit?"CRITICAL ":""}${hit?"HIT":"MISS"}`, `<div class="big-number">${attack}</div><p>Attack roll against <b>${esc(target.name)}</b> // DEF <b>${def}</b>.</p><p>${hit?`Damage roll: <b>${dmg.total}</b> (${esc(w.combat.damage)})`:'<b class="danger-text">The shot misses. The turn is spent.</b>'}</p><div class="field"><label>Target</label><select id="attackTarget">${enemies.map(e=>`<option value="${e.id}" ${e.id===target.id?"selected":""}>${esc(e.name)}</option>`).join("")}</select></div><div class="controls">${hit?`<button class="btn good" id="applyAttackDamage">Apply ${dmg.total} Damage</button>${isCrit?`<button class="btn warn" id="applyCritDamage">Apply Critical ×2 (${dmg.total*2})</button>`:""}`:'<button class="btn" id="finishMiss">Continue</button>'}</div><p class="small muted">${esc(w.combat.note||"")}</p>`);
  setTimeout(()=>{
-   const apply=(amount,crit=false)=>{let t=c.participants.find(x=>x.id===$("#attackTarget").value);t.hp=clamp(t.hp-amount,0,t.hpMax);selectedCombatTarget=t.id;weaponSound(w.id);modeEffect(w);fx("hit");floatNumber("-"+amount,"damage");if(crit)criticalFx();logCombat(`${w.name} ${crit?"critical ":""}attack roll ${attack}; ${amount} damage applied to ${t.name}.`);addNotification(`${w.name} ${crit?"CRITICAL ":""}hit ${t.name} for ${amount}.`,"danger");save();$("#modal").close();render()};
-   $("#applyAttackDamage").onclick=()=>apply(dmg.total,false);
+   const finishTurn=()=>{save();$("#modal").close();if(checkCombatResolution())return;if(c.active)advanceCombatTurn();else render()};
+   const apply=(amount,crit=false)=>{let t=c.participants.find(x=>x.id===$("#attackTarget").value);t.hp=clamp(t.hp-amount,0,t.hpMax);selectedCombatTarget=t.id;weaponSound(w.id);modeEffect(w);fx("hit");floatNumber("-"+amount,"damage");if(crit)criticalFx();logCombat(`${w.name} ${crit?"critical ":""}attack ${attack} vs DEF ${t.defense||11}; ${amount} damage to ${t.name}.`);addNotification(`${w.name} ${crit?"CRITICAL ":""}hit ${t.name} for ${amount}.`,"danger");finishTurn()};
+   if($("#applyAttackDamage"))$("#applyAttackDamage").onclick=()=>apply(dmg.total,false);
    if($("#applyCritDamage"))$("#applyCritDamage").onclick=()=>apply(dmg.total*2,true);
-   $("#noDamage").onclick=()=>{modeEffect(w);logCombat(`${w.name} attack roll ${attack}; damage ${dmg.total} not applied.`);save();$("#modal").close();render()}
+   if($("#finishMiss"))$("#finishMiss").onclick=()=>{weaponSound(w.id);logCombat(`${w.name} attack ${attack} vs DEF ${def}: MISS.`);finishTurn()};
  },0)
 }
 function dogCommand(cmd){
  let d=DATA.dogfight,s=DATA.ship;
  if(cmd==="start"){d.active=true;d.round=1;logDogfight("Dogfight started.");save();return render()}
- if(cmd==="end"){d.active=false;logDogfight("Dogfight ended.");save();return render()}
+ if(cmd==="end"){if(d.forced)return toast("Forced dogfight: destroy hostiles or break pursuit");d.active=false;logDogfight("Dogfight ended.");save();return render()}
  if(!d.active)return toast("Start the dogfight first");
- if(cmd==="fire"){let live=d.enemies.filter(e=>e.hp>0);if(!live.length)return toast("No hostile craft tracked");let target=live[0],atk=rollDie(20)+Number(s.dogfight.attackMod||0),dmg=parseDice(s.dogfight.damage);target.hp=clamp(target.hp-dmg.total,0,target.hpMax);uiBeep(120,.12,.055,"square");fx("hit");floatNumber("-"+dmg.total,"damage");logDogfight(`Forward cannons: attack ${atk}, ${dmg.total} damage to ${target.name}.`);addNotification(`Raven cannons struck ${target.name} for ${dmg.total}.`,"danger");d.round++;save();return render()}
- if(cmd==="evade"){let r=rollDie(20)+Number(s.dogfight.evasionBonus||0);logDogfight(`Evasive maneuver roll: ${r}.`);d.round++;save();return render()}
- if(cmd==="boost"){let cost=Number(s.dogfight.boostFuelCost||0);if(s.fuel<cost)return toast("Not enough fuel");s.fuel-=cost;logDogfight(`Engine boost engaged. Fuel -${cost}.`);glitch();uiBeep(145,.18,.035,"sawtooth");addNotification("Raven boost engaged.","warn");d.round++;save();return render()}
- if(cmd==="overcharge"){let cost=Number(s.dogfight.shieldOverchargeCost||0);if(s.fuel<cost)return toast("Not enough fuel");s.fuel-=cost;s.shields=clamp(s.shields+20,0,s.shieldsMax);logDogfight(`Shield overcharge engaged. Shields +20, fuel -${cost}.`);fx("heal");uiBeep(760,.16,.03,"sine");floatNumber("+20 SHIELD","heal");addNotification("Shield overcharge engaged.","info");d.round++;save();return render()}
+ if(cmd==="escape")return attemptDogfightEscape();
+ if(cmd==="fire"){let live=liveDogfightEnemies();if(!live.length)return finishForcedDogfight("victory");let target=live[0],atk=rollDie(20)+skillBonus("Piloting")+Number(s.dogfight.attackMod||0),def=10+Number(target.threat||1),dmg=parseDice(s.dogfight.damage);if(atk>=def){target.hp=clamp(target.hp-dmg.total,0,target.hpMax);uiBeep(120,.12,.055,"square");fx("hit");floatNumber("-"+dmg.total,"damage");logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}, ${dmg.total} damage to ${target.name}.`);addNotification(`Raven cannons struck ${target.name} for ${dmg.total}.`,"danger")}else logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}: MISS.`);if(!liveDogfightEnemies().length)return finishForcedDogfight("victory");save();return setTimeout(()=>enemyDogfightVolley(),220)}
+ if(cmd==="evade"){let r=rollDie(20)+Number(s.dogfight.evasionBonus||0);logDogfight(`Evasive maneuver roll: ${r}.`);if(r>=15){s.shields=clamp(s.shields+5,0,s.shieldsMax);logDogfight("The Raven gains separation; shields recover 5.")}save();return setTimeout(()=>enemyDogfightVolley(),220)}
+ if(cmd==="boost"){let cost=Number(s.dogfight.boostFuelCost||0);if(s.fuel<cost)return toast("Not enough fuel");s.fuel-=cost;logDogfight(`Engine boost engaged. Fuel -${cost}.`);glitch();uiBeep(145,.18,.035,"sawtooth");addNotification("Raven boost engaged.","warn");save();return setTimeout(()=>enemyDogfightVolley(),220)}
+ if(cmd==="overcharge"){let cost=Number(s.dogfight.shieldOverchargeCost||0);if(s.fuel<cost)return toast("Not enough fuel");s.fuel-=cost;s.shields=clamp(s.shields+20,0,s.shieldsMax);logDogfight(`Shield overcharge engaged. Shields +20, fuel -${cost}.`);fx("heal");uiBeep(760,.16,.03,"sine");floatNumber("+20 SHIELD","heal");addNotification("Shield overcharge engaged.","info");save();return setTimeout(()=>enemyDogfightVolley(),220)}
 }
 function dogEnemyAction(spec){let[id,act]=spec.split(":"),e=DATA.dogfight.enemies.find(x=>x.id===id);if(!e)return;if(act==="remove"){DATA.dogfight.enemies=DATA.dogfight.enemies.filter(x=>x.id!==id);save();return render()}if(act==="damage"){openModal(`Damage ${e.name}`,`<div class="field"><label>Damage</label><input id="shipDmg" type="number" value="10"></div><button class="btn" id="applyShipDmg">Apply</button>`);setTimeout(()=>$("#applyShipDmg").onclick=()=>{e.hp=clamp(e.hp-Number($("#shipDmg").value||0),0,e.hpMax);save();$("#modal").close();render()},0)}}
 function handleContract(spec){
@@ -1166,7 +1289,7 @@ function pageStory(){
     <div class="card span8 story-stage">
       <div class="story-stage-head">
         <div><div class="micro">CURRENT OBJECTIVE</div><div class="story-objective">${esc(s.objective||"Choose the next move.")}</div></div>
-        <div class="danger-meter"><span>DANGER ${Math.round(s.danger||0)}%</span>${meter(s.danger||0,100,(s.danger||0)>70?"danger":(s.danger||0)>45?"warn":"good")}</div>
+        <div class="danger-meter"><span>DANGER ${Math.round(s.danger||0)}% // ${threatBand(s.danger)}</span>${meter(s.danger||0,100,threatClass(s.danger))}<small>${Number(s.danger||0)>=85?"Hostile escalation can force combat on the next dangerous beat.":Number(s.danger||0)>=65?"Hostile complications may become forced encounters.":"Danger affects ambushes, hostile complications, and combat escalation."}</small></div>
       </div>
       <div id="storyTranscript" class="story-transcript">${storyTranscript()}</div>
       <div class="story-composer">
@@ -1482,8 +1605,9 @@ function resolveContractEncounter(contract,choice,roll){
   s.danger=clamp(Number(s.danger||0)+8,0,100);s.director.tension=clamp(Number(s.director.tension||0)+6,0,100);
   const subject=target?.name||contract.title;
   addConsequence(`${subject}: resolution attempt failed`,`The objective remains actionable, but danger increased. Choose a different approach or try again.`,"danger",{contractId:contract.id,targetId:target?.id||null});
-  storyPush("narration","Narrator",`The final approach breaks down before Deadlock can close the job. The objective is still within reach, but the next attempt happens under more pressure.`);
+  storyPush("narration","Narrator",`The final approach breaks down before Deadlock can close the job. The objective is still within reach, but the target's side reacts before Deadlock can reset.`);
   s.objective=`Recover control and resolve ${contract.title}.`;s.choices=missionChoices(contract);
+  if(target)startForcedCombat({source:"target_capture",danger:Math.max(70,Number(s.danger||0)),reason:`${target.name}'s recovery turns hostile.`,objective:`Subdue the opposition and secure ${target.name}.`,returnPage:"Story",contractId:contract.id,targetId:target.id,narration:`The failed approach burns the quiet option. ${target.name}'s people draw first, and the recovery becomes a live firefight.`});
  }
  return true;
 }
@@ -2089,6 +2213,10 @@ function materializeComplication(event){
    addConsequence(`${sys.name} damaged`,`System fault reduced condition to ${sys.condition}%.`,"warn",{systemId:sys.id});
   }
  }
+ const hostile=["rival_hunter","patrol_scan"].includes(event.id),pressure=Number(s.danger||0);
+ if(hostile&&(pressure>=85||(pressure>=65&&chance(.55)))){
+  removeInterruption(iid);startForcedCombat({source:event.id,danger:pressure,reason:event.id==="rival_hunter"?"A rival hunter has closed the distance and opened fire.":"The security patrol has escalated from scan to armed interception.",objective:"Survive the contact, defeat the opposition, or break away.",returnPage:"Story",contractId:activeContract?.id||null});
+ }
  d.lastTopic=event.id==="informant_offer"?"credits":(event.tags?.[0]||"open").toLowerCase();
 }
 
@@ -2140,6 +2268,8 @@ function reactToPlayerAction(action,choice,roll){
  const inferred={...inferIntent(action||choice?.label||""),...(choice||{})};
  const intent=inferred.intent||"action";
  if(inferred.npcId)s.currentNpc=inferred.npcId;
+ const violent=/\b(open fire|shoot|attack|draw (?:blackwake|luna|sol)|fire (?:blackwake|luna|sol)|go loud|start shooting)\b/i.test(String(action||choice?.label||""));
+ if(violent&&!DATA.combat.active){startForcedCombat({source:"player_attack",danger:Math.max(55,Number(s.danger||0)),reason:"Deadlock chose to escalate to live fire.",objective:"Finish the fight or break contact.",returnPage:"Story"});return}
 
  if(inferred.interruptId){
   const it=interruptionById(inferred.interruptId);
@@ -2252,10 +2382,11 @@ function reactToPlayerAction(action,choice,roll){
 function maybeTriggerEncounter(){
  const s=DATA.story,d=s.director;
  if(d.encounterCooldown>0){d.encounterCooldown--;return false}
- const tension=clamp(Number(d.tension||0)+Number(s.danger||0)*.25,0,100);
- const p=.12+(tension/100)*.28;
+ const danger=Number(s.danger||0),tension=clamp(Number(d.tension||0)+danger*.25,0,100);
+ const p=danger>=90?.85:danger>=75?.58:.12+(tension/100)*.28;
  if(!chance(p))return false;
- const event=weightedPick(availableComplications());
+ const available=availableComplications(),hostile=available.filter(e=>["rival_hunter","patrol_scan"].includes(e.id));
+ const event=danger>=85&&hostile.length?weightedPick(hostile):weightedPick(available);
  if(!event)return false;
  materializeComplication(event);
  d.encounterCooldown=2+Math.floor(Math.random()*3);

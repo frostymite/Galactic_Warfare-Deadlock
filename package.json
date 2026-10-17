@@ -1,1 +1,9 @@
-{"name":"deadlock-tactical-os","version":"10.0.0","private":true,"type":"module","scripts":{"serve":"python -m http.server 8080"}}
+{
+  "name": "deadlock-tactical-os",
+  "version": "10.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "python -m http.server 8080"
+  }
+}

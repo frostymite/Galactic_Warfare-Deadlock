@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "10.0.0",
-    "campaign": "Deadlock \u2014 Living Galaxy Foundation",
+    "version": "10.1.0",
+    "campaign": "Deadlock \u2014 Forced Encounters",
     "note": "Established story facts are filled in. Mechanical values that were never firmly established remain editable.",
     "rulesNote": "Combat and dogfight numeric formulas are dashboard mechanics, not story canon. Edit them in GM Controls."
   },
@@ -522,14 +522,28 @@
         "hpMax": 100,
         "conditions": []
       }
-    ]
+    ],
+    "forced": false,
+    "source": null,
+    "reason": null,
+    "objective": null,
+    "returnPage": "Story",
+    "escapeDC": 12,
+    "context": null,
+    "resolved": false
   },
   "dogfight": {
     "active": false,
     "round": 0,
     "enemyIndex": 0,
     "log": [],
-    "enemies": []
+    "enemies": [],
+    "forced": false,
+    "source": null,
+    "reason": null,
+    "returnPage": "Galaxy",
+    "escapeDC": 13,
+    "context": null
   },
   "gm": {
     "rules": {

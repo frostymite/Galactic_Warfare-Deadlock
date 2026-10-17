@@ -1,9 +1,18 @@
-# Deadlock Tactical OS v10.0 — Living Galaxy Foundation
+# Deadlock Tactical OS v10.1 — Forced Encounters
 
 Offline-first solo bounty-hunter RPG/PWA centered on **Rovan Kes / Deadlock**, **The Raven**, and now **Blackglass Station HQ**.
 
-## v10 headline changes
+## v10.1 headline changes
 
+
+- **Danger can now force action:** hostile story complications, failed target recoveries, local ambushes, and hostile travel events can hard-transition into combat.
+- Forced ground encounters auto-roll initiative and give enemies real turns that can damage Rovan.
+- During a forced encounter, Story/Galaxy navigation is locked until Deadlock wins, escapes, or is forced to retreat.
+- Ground combat now uses Rovan's Marksmanship bonus against enemy Defense; misses spend the turn.
+- Take Cover reduces the next incoming hit; Break Contact uses Survival against an encounter-specific escape DC.
+- Hostile hyperspace encounters can force Dogfight; enemy craft return fire against The Raven after player actions.
+- Dogfight escape uses Piloting; victory/escape unlocks the route again.
+- Danger bands are now explicit: Low Threat, Active Threat, High Threat, and Combat Imminent.
 - Data-driven visual asset registry (`asset-manifest.json`).
 - Persistent Blackglass Station HQ with five operational spaces.
 - Twelve navigation destinations across a connected route network.

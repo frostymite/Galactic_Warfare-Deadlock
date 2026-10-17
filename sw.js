@@ -1,4 +1,4 @@
-const CACHE="deadlock-v10-living-galaxy-cache-1";
+const CACHE="deadlock-v10-1-forced-encounters-cache-1";
 const APP_SHELL=[
  './',
  './app.js',

@@ -1,16 +1,7 @@
-# Upload instructions
+# Upload this patch to GitHub
 
-Upload/replace these files and folders at the **root** of `Galactic_Warfare-Deadlock`.
+Upload these files to the **root** of `Galactic_Warfare-Deadlock`, replacing the existing files with the same names.
 
-This patch intentionally does **not** include or overwrite:
+No asset, icon, galaxy-data, or asset-manifest folders need to be changed for v10.1.
 
-- `assets/rovan.jpg`
-- `assets/contact_dren.jpg`
-- `assets/raven.jpg`
-- `assets/raven_dedicated.jpg`
-- existing `assets/npc_*.svg`
-- existing icons
-
-That preserves the visual assets already approved in the current GitHub build.
-
-New folders under `assets/` can be uploaded as folders from desktop, or created one at a time in GitHub on Android if needed. The new service worker cache is `deadlock-v10-living-galaxy-cache-1`.
+After GitHub Pages redeploys, open the live site in Chrome while online and refresh once. The service-worker cache name changed to force the new encounter code to load.
