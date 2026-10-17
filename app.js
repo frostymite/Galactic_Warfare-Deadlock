@@ -43,7 +43,7 @@ function characterVisual(id,state="neutral",alt=""){
 function ravenVisual(state="flight",alt="The Raven"){
  const e=assetEntry("ships","raven")||{};return imgTag(e[state]||e.flight||e.fallback,alt,e.fallback||null,"raven-visual");
 }
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(DATA))}
+function save(){const raw=JSON.stringify(DATA);localStorage.setItem(STORAGE_KEY,raw);window.DeadlockNative?.persistSave?.(STORAGE_KEY,raw)}
 function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");navigator.vibrate?.(20);uiBeep(520,.035,.035);setTimeout(()=>t.classList.remove("show"),1500)}
 let AUDIO_CTX=null;
 function audioContext(){
@@ -196,10 +196,11 @@ function fx(type){
  const f=$("#flashFx");f.className="flash-fx";void f.offsetWidth;f.classList.add(type);
  if(type==="hit"){document.body.classList.remove("screen-shake");void document.body.offsetWidth;document.body.classList.add("screen-shake");setTimeout(()=>document.body.classList.remove("screen-shake"),350)}
 }
+function gpuPulse(kind="impact"){try{window.DeadlockGPU?.pulse?.(kind)}catch{}}
 function floatNumber(text,type="damage",x=window.innerWidth*.74,y=window.innerHeight*.42){
  const el=document.createElement("div");el.className=`float-num ${type}`;el.textContent=text;el.style.left=x+"px";el.style.top=y+"px";$("#floatingLayer").appendChild(el);setTimeout(()=>el.remove(),950)
 }
-function eventBanner(text){
+function eventBanner(text){gpuPulse(/CRITICAL|COMBAT|AMBUSH|HOSTILE/i.test(String(text))?"critical":"impact");
  $("#eventText").textContent=text;const b=$("#levelBanner");b.classList.remove("show");void b.offsetWidth;b.classList.add("show");fx("level");uiBeep(660,.08,.03);setTimeout(()=>uiBeep(880,.12,.035),100)
 }
 function glitch(){const g=$("#screenFx");g.classList.remove("glitch");void g.offsetWidth;g.classList.add("glitch")}
@@ -580,10 +581,11 @@ function galaxyMapSvg(){
 async function load(){
  const [defaults,galaxy,assets,scenes]=await Promise.all([fetch("character-data.json").then(r=>r.json()),fetch("galaxy-data.json").then(r=>r.json()),fetch("asset-manifest.json").then(r=>r.json()),fetch("scene-data.json").then(r=>r.json())]);
  GALAXY=galaxy;ASSET_MANIFEST=assets;SCENES=scenes;
- const local=localStorage.getItem(STORAGE_KEY);
+ const nativeLocal=await window.DeadlockNative?.readSave?.(STORAGE_KEY);
+ const local=nativeLocal||localStorage.getItem(STORAGE_KEY);
  DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);ensureGalaxyState();ensureMissionLoopState();ensureEncounterState();
  uiSound=DATA.settings.sound!==false;
- save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");
+ save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);document.body.dataset.graphics=DATA.settings.graphicsQuality||"high";window.DeadlockGPU?.setEnabled?.(DATA.settings.gpuBackdrop!==false);window.DeadlockHUD?.setEnabled?.(DATA.settings.diegeticHud!==false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");
  if($("#soundBtn"))$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;
  requestAnimationFrame(detectFoldLayout)
 }
@@ -591,6 +593,21 @@ function buildNav(){
  $("#nav").innerHTML="";
  pages.forEach(p=>{let b=document.createElement("button");b.textContent=p;b.dataset.short=p.replace(/\s/g,"").slice(0,3).toUpperCase();b.onclick=()=>render(p);$("#nav").appendChild(b)})
 }
+function runtimeStateSnapshot(){
+ const g=typeof galaxyState==="function"?galaxyState():{};
+ const enc=DATA?.encounter||DATA?.combat?.forcedEncounter||{};
+ const route=g?.route;
+ const loc=(typeof currentGalaxyLocation==="function"?currentGalaxyLocation():null);
+ return {
+  page:currentPage,
+  character:{name:DATA?.character?.name,callsign:DATA?.character?.callsign,health:DATA?.character?.health,healthMax:DATA?.character?.healthMax,stamina:DATA?.character?.stamina,staminaMax:DATA?.character?.staminaMax,credits:DATA?.character?.credits},
+  ship:{name:DATA?.ship?.name,class:DATA?.ship?.class,hull:DATA?.ship?.hull,hullMax:DATA?.ship?.hullMax,shields:DATA?.ship?.shields,shieldsMax:DATA?.ship?.shieldsMax,fuel:DATA?.ship?.fuel,fuelMax:DATA?.ship?.fuelMax},
+  story:{location:DATA?.story?.location,objective:DATA?.story?.objective,danger:DATA?.story?.danger,turn:DATA?.story?.director?.turn||0},
+  encounter:{active:!!(enc?.active||forcedEncounterPage()),reason:enc?.reason||DATA?.combat?.encounter?.reason||'',objective:enc?.objective||'',source:enc?.source||''},
+  galaxy:{phase:g?.phase||'idle',location:loc?.name||'Unknown Space',route:route?.destinationId||route?.phase||'none'}
+ };
+}
+window.getDeadlockRuntimeState=runtimeStateSnapshot;
 function render(page=currentPage){
  const locked=forcedEncounterPage();if(locked&&page!==locked){page=locked;}
  currentPage=page;document.body.dataset.page=page;let activeNav=null;$$('#nav button').forEach(b=>{const active=b.textContent===page;b.classList.toggle("active",active);if(active)activeNav=b});
@@ -598,6 +615,7 @@ function render(page=currentPage){
  $("#title").textContent=page;$("#crumb").textContent=`DEADLOCK // ${page.toUpperCase()}`;
  const content=$("#content");content.classList.remove("page-transition");void content.offsetWidth;content.classList.add("page-transition");
  let key="page"+page.replace(/\s/g,"");content.innerHTML=(window[key]||(()=>`<div class="card">No renderer.</div>`))();wire();enhanceLivingScene(page);
+ window.DeadlockGPU?.setEnabled?.(DATA.settings.gpuBackdrop!==false);window.DeadlockGPU?.setPage?.(page);window.DeadlockHUD?.setEnabled?.(DATA.settings.diegeticHud!==false);window.DeadlockHUD?.update?.(page,runtimeStateSnapshot());
  if(AMBIENT?.running)retuneAmbient();
  setTimeout(()=>content.classList.remove("page-transition"),300)
 }
@@ -920,7 +938,7 @@ function pageGMControls(){
  <div class="card full"><h3>Raw Campaign Data</h3><p class="muted">Advanced: edit the entire save. This is the fastest way to change anything the UI does not expose yet.</p><button class="btn" id="rawEdit">Open Raw JSON Editor</button></div></div>`
 }
 function pageSettings(){return `<div class="grid"><div class="card span6"><h3>Android / PWA</h3><p>This build is installable as a Progressive Web App when served over HTTPS. On Android Chrome, use <b>Install App</b> or <b>Add to Home screen</b>.</p><div class="controls"><button class="btn" id="installSettings">Install App</button><button class="btn" id="wakeSettings">Keep Screen Awake</button></div></div>
- <div class="card span6"><h3>Interface</h3><div class="row"><span>Compact mode</span><input id="compactToggle" type="checkbox" ${DATA.settings.compact?'checked':''} style="width:auto"></div><div class="row"><span>Animations</span><input id="animToggle" type="checkbox" ${DATA.settings.animations!==false?'checked':''} style="width:auto"></div><div class="row"><span>Fold Optimization</span><input id="foldToggle" type="checkbox" ${DATA.settings.foldOptimization!==false?'checked':''} style="width:auto"></div><div class="field"><label>Center-crease gutter (px)</label><input id="hingeGutterInput" type="number" min="12" max="48" value="${Number(DATA.settings.hingeGutter||22)}"></div><div class="small muted">Razr Fold mode activates automatically on square-ish unfolded viewports. Increase the gutter if you want more room around the crease.</div></div>
+ <div class="card span6"><h3>Interface / Renderer</h3><div class="row"><span>Compact mode</span><input id="compactToggle" type="checkbox" ${DATA.settings.compact?'checked':''} style="width:auto"></div><div class="row"><span>Animations</span><input id="animToggle" type="checkbox" ${DATA.settings.animations!==false?'checked':''} style="width:auto"></div><div class="row"><span>GPU cinematic backdrop</span><input id="gpuToggle" type="checkbox" ${DATA.settings.gpuBackdrop!==false?'checked':''} style="width:auto"></div><div class="row"><span>Diegetic game HUD</span><input id="hudToggle" type="checkbox" ${DATA.settings.diegeticHud!==false?'checked':''} style="width:auto"></div><div class="field"><label>Graphics profile</label><select id="graphicsQuality"><option value="performance" ${DATA.settings.graphicsQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${DATA.settings.graphicsQuality==='balanced'?'selected':''}>Balanced</option><option value="high" ${DATA.settings.graphicsQuality!=='performance'&&DATA.settings.graphicsQuality!=='balanced'?'selected':''}>High</option></select></div><div class="row"><span>Fold Optimization</span><input id="foldToggle" type="checkbox" ${DATA.settings.foldOptimization!==false?'checked':''} style="width:auto"></div><div class="field"><label>Center-crease gutter (px)</label><input id="hingeGutterInput" type="number" min="12" max="48" value="${Number(DATA.settings.hingeGutter||22)}"></div><div class="small muted">v12 keeps game logic separate from presentation. GPU/HUD options can be disabled without affecting saves, combat, story, or galaxy state.</div></div>
  <div class="card span6 audio-settings"><h3>Audio</h3><div class="row"><span>Master sound</span><input id="soundToggle" type="checkbox" ${uiSound?'checked':''} style="width:auto"></div><div class="row"><span>Cinematic orchestral score</span><input id="musicToggle" type="checkbox" ${DATA.settings.music!==false?'checked':''} style="width:auto"></div><div class="field"><label>Music volume <span id="musicVolumeLabel">${Number(DATA.settings.musicVolume??55)}%</span></label><input id="musicVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.musicVolume??55)}"></div><div class="row"><span>NPC spoken dialogue</span><input id="voiceToggle" type="checkbox" ${DATA.settings.characterVoices!==false?'checked':''} style="width:auto"></div><div class="field"><label>Voice volume <span id="voiceVolumeLabel">${Number(DATA.settings.voiceVolume??78)}%</span></label><input id="voiceVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.voiceVolume??78)}"></div><div class="controls"><button class="btn" id="testNpcVoice">Test Dren Voice</button></div><div class="small muted">Dialogue uses your device's installed text-to-speech voices. Offline speech depends on having an Android TTS voice downloaded; the procedural orchestral score itself needs no network or audio files.</div></div>
  <div class="card full"><h3>Data</h3><p class="muted">Campaign state auto-saves locally. Export a JSON backup before major changes.</p><div class="controls"><button class="btn" id="saveNow">Save Now</button><button class="btn warn" id="resetData">Reset Included Data</button></div></div></div>`}
 
@@ -986,6 +1004,9 @@ function wire(){
  if($("#rollBtn"))$("#rollBtn").onclick=()=>{let r=roll(Number($("#dieSides").value),Number($("#dieCount").value),Number($("#dieMod").value));$("#diceResult").textContent=r.total;render("Dice")};
  if($("#compactToggle"))$("#compactToggle").onchange=e=>{DATA.settings.compact=e.target.checked;document.body.classList.toggle("compact",e.target.checked);save()};
  if($("#animToggle"))$("#animToggle").onchange=e=>{DATA.settings.animations=e.target.checked;document.body.classList.toggle("no-anim",!e.target.checked);save()};
+ if($("#gpuToggle"))$("#gpuToggle").onchange=e=>{DATA.settings.gpuBackdrop=e.target.checked;window.DeadlockGPU?.setEnabled?.(e.target.checked);save()};
+ if($("#hudToggle"))$("#hudToggle").onchange=e=>{DATA.settings.diegeticHud=e.target.checked;window.DeadlockHUD?.setEnabled?.(e.target.checked);save();render()};
+ if($("#graphicsQuality"))$("#graphicsQuality").onchange=e=>{DATA.settings.graphicsQuality=e.target.value;document.body.dataset.graphics=e.target.value;save();toast(`Graphics: ${e.target.value}`)};
  if($("#soundToggle"))$("#soundToggle").onchange=e=>{uiSound=e.target.checked;DATA.settings.sound=uiSound;$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;save();syncAudioState()};
  if($("#musicToggle"))$("#musicToggle").onchange=e=>{DATA.settings.music=e.target.checked;save();syncAudioState()};
  if($("#voiceToggle"))$("#voiceToggle").onchange=e=>{DATA.settings.characterVoices=e.target.checked;if(!e.target.checked)window.speechSynthesis?.cancel();save()};

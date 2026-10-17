@@ -1,1 +1,11 @@
-{"appId":"com.deadlock.tacticalos","appName":"Deadlock Tactical OS","webDir":".","server":{"androidScheme":"https"}}
+{
+  "appId": "com.deadlock.tacticalos",
+  "appName": "Deadlock",
+  "webDir": "dist",
+  "server": {"androidScheme": "https"},
+  "android": {
+    "backgroundColor": "#020508",
+    "allowMixedContent": false,
+    "captureInput": true
+  }
+}

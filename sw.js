@@ -1,7 +1,12 @@
-const CACHE="deadlock-v11-living-scenes-cache-1";
+const CACHE="deadlock-v12-standalone-rpg-cache-1";
 const APP_SHELL=[
  './',
  './app.js',
+ './asset-packs.json',
+ './runtime/runtime.css',
+ './runtime/native-bridge.js',
+ './runtime/deadlock-gpu.js',
+ './runtime/diegetic-hud.js',
  './asset-manifest.json',
  './assets/characters/dren/angry.svg',
  './assets/characters/dren/holo.svg',

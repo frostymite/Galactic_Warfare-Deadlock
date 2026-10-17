@@ -1,31 +1,45 @@
-# Deadlock Tactical OS v11 — Living Scenes
+# Deadlock Tactical OS v12 — Standalone RPG Foundation
 
-Offline-first solo bounty-hunter RPG for Rovan Kes / Deadlock.
+v12 begins the migration from an advanced offline web/PWA RPG into a standalone Android game while preserving the existing campaign engine.
 
-v11 builds on the working v10 Living Galaxy and v10.1 Forced Encounters foundation and adds the first full animated-universe scene system.
+## New in v12
 
-## Highlights
+- dependency-free WebGL2 cinematic backdrop renderer
+- page-specific diegetic game HUDs
+- Combat/Dogfight targeting and status instrumentation
+- Raven telemetry and Galaxy navigation instrumentation
+- Story objective/danger and Holonet encryption HUDs
+- High / Balanced / Performance graphics profiles
+- renderer and HUD can be disabled independently without affecting game state
+- native Android bridge hooks for haptics, app state, display and native Preferences save mirroring
+- `asset-packs.json` foundation for large future local visual/audio packs
+- Capacitor 8 Android project configuration
+- automatic GitHub Actions debug APK builder
 
-- layered 2.5D living scenes
-- Blackglass HQ continuous environment
-- Raven cockpit scene
-- hyperspace streak travel
-- animated orbital arrival
-- planet environment themes
-- characters physically staged inside Story scenes
-- speaking animation tied to TTS
-- relationship-driven posture / lighting
-- ground combat muzzle / hit reactions
-- animated dogfight presentation
-- cinematic scene expand mode
-- offline and fold-friendly
+## Preservation guarantee
 
-See `LIVING_SCENES_V11.md` for architecture details and `QA_V11.md` for validation.
+`app.js` remains authoritative for story canon, campaign saves, contracts, combat, galaxy travel and procedural GM decisions. v12 presentation reads game state but does not own or rewrite it.
 
-## Android / GitHub Pages
+## Build
 
-The v11 patch is designed to be applied on top of a working v10 + v10.1 installation.
+Browser/PWA development:
 
-Upload the v11 root files and the new `assets/scenes/` folder. Existing canonical artwork in `assets/` should remain in place.
+```bash
+python -m http.server 8080
+```
 
-After GitHub Pages redeploys, open the live page once in Chrome while online and refresh so the new service worker cache can install.
+Prepare the standalone web bundle:
+
+```bash
+npm run build:web
+```
+
+Local Android development when Android tooling is installed:
+
+```bash
+npm install
+npm run android:add
+npm run android:debug
+```
+
+For the easiest route, upload the project to GitHub and use the included **Build Deadlock Android APK** Action. See `docs/APK_BUILD_GUIDE.md`.

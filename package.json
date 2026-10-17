@@ -1,9 +1,27 @@
 {
   "name": "deadlock-tactical-os",
-  "version": "11.0.0",
+  "version": "12.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "serve": "python -m http.server 8080"
+    "serve": "python -m http.server 8080",
+    "build:web": "node tools/build-web.mjs",
+    "android:add": "npm run build:web && npx cap add android",
+    "android:sync": "npm run build:web && npx cap sync android",
+    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/filesystem": "8.1.5",
+    "@capacitor/haptics": "8.0.2",
+    "@capacitor/network": "8.0.1",
+    "@capacitor/preferences": "8.0.1",
+    "@capacitor/screen-orientation": "8.0.2",
+    "@capacitor/status-bar": "8.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.3"
   }
 }

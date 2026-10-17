@@ -1,36 +1,140 @@
 {
   "meta": {
-    "version": "11.0.0",
-    "name": "Deadlock Living Scenes",
+    "version": "12.0.0",
+    "name": "Deadlock Standalone RPG Scene Runtime",
     "goal": "Layered, continuously animated 2.5D scenes that remain offline and fold-friendly."
   },
   "presets": {
-    "blackglass": {"background":"assets/scenes/blackglass_command.svg","theme":"hq","traffic":5,"particles":18,"crowd":4,"camera":"slow","actors":true},
-    "cockpit": {"background":"assets/scenes/raven_cockpit.svg","theme":"cockpit","traffic":0,"particles":10,"crowd":0,"camera":"slow","actors":true},
-    "urban": {"background":"assets/scenes/urban_night.svg","theme":"urban","traffic":4,"particles":24,"crowd":7,"camera":"medium","actors":true},
-    "combat": {"background":"assets/scenes/combat_industrial.svg","theme":"combat","traffic":0,"particles":32,"crowd":0,"camera":"combat","actors":true},
-    "orbit": {"background":"assets/scenes/orbit.svg","theme":"orbit","traffic":3,"particles":14,"crowd":0,"camera":"slow","actors":false},
-    "desert": {"background":"assets/scenes/desert.svg","theme":"desert","traffic":1,"particles":28,"crowd":2,"camera":"slow","actors":true},
-    "jungle": {"background":"assets/scenes/jungle.svg","theme":"jungle","traffic":0,"particles":30,"crowd":2,"camera":"slow","actors":true},
-    "ice": {"background":"assets/scenes/ice.svg","theme":"ice","traffic":1,"particles":36,"crowd":2,"camera":"slow","actors":true},
-    "volcanic": {"background":"assets/scenes/volcanic.svg","theme":"volcanic","traffic":0,"particles":34,"crowd":1,"camera":"medium","actors":true},
-    "ocean": {"background":"assets/scenes/ocean.svg","theme":"ocean","traffic":2,"particles":18,"crowd":4,"camera":"slow","actors":true},
-    "asteroid": {"background":"assets/scenes/asteroid.svg","theme":"asteroid","traffic":4,"particles":26,"crowd":0,"camera":"medium","actors":false},
-    "ruins": {"background":"assets/scenes/ruins.svg","theme":"ruins","traffic":0,"particles":22,"crowd":2,"camera":"slow","actors":true},
-    "unknown": {"background":"assets/scenes/unknown.svg","theme":"unknown","traffic":2,"particles":36,"crowd":0,"camera":"medium","actors":true}
+    "blackglass": {
+      "background": "assets/scenes/blackglass_command.svg",
+      "theme": "hq",
+      "traffic": 5,
+      "particles": 18,
+      "crowd": 4,
+      "camera": "slow",
+      "actors": true
+    },
+    "cockpit": {
+      "background": "assets/scenes/raven_cockpit.svg",
+      "theme": "cockpit",
+      "traffic": 0,
+      "particles": 10,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": true
+    },
+    "urban": {
+      "background": "assets/scenes/urban_night.svg",
+      "theme": "urban",
+      "traffic": 4,
+      "particles": 24,
+      "crowd": 7,
+      "camera": "medium",
+      "actors": true
+    },
+    "combat": {
+      "background": "assets/scenes/combat_industrial.svg",
+      "theme": "combat",
+      "traffic": 0,
+      "particles": 32,
+      "crowd": 0,
+      "camera": "combat",
+      "actors": true
+    },
+    "orbit": {
+      "background": "assets/scenes/orbit.svg",
+      "theme": "orbit",
+      "traffic": 3,
+      "particles": 14,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": false
+    },
+    "desert": {
+      "background": "assets/scenes/desert.svg",
+      "theme": "desert",
+      "traffic": 1,
+      "particles": 28,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true
+    },
+    "jungle": {
+      "background": "assets/scenes/jungle.svg",
+      "theme": "jungle",
+      "traffic": 0,
+      "particles": 30,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true
+    },
+    "ice": {
+      "background": "assets/scenes/ice.svg",
+      "theme": "ice",
+      "traffic": 1,
+      "particles": 36,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true
+    },
+    "volcanic": {
+      "background": "assets/scenes/volcanic.svg",
+      "theme": "volcanic",
+      "traffic": 0,
+      "particles": 34,
+      "crowd": 1,
+      "camera": "medium",
+      "actors": true
+    },
+    "ocean": {
+      "background": "assets/scenes/ocean.svg",
+      "theme": "ocean",
+      "traffic": 2,
+      "particles": 18,
+      "crowd": 4,
+      "camera": "slow",
+      "actors": true
+    },
+    "asteroid": {
+      "background": "assets/scenes/asteroid.svg",
+      "theme": "asteroid",
+      "traffic": 4,
+      "particles": 26,
+      "crowd": 0,
+      "camera": "medium",
+      "actors": false
+    },
+    "ruins": {
+      "background": "assets/scenes/ruins.svg",
+      "theme": "ruins",
+      "traffic": 0,
+      "particles": 22,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true
+    },
+    "unknown": {
+      "background": "assets/scenes/unknown.svg",
+      "theme": "unknown",
+      "traffic": 2,
+      "particles": 36,
+      "crowd": 0,
+      "camera": "medium",
+      "actors": true
+    }
   },
   "locationThemes": {
-    "blackglass_station":"blackglass",
-    "veyra_prime":"urban",
-    "drekthar":"desert",
-    "nerath":"jungle",
-    "cindar":"ice",
-    "talos":"ocean",
-    "orivon":"volcanic",
-    "xerra":"urban",
-    "sable_belt":"asteroid",
-    "thalos":"ocean",
-    "rethis":"ruins",
-    "umber":"unknown"
+    "blackglass_station": "blackglass",
+    "veyra_prime": "urban",
+    "drekthar": "desert",
+    "nerath": "jungle",
+    "cindar": "ice",
+    "talos": "ocean",
+    "orivon": "volcanic",
+    "xerra": "urban",
+    "sable_belt": "asteroid",
+    "thalos": "ocean",
+    "rethis": "ruins",
+    "umber": "unknown"
   }
 }

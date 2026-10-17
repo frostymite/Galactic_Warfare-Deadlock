@@ -1,7 +1,7 @@
 {
-  "name": "Deadlock v11 \u2014 Living Scenes",
-  "short_name": "Deadlock 11",
-  "description": "Offline-first bounty hunter RPG with layered animated living scenes, forced combat, Blackglass HQ and interplanetary travel.",
+  "name": "Deadlock v12 \u2014 Standalone RPG Foundation",
+  "short_name": "Deadlock 12",
+  "description": "Offline-first standalone Android RPG foundation with GPU cinematic runtime, diegetic HUDs, living scenes, forced combat, Blackglass HQ and interplanetary travel.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

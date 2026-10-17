@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "10.1.0",
-    "campaign": "Deadlock \u2014 Forced Encounters",
+    "version": "12.0.0",
+    "campaign": "Deadlock \u2014 Standalone RPG Foundation",
     "note": "Established story facts are filled in. Mechanical values that were never firmly established remain editable.",
     "rulesNote": "Combat and dogfight numeric formulas are dashboard mechanics, not story canon. Edit them in GM Controls."
   },
@@ -455,7 +455,10 @@
     "musicVolume": 55,
     "characterVoices": true,
     "voiceVolume": 78,
-    "livingGalaxy": true
+    "livingGalaxy": true,
+    "gpuBackdrop": true,
+    "diegeticHud": true,
+    "graphicsQuality": "high"
   },
   "targets": [
     {
