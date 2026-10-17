@@ -118,6 +118,16 @@ The Story tab and on-device Story UI are explicitly wired into navigation. This 
 Freeform Story dialogue now uses an offline personality/memory layer that assembles NPC reactions from speech intent, mood, campaign state, recent history, and established memories. No API or paid service is required.
 
 
+
+## v9.3.5 — Cinematic Orchestral Score
+
+- Replaces the sustained ambient drone with an original adaptive space-opera score.
+- Adds musical chord progressions, melodic motifs, layered string-like pads, low brass accents, bass movement, pizzicato/ostinato figures, timpani and cymbal-style percussion.
+- Story/Overview remain restrained; Combat and Dogfight increase tempo and rhythmic density.
+- Score is synthesized locally with Web Audio: no streaming, music files, API key, subscription, or network connection required.
+- NPC speech still ducks the score automatically.
+- No franchise themes or copyrighted melodies are included.
+
 ## v9.3.4 — Ambient Soundscape & Character Voices
 
 - Procedural low-volume ambient soundtrack generated locally with Web Audio.

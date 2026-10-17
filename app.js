@@ -49,83 +49,82 @@ function uiBeep(freq=440,dur=.05,vol=.025,type="sine"){
 
 function audioPrefs(){return DATA?.settings||{}}
 function ambientGainTarget(){
- const v=clamp(Number(audioPrefs().musicVolume??16),0,100)/100;
- return .045*v;
+ const v=clamp(Number(audioPrefs().musicVolume??18),0,100)/100;
+ return .18*v;
 }
-function ambientProfile(){
+function midiFreq(n){return 440*Math.pow(2,(Number(n)-69)/12)}
+function scoreProfile(){
  const danger=clamp(Number(DATA?.story?.danger||0),0,100);
  const profiles={
-  Story:[110,164.8,220,520],Holonet:[123.5,185,247,650],Combat:[82.4,123.5,164.8,420],Dogfight:[92.5,138.6,185,470],
-  Ship:[103.8,155.6,207.7,560],Overview:[110,164.8,220,600]
+  Overview:{bpm:72,chords:[[50,53,57],[46,50,53],[53,57,60],[48,52,55]],melody:[62,null,65,64,62,69,67,null,65,64,62,null,57,60,62,null],energy:.38},
+  Story:{bpm:76,chords:[[50,53,57],[46,50,53],[53,57,60],[48,52,55]],melody:[62,null,69,65,64,null,62,57,60,null,65,67,64,null,62,null],energy:.46},
+  Holonet:{bpm:68,chords:[[52,55,59],[48,52,55],[55,59,62],[50,54,57]],melody:[64,null,null,67,71,null,69,null,64,null,62,64,67,null,null,null],energy:.30},
+  Ship:{bpm:82,chords:[[55,58,62],[51,55,58],[58,62,65],[53,57,60]],melody:[67,null,70,69,67,74,72,null,70,69,67,null,62,65,67,null],energy:.44},
+  Combat:{bpm:118,chords:[[50,53,57],[48,52,55],[46,50,53],[45,50,53]],melody:[62,65,69,67,65,62,60,62,65,69,72,69,67,65,62,60],energy:.90},
+  Dogfight:{bpm:132,chords:[[45,48,52],[43,47,50],[41,45,48],[40,45,48]],melody:[69,72,76,74,72,69,67,69,72,76,79,76,74,72,69,67],energy:1.0}
  };
- const p=profiles[currentPage]||profiles.Overview;
- return {freqs:p.slice(0,3),filter:p[3]+danger*3.2,danger};
+ const base=profiles[currentPage]||profiles.Overview;
+ return {...base,danger,energy:clamp(base.energy+danger/220,0,1)};
+}
+function makeImpulse(ctx,seconds=2.2,decay=2.4){
+ const rate=ctx.sampleRate,len=Math.floor(rate*seconds),buf=ctx.createBuffer(2,len,rate);
+ for(let c=0;c<2;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay)}
+ return buf;
+}
+function scoreBus(ctx){
+ const master=ctx.createGain(),dry=ctx.createGain(),wet=ctx.createGain(),verb=ctx.createConvolver(),tone=ctx.createBiquadFilter();
+ master.gain.value=.0001;dry.gain.value=.78;wet.gain.value=.28;tone.type='lowpass';tone.frequency.value=5200;tone.Q.value=.3;verb.buffer=makeImpulse(ctx);
+ tone.connect(dry);tone.connect(verb);verb.connect(wet);dry.connect(master);wet.connect(master);master.connect(ctx.destination);
+ return {master,tone,dry,wet,verb};
+}
+function scoreOsc(ctx,type,freq,start,dur,vol,attack=.03,release=.2,detune=0,dest=null){
+ const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,start);o.detune.value=detune;
+ g.gain.setValueAtTime(.0001,start);g.gain.linearRampToValueAtTime(Math.max(.0002,vol),start+Math.min(attack,dur*.4));
+ g.gain.setValueAtTime(Math.max(.0002,vol),Math.max(start+attack,start+dur-release));g.gain.exponentialRampToValueAtTime(.0001,start+dur);
+ o.connect(g);g.connect(dest||ctx.destination);o.start(start);o.stop(start+dur+.03);return o;
+}
+function strings(notes,start,dur,vol=.03){
+ if(!AUDIO_CTX||!AMBIENT)return;notes.forEach((m,i)=>{const f=midiFreq(m);scoreOsc(AUDIO_CTX,'sawtooth',f,start,dur,vol/(notes.length||1),.55,.65,-5+i*4,AMBIENT.tone);scoreOsc(AUDIO_CTX,'triangle',f*.5,start,dur,vol*.42/(notes.length||1),.65,.7,3-i*2,AMBIENT.tone)})
+}
+function brass(notes,start,dur,vol=.038){
+ if(!AUDIO_CTX||!AMBIENT)return;notes.forEach((m,i)=>{const f=midiFreq(m);scoreOsc(AUDIO_CTX,'sawtooth',f,start,dur,vol/(notes.length||1),.045,.24,i*3-3,AMBIENT.tone);scoreOsc(AUDIO_CTX,'square',f*.5,start,dur,vol*.24/(notes.length||1),.03,.18,0,AMBIENT.tone)})
+}
+function bassNote(m,start,dur,vol=.035){if(!AUDIO_CTX||!AMBIENT)return;const f=midiFreq(m);scoreOsc(AUDIO_CTX,'triangle',f,start,dur,vol,.025,.18,0,AMBIENT.tone);scoreOsc(AUDIO_CTX,'sine',f*.5,start,dur,vol*.48,.02,.22,0,AMBIENT.tone)}
+function melodyNote(m,start,dur,vol=.025){if(!AUDIO_CTX||!AMBIENT||m==null)return;const f=midiFreq(m);scoreOsc(AUDIO_CTX,'triangle',f,start,dur,vol,.055,.22,-3,AMBIENT.tone);scoreOsc(AUDIO_CTX,'sine',f*2,start,dur,vol*.18,.03,.18,4,AMBIENT.tone)}
+function pizzNote(m,start,dur=.16,vol=.018){if(!AUDIO_CTX||!AMBIENT)return;const f=midiFreq(m);scoreOsc(AUDIO_CTX,'triangle',f,start,dur,vol,.006,.12,0,AMBIENT.tone)}
+function timpani(m,start,vol=.04){if(!AUDIO_CTX||!AMBIENT)return;const ctx=AUDIO_CTX,f=midiFreq(m),o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(f*1.5,start);o.frequency.exponentialRampToValueAtTime(f,start+.14);g.gain.setValueAtTime(vol,start);g.gain.exponentialRampToValueAtTime(.0001,start+.65);o.connect(g);g.connect(AMBIENT.tone);o.start(start);o.stop(start+.7)}
+function noiseHit(start,dur=.12,vol=.012,high=false){
+ if(!AUDIO_CTX||!AMBIENT)return;const ctx=AUDIO_CTX,len=Math.max(1,Math.floor(ctx.sampleRate*dur)),buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+ const src=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();src.buffer=buf;f.type=high?'highpass':'bandpass';f.frequency.value=high?4200:900;f.Q.value=high?.2:1.2;g.gain.setValueAtTime(vol,start);g.gain.exponentialRampToValueAtTime(.0001,start+dur);src.connect(f);f.connect(g);g.connect(AMBIENT.tone);src.start(start);src.stop(start+dur+.02)
 }
 function setAmbientDuck(ducked){
- if(!AMBIENT?.master||!AUDIO_CTX)return;
- AMBIENT.ducked=!!ducked;
- const now=AUDIO_CTX.currentTime,target=ambientGainTarget()*(ducked?.32:1);
- AMBIENT.master.gain.cancelScheduledValues(now);
- AMBIENT.master.gain.setTargetAtTime(Math.max(.0001,target),now,.22);
+ if(!AMBIENT?.master||!AUDIO_CTX)return;AMBIENT.ducked=!!ducked;const now=AUDIO_CTX.currentTime,target=ambientGainTarget()*(ducked?.26:1);AMBIENT.master.gain.cancelScheduledValues(now);AMBIENT.master.gain.setTargetAtTime(Math.max(.0001,target),now,.18)
+}
+function scheduleScoreStep(step,time,p){
+ const beat=60/p.bpm,barStep=step%16,bar=Math.floor(step/16),ch=p.chords[(bar%p.chords.length)];
+ if(barStep===0){strings(ch,time,beat*4*.98,.038*(.65+p.energy*.45));bassNote(ch[0]-12,time,beat*2.8,.035);if(p.energy>.65)brass(ch,time,beat*.72,.034*p.energy);timpani(ch[0]-12,time,.028+.025*p.energy)}
+ if(barStep===8){strings(p.chords[((bar+1)%p.chords.length)],time,beat*2.0,.020*(.7+p.energy*.4));if(p.energy>.72)brass(ch,time,beat*.48,.024*p.energy)}
+ const melody=p.melody[barStep%p.melody.length];if(melody!=null&&barStep%2===0)melodyNote(melody,time,beat*1.55,.018+.011*p.energy);
+ if(p.energy>.52){const arp=ch[(barStep/2|0)%ch.length]+12;if(barStep%2===0)pizzNote(arp,time,beat*.34,.010+.010*p.energy)}
+ if(p.energy>.70){if(barStep%4===0)timpani(ch[0]-12,time,.025+.02*p.energy);if(barStep===4||barStep===12)noiseHit(time,.11,.006+.008*p.energy,false)}
+ if(p.energy>.88){if(barStep%2===0)noiseHit(time,.055,.004+.005*p.energy,true);if(barStep===15)noiseHit(time,.42,.012,true)}
+}
+function scoreTick(){
+ if(!AMBIENT?.running||!AUDIO_CTX)return;const p=scoreProfile();AMBIENT.profile=currentPage;AMBIENT.tone.frequency.setTargetAtTime(3400+p.energy*3000,AUDIO_CTX.currentTime,.8);
+ while(AMBIENT.nextTime<AUDIO_CTX.currentTime+.55){scheduleScoreStep(AMBIENT.step,AMBIENT.nextTime,p);const subdivision=(60/p.bpm)/2;AMBIENT.nextTime+=subdivision;AMBIENT.step=(AMBIENT.step+1)%64}
 }
 function retuneAmbient(){
- if(!AMBIENT?.running||!AUDIO_CTX)return;
- const p=ambientProfile(),now=AUDIO_CTX.currentTime;
- AMBIENT.osc.forEach((o,i)=>o.frequency.setTargetAtTime(p.freqs[i]*(1+((Math.random()-.5)*.018)),now,2.5));
- AMBIENT.filter.frequency.setTargetAtTime(p.filter,now,2.2);
- if(!AMBIENT.ducked){
-  AMBIENT.master.gain.setTargetAtTime(ambientGainTarget(),now,.6);
- }
- // Sparse, quiet upper tone for movement; more likely when tension rises.
- if(Math.random()<.34+(p.danger/100)*.22){
-  try{
-   const o=AUDIO_CTX.createOscillator(),g=AUDIO_CTX.createGain();
-   o.type="sine";o.frequency.value=p.freqs[2]*(2+(Math.random()>.5?.5:0));
-   g.gain.setValueAtTime(.0001,now);
-   g.gain.linearRampToValueAtTime(.0035*(clamp(Number(audioPrefs().musicVolume??16),0,100)/100),now+.45);
-   g.gain.exponentialRampToValueAtTime(.0001,now+2.8);
-   o.connect(g);g.connect(AMBIENT.master);o.start(now);o.stop(now+3);
-  }catch(e){}
- }
+ if(!AMBIENT?.running||!AUDIO_CTX)return;AMBIENT.step=0;AMBIENT.nextTime=AUDIO_CTX.currentTime+.08;if(!AMBIENT.ducked)AMBIENT.master.gain.setTargetAtTime(ambientGainTarget(),AUDIO_CTX.currentTime,.45);scoreTick()
 }
 function startAmbientMusic(){
- if(!uiSound||audioPrefs().music===false)return;
- const ctx=audioContext();if(!ctx)return;
- if(AMBIENT?.running){retuneAmbient();return}
- try{
-  const master=ctx.createGain(),filter=ctx.createBiquadFilter();
-  master.gain.value=.0001;filter.type="lowpass";filter.Q.value=.7;
-  filter.connect(master);master.connect(ctx.destination);
-  const p=ambientProfile();
-  const osc=p.freqs.map((f,i)=>{
-   const o=ctx.createOscillator(),g=ctx.createGain();
-   o.type=i===1?"triangle":"sine";o.frequency.value=f;
-   g.gain.value=i===0?.20:i===1?.10:.055;
-   o.connect(g);g.connect(filter);o.start();return o;
-  });
-  AMBIENT={master,filter,osc,running:true,ducked:false,timer:null};
-  master.gain.setTargetAtTime(ambientGainTarget(),ctx.currentTime,.8);
-  AMBIENT.timer=setInterval(retuneAmbient,7200);retuneAmbient();
- }catch(e){AMBIENT=null}
+ if(!uiSound||audioPrefs().music===false)return;const ctx=audioContext();if(!ctx)return;if(AMBIENT?.running)return;
+ try{const bus=scoreBus(ctx);AMBIENT={...bus,running:true,ducked:false,timer:null,step:0,nextTime:ctx.currentTime+.08,profile:currentPage};bus.master.gain.setTargetAtTime(ambientGainTarget(),ctx.currentTime,.7);AMBIENT.timer=setInterval(scoreTick,90);scoreTick()}catch(e){AMBIENT=null}
 }
 function stopAmbientMusic(){
- if(!AMBIENT)return;
- try{
-  if(AMBIENT.timer)clearInterval(AMBIENT.timer);
-  if(AUDIO_CTX&&AMBIENT.master){
-   const now=AUDIO_CTX.currentTime;AMBIENT.master.gain.setTargetAtTime(.0001,now,.08);
-   setTimeout(()=>{try{AMBIENT?.osc?.forEach(o=>o.stop())}catch(e){} AMBIENT=null},280);
-  }else AMBIENT=null;
- }catch(e){AMBIENT=null}
+ if(!AMBIENT)return;const old=AMBIENT;AMBIENT=null;try{if(old.timer)clearInterval(old.timer);if(AUDIO_CTX&&old.master){const now=AUDIO_CTX.currentTime;old.master.gain.cancelScheduledValues(now);old.master.gain.setTargetAtTime(.0001,now,.08);setTimeout(()=>{try{old.master.disconnect();old.tone.disconnect();old.verb.disconnect()}catch(e){}},320)}}catch(e){}
 }
-function unlockGameAudio(){
- AUDIO_UNLOCKED=true;
- if(uiSound&&audioPrefs().music!==false)startAmbientMusic();
-}
-function syncAudioState(){
- if(!uiSound){stopAmbientMusic();try{window.speechSynthesis?.cancel()}catch(e){};return}
- if(audioPrefs().music===false)stopAmbientMusic();else if(AUDIO_UNLOCKED)startAmbientMusic();
-}
+function unlockGameAudio(){AUDIO_UNLOCKED=true;if(uiSound&&audioPrefs().music!==false)startAmbientMusic()}
+function syncAudioState(){if(!uiSound){stopAmbientMusic();try{window.speechSynthesis?.cancel()}catch(e){};return}if(audioPrefs().music===false)stopAmbientMusic();else if(AUDIO_UNLOCKED)startAmbientMusic()}
 function availableSpeechVoices(){
  try{return (window.speechSynthesis?.getVoices?.()||[]).filter(v=>/^en([_-]|$)/i.test(v.lang||"en"))}catch(e){return []}
 }
@@ -669,7 +668,7 @@ function pageGMControls(){
 }
 function pageSettings(){return `<div class="grid"><div class="card span6"><h3>Android / PWA</h3><p>This build is installable as a Progressive Web App when served over HTTPS. On Android Chrome, use <b>Install App</b> or <b>Add to Home screen</b>.</p><div class="controls"><button class="btn" id="installSettings">Install App</button><button class="btn" id="wakeSettings">Keep Screen Awake</button></div></div>
  <div class="card span6"><h3>Interface</h3><div class="row"><span>Compact mode</span><input id="compactToggle" type="checkbox" ${DATA.settings.compact?'checked':''} style="width:auto"></div><div class="row"><span>Animations</span><input id="animToggle" type="checkbox" ${DATA.settings.animations!==false?'checked':''} style="width:auto"></div><div class="row"><span>Fold Optimization</span><input id="foldToggle" type="checkbox" ${DATA.settings.foldOptimization!==false?'checked':''} style="width:auto"></div><div class="field"><label>Center-crease gutter (px)</label><input id="hingeGutterInput" type="number" min="12" max="48" value="${Number(DATA.settings.hingeGutter||22)}"></div><div class="small muted">Razr Fold mode activates automatically on square-ish unfolded viewports. Increase the gutter if you want more room around the crease.</div></div>
- <div class="card span6 audio-settings"><h3>Audio</h3><div class="row"><span>Master sound</span><input id="soundToggle" type="checkbox" ${uiSound?'checked':''} style="width:auto"></div><div class="row"><span>Ambient music</span><input id="musicToggle" type="checkbox" ${DATA.settings.music!==false?'checked':''} style="width:auto"></div><div class="field"><label>Music volume <span id="musicVolumeLabel">${Number(DATA.settings.musicVolume??16)}%</span></label><input id="musicVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.musicVolume??16)}"></div><div class="row"><span>NPC spoken dialogue</span><input id="voiceToggle" type="checkbox" ${DATA.settings.characterVoices!==false?'checked':''} style="width:auto"></div><div class="field"><label>Voice volume <span id="voiceVolumeLabel">${Number(DATA.settings.voiceVolume??78)}%</span></label><input id="voiceVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.voiceVolume??78)}"></div><div class="controls"><button class="btn" id="testNpcVoice">Test Dren Voice</button></div><div class="small muted">Dialogue uses your device's installed text-to-speech voices. Offline speech depends on having an Android TTS voice downloaded; the procedural ambient soundtrack itself needs no network or audio files.</div></div>
+ <div class="card span6 audio-settings"><h3>Audio</h3><div class="row"><span>Master sound</span><input id="soundToggle" type="checkbox" ${uiSound?'checked':''} style="width:auto"></div><div class="row"><span>Cinematic orchestral score</span><input id="musicToggle" type="checkbox" ${DATA.settings.music!==false?'checked':''} style="width:auto"></div><div class="field"><label>Music volume <span id="musicVolumeLabel">${Number(DATA.settings.musicVolume??16)}%</span></label><input id="musicVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.musicVolume??16)}"></div><div class="row"><span>NPC spoken dialogue</span><input id="voiceToggle" type="checkbox" ${DATA.settings.characterVoices!==false?'checked':''} style="width:auto"></div><div class="field"><label>Voice volume <span id="voiceVolumeLabel">${Number(DATA.settings.voiceVolume??78)}%</span></label><input id="voiceVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.voiceVolume??78)}"></div><div class="controls"><button class="btn" id="testNpcVoice">Test Dren Voice</button></div><div class="small muted">Dialogue uses your device's installed text-to-speech voices. Offline speech depends on having an Android TTS voice downloaded; the procedural orchestral score itself needs no network or audio files.</div></div>
  <div class="card full"><h3>Data</h3><p class="muted">Campaign state auto-saves locally. Export a JSON backup before major changes.</p><div class="controls"><button class="btn" id="saveNow">Save Now</button><button class="btn warn" id="resetData">Reset Included Data</button></div></div></div>`}
 
 function roll(sides=20,count=1,mod=0){let rolls=Array.from({length:count},()=>rollDie(sides)),total=rolls.reduce((a,b)=>a+b,0)+mod;diceHistory.unshift({sides,count,mod,rolls,total,time:new Date().toLocaleTimeString()});diceHistory=diceHistory.slice(0,25);return {rolls,total}}
