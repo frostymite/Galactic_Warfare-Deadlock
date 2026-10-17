@@ -1,10 +1,12 @@
 
 const STORAGE_KEY="deadlock_dashboard_v3";
-let DATA=null,GALAXY=null,ASSET_MANIFEST=null,currentPage="Overview",diceHistory=[],deferredInstall=null,wakeLock=null;
+let DATA=null,GALAXY=null,ASSET_MANIFEST=null,SCENES=null,currentPage="Overview",diceHistory=[],deferredInstall=null,wakeLock=null;
 let uiSound=true;
 let AMBIENT=null;
 let AUDIO_UNLOCKED=false;
 let LAST_SPOKEN={speaker:"",text:"",at:0};
+let SCENE_LAST_DIALOGUE={speaker:"",text:"",at:0};
+let SCENE_RUNTIME={raf:0,el:null,pointerX:0,pointerY:0};
 const NPC_VOICE_PROFILES={
  dren:{pitch:.76,rate:.96,index:0},
  nera:{pitch:1.08,rate:.91,index:1},
@@ -179,8 +181,8 @@ function speakCharacter(speaker,text,{force=false}={}){
   const u=new SpeechSynthesisUtterance(clean),p=NPC_VOICE_PROFILES[id]||NPC_VOICE_PROFILES.unknown;
   const voice=speechVoiceFor(id);if(voice)u.voice=voice;
   u.lang=voice?.lang||"en-US";u.pitch=p.pitch;u.rate=p.rate;u.volume=clamp(Number(audioPrefs().voiceVolume??78),0,100)/100;
-  u.onstart=()=>setAmbientDuck(true);
-  u.onend=u.onerror=()=>setAmbientDuck(false);
+  u.onstart=()=>{setAmbientDuck(true);setSceneSpeaker(id,true)};
+  u.onend=u.onerror=()=>{setAmbientDuck(false);setSceneSpeaker(id,false)};
   window.speechSynthesis.speak(u);return true;
  }catch(e){setAmbientDuck(false);return false}
 }
@@ -330,7 +332,7 @@ function checkCombatResolution(){
 function enemyCombatAttack(enemy){
  if(!enemy||enemy.hp<=0||!DATA.combat.active)return;
  const natural=rollDie(20),attack=natural+Number(enemy.attackMod||1),def=groundDefense();let dmg=0;
- if(natural===20||attack>=def){dmg=parseDice(enemy.damage||"1d6+1").total;const r=DATA.combat.participants.find(x=>x.id==="rovan");const guarded=r?.conditions?.includes("Guarded");if(guarded){dmg=Math.max(1,Math.floor(dmg/2));r.conditions=r.conditions.filter(x=>x!=="Guarded")};DATA.character.health=clamp(DATA.character.health-dmg,0,DATA.character.healthMax);if(r)r.hp=DATA.character.health;fx("hit");floatNumber("-"+dmg,"damage");logCombat(`${enemy.name} attack ${attack} vs DEF ${def}: HIT for ${dmg}.`);addNotification(`${enemy.name} hit Rovan for ${dmg}.`,"danger")}
+ sceneActionFx("enemy-shot",enemy.id);if(natural===20||attack>=def){dmg=parseDice(enemy.damage||"1d6+1").total;const r=DATA.combat.participants.find(x=>x.id==="rovan");const guarded=r?.conditions?.includes("Guarded");if(guarded){dmg=Math.max(1,Math.floor(dmg/2));r.conditions=r.conditions.filter(x=>x!=="Guarded")};DATA.character.health=clamp(DATA.character.health-dmg,0,DATA.character.healthMax);if(r)r.hp=DATA.character.health;fx("hit");floatNumber("-"+dmg,"damage");logCombat(`${enemy.name} attack ${attack} vs DEF ${def}: HIT for ${dmg}.`);addNotification(`${enemy.name} hit Rovan for ${dmg}.`,"danger")}
  else logCombat(`${enemy.name} attack ${attack} vs DEF ${def}: MISS.`);
 }
 function advanceCombatTurn(){
@@ -363,8 +365,9 @@ function startForcedDogfight(ctx={}){
 function enemyDogfightVolley(){
  const d=DATA.dogfight,s=DATA.ship;if(!d.active)return;
  for(const e of liveDogfightEnemies()){
+  sceneActionFx("enemy-flyby",e.id);
   const attack=rollDie(20)+Number(e.attackMod||1),evade=12+Math.round(Number(DATA.character.skills?.Piloting||50)/25);if(attack<evade){logDogfight(`${e.name} attack ${attack} vs EVADE ${evade}: MISS.`);continue}
-  let dmg=parseDice(e.damage||"1d10+2").total;if(s.shields>0){const absorbed=Math.min(s.shields,dmg);s.shields-=absorbed;dmg-=absorbed}if(dmg>0)s.hull=clamp(s.hull-dmg,0,s.hullMax);logDogfight(`${e.name} scores a hit. Raven shields ${s.shields}/${s.shieldsMax}, hull ${s.hull}/${s.hullMax}.`);fx("hit");
+  let dmg=parseDice(e.damage||"1d10+2").total;if(s.shields>0){const absorbed=Math.min(s.shields,dmg);s.shields-=absorbed;dmg-=absorbed}if(dmg>0)s.hull=clamp(s.hull-dmg,0,s.hullMax);logDogfight(`${e.name} scores a hit. Raven shields ${s.shields}/${s.shieldsMax}, hull ${s.hull}/${s.hullMax}.`);fx("hit");sceneActionFx("ship-hit");
  }
  if(s.hull<=0){finishForcedDogfight("defeat");return}d.round++;save();render("Dogfight");
 }
@@ -444,7 +447,7 @@ function migrateOfflineData(current,defaults){
  s.activeContractId=s.activeContractId||"marr";
  const marrChoice=(s.choices||[]).find(c=>/marr/i.test(c.label||""));
  if(marrChoice){marrChoice.contractId="marr";marrChoice.actionType=marrChoice.actionType||"contract_review";}
- current.meta.version="9.4.0";
+ current.meta.version="11.0.0";
  return current;
 }
 
@@ -575,8 +578,8 @@ function galaxyMapSvg(){
 }
 
 async function load(){
- const [defaults,galaxy,assets]=await Promise.all([fetch("character-data.json").then(r=>r.json()),fetch("galaxy-data.json").then(r=>r.json()),fetch("asset-manifest.json").then(r=>r.json())]);
- GALAXY=galaxy;ASSET_MANIFEST=assets;
+ const [defaults,galaxy,assets,scenes]=await Promise.all([fetch("character-data.json").then(r=>r.json()),fetch("galaxy-data.json").then(r=>r.json()),fetch("asset-manifest.json").then(r=>r.json()),fetch("scene-data.json").then(r=>r.json())]);
+ GALAXY=galaxy;ASSET_MANIFEST=assets;SCENES=scenes;
  const local=localStorage.getItem(STORAGE_KEY);
  DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);ensureGalaxyState();ensureMissionLoopState();ensureEncounterState();
  uiSound=DATA.settings.sound!==false;
@@ -594,7 +597,7 @@ function render(page=currentPage){
  if(activeNav)requestAnimationFrame(()=>activeNav.scrollIntoView({block:"nearest",inline:"nearest"}));
  $("#title").textContent=page;$("#crumb").textContent=`DEADLOCK // ${page.toUpperCase()}`;
  const content=$("#content");content.classList.remove("page-transition");void content.offsetWidth;content.classList.add("page-transition");
- let key="page"+page.replace(/\s/g,"");content.innerHTML=(window[key]||(()=>`<div class="card">No renderer.</div>`))();wire();
+ let key="page"+page.replace(/\s/g,"");content.innerHTML=(window[key]||(()=>`<div class="card">No renderer.</div>`))();wire();enhanceLivingScene(page);
  if(AMBIENT?.running)retuneAmbient();
  setTimeout(()=>content.classList.remove("page-transition"),300)
 }
@@ -1018,7 +1021,7 @@ function weaponAttack(id,targetId=null){
  let w=DATA.weapons.find(x=>x.id===id),c=DATA.combat,enemies=liveCombatEnemies();if(!enemies.length)return toast("No hostile combatants");
  const current=c.participants[c.turnIndex];if(c.active&&current?.id!=="rovan")return toast("Wait for Rovan's turn");
  let target=c.participants.find(x=>x.id===(targetId||selectedCombatTarget))||enemies[0],natural=rollDie(20),attack=natural+skillBonus("Marksmanship")+Number(w.combat.attackMod||0),def=Number(target.defense||11),dmg=parseDice(w.combat.damage),isCrit=natural===20,hit=isCrit||attack>=def;
- if(isCrit){criticalFx();addNotification(`CRITICAL opportunity with ${w.name} against ${target.name}.`,"warn")}
+ sceneActionFx("player-shot",w.id);if(isCrit){criticalFx();addNotification(`CRITICAL opportunity with ${w.name} against ${target.name}.`,"warn")}
  openModal(`${w.name} // ${isCrit?"CRITICAL ":""}${hit?"HIT":"MISS"}`, `<div class="big-number">${attack}</div><p>Attack roll against <b>${esc(target.name)}</b> // DEF <b>${def}</b>.</p><p>${hit?`Damage roll: <b>${dmg.total}</b> (${esc(w.combat.damage)})`:'<b class="danger-text">The shot misses. The turn is spent.</b>'}</p><div class="field"><label>Target</label><select id="attackTarget">${enemies.map(e=>`<option value="${e.id}" ${e.id===target.id?"selected":""}>${esc(e.name)}</option>`).join("")}</select></div><div class="controls">${hit?`<button class="btn good" id="applyAttackDamage">Apply ${dmg.total} Damage</button>${isCrit?`<button class="btn warn" id="applyCritDamage">Apply Critical ×2 (${dmg.total*2})</button>`:""}`:'<button class="btn" id="finishMiss">Continue</button>'}</div><p class="small muted">${esc(w.combat.note||"")}</p>`);
  setTimeout(()=>{
    const finishTurn=()=>{save();$("#modal").close();if(checkCombatResolution())return;if(c.active)advanceCombatTurn();else render()};
@@ -1034,7 +1037,7 @@ function dogCommand(cmd){
  if(cmd==="end"){if(d.forced)return toast("Forced dogfight: destroy hostiles or break pursuit");d.active=false;logDogfight("Dogfight ended.");save();return render()}
  if(!d.active)return toast("Start the dogfight first");
  if(cmd==="escape")return attemptDogfightEscape();
- if(cmd==="fire"){let live=liveDogfightEnemies();if(!live.length)return finishForcedDogfight("victory");let target=live[0],atk=rollDie(20)+skillBonus("Piloting")+Number(s.dogfight.attackMod||0),def=10+Number(target.threat||1),dmg=parseDice(s.dogfight.damage);if(atk>=def){target.hp=clamp(target.hp-dmg.total,0,target.hpMax);uiBeep(120,.12,.055,"square");fx("hit");floatNumber("-"+dmg.total,"damage");logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}, ${dmg.total} damage to ${target.name}.`);addNotification(`Raven cannons struck ${target.name} for ${dmg.total}.`,"danger")}else logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}: MISS.`);if(!liveDogfightEnemies().length)return finishForcedDogfight("victory");save();return setTimeout(()=>enemyDogfightVolley(),220)}
+ if(cmd==="fire"){sceneActionFx("ship-fire");let live=liveDogfightEnemies();if(!live.length)return finishForcedDogfight("victory");let target=live[0],atk=rollDie(20)+skillBonus("Piloting")+Number(s.dogfight.attackMod||0),def=10+Number(target.threat||1),dmg=parseDice(s.dogfight.damage);if(atk>=def){target.hp=clamp(target.hp-dmg.total,0,target.hpMax);uiBeep(120,.12,.055,"square");fx("hit");floatNumber("-"+dmg.total,"damage");logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}, ${dmg.total} damage to ${target.name}.`);addNotification(`Raven cannons struck ${target.name} for ${dmg.total}.`,"danger")}else logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}: MISS.`);if(!liveDogfightEnemies().length)return finishForcedDogfight("victory");save();return setTimeout(()=>enemyDogfightVolley(),220)}
  if(cmd==="evade"){let r=rollDie(20)+Number(s.dogfight.evasionBonus||0);logDogfight(`Evasive maneuver roll: ${r}.`);if(r>=15){s.shields=clamp(s.shields+5,0,s.shieldsMax);logDogfight("The Raven gains separation; shields recover 5.")}save();return setTimeout(()=>enemyDogfightVolley(),220)}
  if(cmd==="boost"){let cost=Number(s.dogfight.boostFuelCost||0);if(s.fuel<cost)return toast("Not enough fuel");s.fuel-=cost;logDogfight(`Engine boost engaged. Fuel -${cost}.`);glitch();uiBeep(145,.18,.035,"sawtooth");addNotification("Raven boost engaged.","warn");save();return setTimeout(()=>enemyDogfightVolley(),220)}
  if(cmd==="overcharge"){let cost=Number(s.dogfight.shieldOverchargeCost||0);if(s.fuel<cost)return toast("Not enough fuel");s.fuel-=cost;s.shields=clamp(s.shields+20,0,s.shieldsMax);logDogfight(`Shield overcharge engaged. Shields +20, fuel -${cost}.`);fx("heal");uiBeep(760,.16,.03,"sine");floatNumber("+20 SHIELD","heal");addNotification("Shield overcharge engaged.","info");save();return setTimeout(()=>enemyDogfightVolley(),220)}
@@ -1152,7 +1155,7 @@ function storyPush(type,speaker,text,extra={}){
   ...extra
  });
  if(DATA.story.history.length>200)DATA.story.history=DATA.story.history.slice(-200);
- if(type==="dialogue")setTimeout(()=>speakCharacter(speaker,text),30);
+ if(type==="dialogue"){SCENE_LAST_DIALOGUE={speaker,text:String(text||""),at:Date.now()};setTimeout(()=>{speakCharacter(speaker,text);setSceneSpeaker(speakerNpcId(speaker),true);setTimeout(()=>setSceneSpeaker(speakerNpcId(speaker),false),Math.min(5200,1200+String(text||"").length*32))},30);}else if(type==="narration")setTimeout(()=>sceneActionFx("narration"),20);
 }
 function storyTranscript(){
  return (DATA.story.history||[]).slice(-40).map(h=>{
@@ -2439,3 +2442,131 @@ function openStoryProvider(){
 }
 
 
+
+
+/* ===== v11 LIVING SCENES: 2.5D ANIMATED UNIVERSE ===== */
+function sceneLocationId(){
+ const g=galaxyState?.();
+ const locText=String(DATA?.story?.location||"").toLowerCase();
+ if(locText.includes("blackglass"))return "blackglass_station";
+ for(const l of GALAXY?.locations||[])if(locText.includes(String(l.name||"").toLowerCase()))return l.id;
+ return g?.currentLocationId||g?.homeId||"blackglass_station";
+}
+function scenePresetFor(page){
+ const g=galaxyState?.(),locId=sceneLocationId(),theme=SCENES?.locationThemes?.[locId]||"unknown";
+ if(page==="HQ")return "blackglass";
+ if(page==="Combat")return "combat";
+ if(page==="Dogfight")return "orbit";
+ if(page==="Ship")return "cockpit";
+ if(page==="Galaxy"&&g?.phase==="transit")return "cockpit";
+ if(page==="Galaxy"&&g?.phase==="orbit")return "orbit";
+ if(page==="Story"){
+  if(/raven|cockpit|ship/i.test(DATA?.story?.location||""))return "cockpit";
+  return theme;
+ }
+ return theme;
+}
+function sceneContext(page){
+ const presetId=scenePresetFor(page),preset=SCENES?.presets?.[presetId]||SCENES?.presets?.unknown||{};
+ const g=galaxyState?.(),loc=galaxyLocation?.(sceneLocationId()),npc=currentStoryVisualNpc?.();
+ let title=loc?.name||DATA?.story?.location||"Deadlock Reach",sub="LIVING SCENE";
+ if(page==="HQ"){title="Blackglass Station";sub="DEADLOCK HQ // COMMAND DECK"}
+ if(page==="Ship"){title="The Raven";sub="COCKPIT // LIVE FLIGHT DECK"}
+ if(page==="Combat"){title=DATA?.combat?.reason||"Hostile Contact";sub="GROUND ENCOUNTER // LIVE"}
+ if(page==="Dogfight"){title=DATA?.dogfight?.reason||"The Raven";sub="SPACE COMBAT // LIVE"}
+ if(page==="Galaxy"&&g?.phase==="transit"){title="Hyperspace Transit";sub=`ROUTE // ${g?.transit?.progress||0}%`}
+ if(page==="Story"){title=DATA?.story?.location||title;sub=`SCENE ${DATA?.story?.sceneNumber||1} // ${String(DATA?.story?.sceneType||"INTERACTION").toUpperCase()}`}
+ return {page,presetId,preset,loc,npc,title,sub};
+}
+function sceneActorAsset(id,state="neutral"){
+ if(id==="rovan")return assetUrl("characters","rovan",state)||assetUrl("characters","rovan","neutral")||"assets/rovan.jpg";
+ const key=id==="kade"?"nera":id;
+ return assetUrl("characters",key,state)||assetUrl("characters",key,"neutral")||assetFallback("characters",key)||assetUrl("characters","unknown","holo");
+}
+function sceneActorState(npc){
+ // Dedicated expression art can be swapped into the manifest later. For now keep established character faces stable
+ // and express mood through motion, lighting, posture, and voice instead of non-canon placeholder faces.
+ return "neutral";
+}
+function sceneMoodClass(npc){
+ if(!npc)return "mood-neutral";const m=npc.mood||{};
+ if(Number(m.irritation||0)>=60)return "mood-irritated";
+ if(Number(m.fear||0)>=55)return "mood-guarded";
+ if(Number(m.trust||50)<35)return "mood-wary";
+ if(Number(m.trust||50)>=68||Number(m.respect||50)>=68)return "mood-open";
+ return "mood-neutral";
+}
+function actorMarkup(id,side,state="neutral",label="",mood="mood-neutral"){
+ const src=sceneActorAsset(id,state),fallback=assetFallback("characters",id==="kade"?"nera":id)||sceneActorAsset(id,"neutral");
+ const injury=id==="rovan"&&Number(DATA?.character?.health||100)<=Math.max(1,Number(DATA?.character?.healthMax||100)*.35)?" actor-injured":"";
+ return `<div class="scene-actor actor-${side} ${esc(mood)}${injury}" data-scene-actor="${esc(id)}"><div class="actor-shadow"></div><img src="${esc(src)}" alt="${esc(label||id)}" ${fallback&&fallback!==src?`onerror="this.onerror=null;this.src='${esc(fallback)}'"`:""}><div class="actor-rim"></div><div class="actor-breath"></div></div>`;
+}
+function sceneTraffic(count=3){return Array.from({length:count},(_,i)=>`<i class="scene-ship ship-${i%4}" style="--lane:${i};--delay:${-(i*2.7)}s"></i>`).join("")}
+function sceneParticles(count=18,theme="hq"){return Array.from({length:count},(_,i)=>`<i class="scene-particle p-${i%6}" style="--i:${i};--x:${(i*37)%101};--y:${(i*61)%97};--delay:${-(i*.41)}s"></i>`).join("")}
+function sceneCrowd(count=4){return `<div class="scene-crowd">${Array.from({length:count},(_,i)=>`<i style="--i:${i};--delay:${-(i*1.7)}s"></i>`).join("")}</div>`}
+function livingSceneMarkup(ctx){
+ const p=ctx.preset||{},page=ctx.page,theme=p.theme||ctx.presetId;
+ const recent=[...(DATA?.story?.history||[])].reverse().find(h=>h.type==="dialogue");
+ const npc=ctx.npc, npcId=npc?.id||null, npcState=sceneActorState(npc);
+ const actors=[];
+ if(page==="Story"){
+  actors.push(actorMarkup("rovan","left","focused","Rovan Kes","mood-neutral"));
+  if(npcId)actors.push(actorMarkup(npcId,"right",npcState,npc.name,sceneMoodClass(npc)));
+ }else if(page==="HQ")actors.push(actorMarkup("rovan","left","neutral","Rovan Kes","mood-neutral"));
+ else if(page==="Combat")actors.push(actorMarkup("rovan","left","focused","Rovan Kes","mood-neutral"));
+ else if(page==="Ship"||page==="Galaxy"&&ctx.presetId==="cockpit")actors.push(actorMarkup("rovan","left","focused","Rovan Kes","mood-neutral"));
+ const danger=clamp(Number(DATA?.story?.danger||0),0,100);
+ const groundEnemyCount=page==="Combat"?Math.max(1,Math.min(5,(typeof liveCombatEnemies==="function"?liveCombatEnemies().length:0)||3)):0;
+ const dogEnemyCount=page==="Dogfight"?Math.max(1,Math.min(5,(typeof liveDogfightEnemies==="function"?liveDogfightEnemies().length:0)||3)):0;
+ const inTransit=page==="Galaxy"&&galaxyState?.()?.phase==="transit";
+ return `<section class="living-scene theme-${esc(theme)} camera-${esc(p.camera||"slow")} ${danger>=75?"scene-high-danger":""} ${inTransit?"scene-transit":""}" data-living-scene data-scene-page="${esc(page)}" data-scene-preset="${esc(ctx.presetId)}">
+  <div class="scene-camera">
+   <div class="scene-world">
+    <img class="scene-backdrop" src="${esc(p.background||"assets/scenes/unknown.svg")}" alt="${esc(ctx.title)} environment">
+    <div class="scene-stars"></div><div class="scene-depth-haze"></div>
+    <div class="scene-traffic">${sceneTraffic(Number(p.traffic||0))}</div>
+    <div class="scene-atmosphere">${sceneParticles(Number(p.particles||12),theme)}</div>
+    ${theme==="hq"?'<div class="scene-holo-table"><i></i><b></b><em></em></div><div class="scene-window-reflection"></div>':""}
+    ${theme==="cockpit"?'<div class="scene-cockpit-glass"></div><div class="scene-instruments"><i></i><i></i><i></i><i></i><i></i></div>':""}
+    ${theme==="combat"?`<div class="scene-cover cover-a"></div><div class="scene-cover cover-b"></div><div class="scene-enemies">${Array.from({length:groundEnemyCount},()=>"<i></i>").join("")}</div>`:""}
+    ${page==="Dogfight"?`<div class="scene-raven-flight"><img src="assets/raven_dedicated.jpg" alt="The Raven"></div><div class="scene-enemy-fighters">${Array.from({length:dogEnemyCount},()=>"<i></i>").join("")}</div>`:""}
+    ${inTransit?`<div class="scene-hyperspace">${Array.from({length:28},(_,i)=>`<i style="--i:${i};--a:${(i*47)%360}deg;--delay:${-(i*.11)}s"></i>`).join("")}</div>`:""}
+    ${page==="Galaxy"&&ctx.presetId==="orbit"?'<div class="scene-orbit-raven"><img src="assets/raven_dedicated.jpg" alt="The Raven in orbit"></div>':""}
+    ${sceneCrowd(Number(p.crowd||0))}
+    <div class="scene-actors">${actors.join("")}</div>
+    <div class="scene-light-sweep"></div><div class="scene-vignette"></div>
+    <div class="scene-muzzle muzzle-player"></div><div class="scene-muzzle muzzle-enemy"></div><div class="scene-hit-flash"></div>
+   </div>
+  </div>
+  <div class="scene-livebar"><div><span class="scene-live-dot"></span><b>${esc(ctx.title)}</b><small>${esc(ctx.sub)}</small></div><div class="scene-live-actions"><span>${danger}% THREAT</span><button class="scene-cinema-btn" type="button" data-scene-cinema>EXPAND</button></div></div>
+ </section>`;
+}
+function enhanceLivingScene(page){
+ if(!SCENES||!DATA)return;
+ const allowed=["Story","HQ","Galaxy","Ship","Combat","Dogfight"];
+ if(!allowed.includes(page))return stopSceneRuntime();
+ const content=$("#content"),ctx=sceneContext(page);if(!content||!ctx)return;
+ const wrap=document.createElement("div");wrap.className="living-scene-card";wrap.innerHTML=livingSceneMarkup(ctx);
+ if(page==="Story")content.querySelector(".story-topbar")?.after(wrap);
+ else {if(page==="HQ")content.querySelector(".hq-shell")?.classList.add("scene-enhanced");const root=content.firstElementChild; if(root)root.insertBefore(wrap,root.firstChild); else content.prepend(wrap)}
+ startSceneRuntime(wrap.querySelector("[data-living-scene]"));
+ const recent=[...(DATA.story?.history||[])].reverse().find(h=>h.type==="dialogue");
+ if(recent&&Date.now()-Number(SCENE_LAST_DIALOGUE.at||0)<7000){const id=speakerNpcId(recent.speaker);if(id){setSceneSpeaker(id,true);setTimeout(()=>setSceneSpeaker(id,false),1800)}}
+}
+function startSceneRuntime(el){
+ stopSceneRuntime(false);SCENE_RUNTIME.el=el;if(!el)return;
+ const move=e=>{const r=el.getBoundingClientRect(),x=((e.clientX-r.left)/Math.max(1,r.width)-.5),y=((e.clientY-r.top)/Math.max(1,r.height)-.5);SCENE_RUNTIME.pointerX=x;SCENE_RUNTIME.pointerY=y;el.style.setProperty("--px",x.toFixed(3));el.style.setProperty("--py",y.toFixed(3))};
+ el.addEventListener("pointermove",move,{passive:true});
+ el.querySelector("[data-scene-cinema]")?.addEventListener("click",()=>{el.classList.toggle("scene-cinema");document.body.classList.toggle("scene-cinema-open",el.classList.contains("scene-cinema"));el.querySelector("[data-scene-cinema]").textContent=el.classList.contains("scene-cinema")?"CLOSE":"EXPAND"});
+ const loop=()=>{if(!SCENE_RUNTIME.el||!document.body.contains(SCENE_RUNTIME.el))return;const t=performance.now()/1000;el.style.setProperty("--scene-time",t.toFixed(2));SCENE_RUNTIME.raf=requestAnimationFrame(loop)};SCENE_RUNTIME.raf=requestAnimationFrame(loop);
+}
+function stopSceneRuntime(clear=true){if(SCENE_RUNTIME.raf)cancelAnimationFrame(SCENE_RUNTIME.raf);SCENE_RUNTIME.raf=0;if(clear)SCENE_RUNTIME.el=null;document.body.classList.remove("scene-cinema-open")}
+function setSceneSpeaker(id,on=true){
+ if(!id)return;const el=document.querySelector(`[data-scene-actor="${CSS.escape(id)}"]`)||document.querySelector(`[data-scene-actor="${CSS.escape(id==="nera"?"kade":id)}"]`);if(!el)return;
+ el.classList.toggle("speaking",!!on);el.closest("[data-living-scene]")?.classList.toggle("scene-dialogue-active",!!on);
+}
+function sceneActionFx(type,detail=""){
+ const s=document.querySelector("[data-living-scene]");if(!s)return;
+ const cls={"player-shot":"scene-fx-player-shot","enemy-shot":"scene-fx-enemy-shot","hit":"scene-fx-hit","ship-fire":"scene-fx-ship-fire","ship-hit":"scene-fx-ship-hit","enemy-flyby":"scene-fx-flyby","narration":"scene-fx-narration"}[type]||"scene-fx-beat";
+ s.classList.remove(cls);void s.offsetWidth;s.classList.add(cls);setTimeout(()=>s.classList.remove(cls),type.includes("hit")?700:480);
+}

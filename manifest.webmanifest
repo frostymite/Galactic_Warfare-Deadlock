@@ -1,7 +1,7 @@
 {
-  "name": "Deadlock v10.1 \u2014 Forced Encounters",
-  "short_name": "Deadlock 10.1",
-  "description": "Offline-first bounty hunter RPG with forced combat, enemy turns, dogfight escalation, Blackglass Station HQ and living galaxy travel.",
+  "name": "Deadlock v11 \u2014 Living Scenes",
+  "short_name": "Deadlock 11",
+  "description": "Offline-first bounty hunter RPG with layered animated living scenes, forced combat, Blackglass HQ and interplanetary travel.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

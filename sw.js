@@ -1,4 +1,4 @@
-const CACHE="deadlock-v10-1-forced-encounters-cache-1";
+const CACHE="deadlock-v11-living-scenes-cache-1";
 const APP_SHELL=[
  './',
  './app.js',
@@ -67,7 +67,21 @@ const APP_SHELL=[
  './icons/maskable-512.png',
  './index.html',
  './manifest.webmanifest',
- './styles.css'
+ './styles.css',
+ './scene-data.json',
+ './assets/scenes/asteroid.svg',
+ './assets/scenes/blackglass_command.svg',
+ './assets/scenes/combat_industrial.svg',
+ './assets/scenes/desert.svg',
+ './assets/scenes/ice.svg',
+ './assets/scenes/jungle.svg',
+ './assets/scenes/ocean.svg',
+ './assets/scenes/orbit.svg',
+ './assets/scenes/raven_cockpit.svg',
+ './assets/scenes/ruins.svg',
+ './assets/scenes/unknown.svg',
+ './assets/scenes/urban_night.svg',
+ './assets/scenes/volcanic.svg',
 ];
 
 self.addEventListener("install",event=>{
