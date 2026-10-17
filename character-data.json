@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "9.3.2",
-    "campaign": "Deadlock \u2014 Tabletop Dialogue",
+    "version": "9.3.3",
+    "campaign": "Deadlock — Procedural GM Personality Layer",
     "note": "Established story facts are filled in. Mechanical values that were never firmly established remain editable.",
     "rulesNote": "Combat and dogfight numeric formulas are dashboard mechanics, not story canon. Edit them in GM Controls."
   },
@@ -561,7 +561,7 @@
       "Rovan's Kade bounty payout is 40,000 credits.",
       "Rovan required a seller to sign an NDA covering their contact and transactions.",
       "Rovan's campaign should remain dangerous, action-oriented, choice-driven, and reactive.",
-      "Whenever possible, present 3\u20135 meaningful options while still allowing freeform actions.",
+      "Whenever possible, present 3–5 meaningful options while still allowing freeform actions.",
       "Rovan does not currently own a rifle; the tracker was removed from his old rifle before that rifle was returned to Dren Voss."
     ],
     "gmNotes": [
@@ -600,10 +600,13 @@
           }
         ],
         "speech": {
-          "greetingBias": "professional",
+          "greetingBias": "dry",
           "verbosity": "short",
-          "sarcasm": 0.45,
-          "threatTolerance": 0.75
+          "sarcasm": 0.55,
+          "threatTolerance": 0.8,
+          "directness": 0.76,
+          "humor": 0.48,
+          "riskBias": "competitive"
         },
         "portrait": "assets/contact_dren.jpg",
         "portraitType": "Established Holonet portrait from user-approved reference"
@@ -631,13 +634,16 @@
           }
         ],
         "speech": {
-          "greetingBias": "professional",
+          "greetingBias": "formal",
           "verbosity": "short",
-          "sarcasm": 0.15,
-          "threatTolerance": 0.5
+          "sarcasm": 0.08,
+          "threatTolerance": 0.55,
+          "directness": 0.88,
+          "humor": 0.05,
+          "riskBias": "calculated"
         },
         "portrait": "assets/npc_nera.svg",
-        "portraitType": "Abstract holographic dossier \u2014 appearance not canon"
+        "portraitType": "Abstract holographic dossier — appearance not canon"
       },
       {
         "id": "renn",
@@ -662,13 +668,16 @@
           }
         ],
         "speech": {
-          "greetingBias": "professional",
-          "verbosity": "short",
-          "sarcasm": 0.15,
-          "threatTolerance": 0.5
+          "greetingBias": "cautious",
+          "verbosity": "medium",
+          "sarcasm": 0.18,
+          "threatTolerance": 0.3,
+          "directness": 0.58,
+          "humor": 0.28,
+          "riskBias": "avoidant"
         },
         "portrait": "assets/npc_renn.svg",
-        "portraitType": "Abstract holographic dossier \u2014 appearance not canon"
+        "portraitType": "Abstract holographic dossier — appearance not canon"
       },
       {
         "id": "jessa",
@@ -693,13 +702,16 @@
           }
         ],
         "speech": {
-          "greetingBias": "professional",
+          "greetingBias": "direct",
           "verbosity": "short",
-          "sarcasm": 0.15,
-          "threatTolerance": 0.5
+          "sarcasm": 0.32,
+          "threatTolerance": 0.7,
+          "directness": 0.9,
+          "humor": 0.35,
+          "riskBias": "action"
         },
         "portrait": "assets/npc_jessa.svg",
-        "portraitType": "Abstract holographic dossier \u2014 appearance not canon"
+        "portraitType": "Abstract holographic dossier — appearance not canon"
       }
     ],
     "history": [
@@ -1042,28 +1054,28 @@
             "Dren comes on the line already looking like he expects trouble."
           ],
           "neutral": [
-            "\u201cYou calling because you found something useful, or because you're about to make my day complicated?\u201d",
-            "\u201cAll right, Deadlock. Give me the part that matters.\u201d",
-            "\u201cIf this is about Marr, start with the useful information.\u201d"
+            "“You calling because you found something useful, or because you're about to make my day complicated?”",
+            "“All right, Deadlock. Give me the part that matters.”",
+            "“If this is about Marr, start with the useful information.”"
           ],
           "highRespect": [
-            "\u201cI don't love the plan. That doesn't mean I think you can't make it work.\u201d",
-            "\u201cYou've earned enough benefit of the doubt for me to hear the whole thing.\u201d",
-            "\u201cAgainst my better judgment, I'm listening.\u201d"
+            "“I don't love the plan. That doesn't mean I think you can't make it work.”",
+            "“You've earned enough benefit of the doubt for me to hear the whole thing.”",
+            "“Against my better judgment, I'm listening.”"
           ],
           "irritated": [
-            "\u201cCareful. You're spending goodwill faster than credits.\u201d",
-            "\u201cYou have a point buried in there somewhere. Find it.\u201d",
-            "\u201cI agreed to work with you, not enjoy it.\u201d"
+            "“Careful. You're spending goodwill faster than credits.”",
+            "“You have a point buried in there somewhere. Find it.”",
+            "“I agreed to work with you, not enjoy it.”"
           ],
           "memory": [
             [
               "RIFLE_RETURNED",
-              "\u201cYou gave the rifle back. I remember. Don't make me regret deciding that meant something.\u201d"
+              "“You gave the rifle back. I remember. Don't make me regret deciding that meant something.”"
             ],
             [
               "MARR_SPLIT",
-              "\u201cWe said we'd split Marr's payout. That agreement still matters until one of us breaks it.\u201d"
+              "“We said we'd split Marr's payout. That agreement still matters until one of us breaks it.”"
             ]
           ]
         },
@@ -1073,22 +1085,22 @@
             "The channel opens. Kade wastes no time on pleasantries."
           ],
           "neutral": [
-            "\u201cDeadlock. Give me the result, the obstacle, or the price.\u201d",
-            "\u201cI assume you're calling because something changed.\u201d",
-            "\u201cTalk.\u201d"
+            "“Deadlock. Give me the result, the obstacle, or the price.”",
+            "“I assume you're calling because something changed.”",
+            "“Talk.”"
           ],
           "highRespect": [
-            "\u201cYou've been reliable enough that I'm willing to hear the complication.\u201d",
-            "\u201cIf you're calling this early, I'll assume it's worth my attention.\u201d"
+            "“You've been reliable enough that I'm willing to hear the complication.”",
+            "“If you're calling this early, I'll assume it's worth my attention.”"
           ],
           "irritated": [
-            "\u201cDo not turn a straightforward contract into theater.\u201d",
-            "\u201cI pay for outcomes, not explanations.\u201d"
+            "“Do not turn a straightforward contract into theater.”",
+            "“I pay for outcomes, not explanations.”"
           ],
           "memory": [
             [
               "ACTIVE_CONTRACT",
-              "\u201cMy forty-thousand-credit problem is still open, Deadlock.\u201d"
+              "“My forty-thousand-credit problem is still open, Deadlock.”"
             ]
           ]
         },
@@ -1098,19 +1110,19 @@
             "The channel opens to a low voice and background noise."
           ],
           "neutral": [
-            "\u201cI'm listening. Just tell me this isn't one of those plans that gets louder after thirty seconds.\u201d",
-            "\u201cAll right. What changed?\u201d"
+            "“I'm listening. Just tell me this isn't one of those plans that gets louder after thirty seconds.”",
+            "“All right. What changed?”"
           ],
           "highRespect": [
-            "\u201cIf you think it's workable, I'll hear you out.\u201d"
+            "“If you think it's workable, I'll hear you out.”"
           ],
           "irritated": [
-            "\u201cI knew this was going to come back around.\u201d"
+            "“I knew this was going to come back around.”"
           ],
           "memory": [
             [
               "STAGED_TURNIN",
-              "\u201cLast time we staged a turn-in, I aged a year. Keep that in mind.\u201d"
+              "“Last time we staged a turn-in, I aged a year. Keep that in mind.”"
             ]
           ]
         },
@@ -1120,19 +1132,19 @@
             "Jessa's voice comes through with the clipped tone of someone already working."
           ],
           "neutral": [
-            "\u201cIf this ends with shooting, give me the useful version first: who, where, and what are they flying?\u201d",
-            "\u201cTell me whether I need tools or ammunition.\u201d"
+            "“If this ends with shooting, give me the useful version first: who, where, and what are they flying?”",
+            "“Tell me whether I need tools or ammunition.”"
           ],
           "highRespect": [
-            "\u201cYou've got a plan. Fine. Tell me where I fit.\u201d"
+            "“You've got a plan. Fine. Tell me where I fit.”"
           ],
           "irritated": [
-            "\u201cIf you're about to say 'trust me,' I'm hanging up.\u201d"
+            "“If you're about to say 'trust me,' I'm hanging up.”"
           ],
           "memory": [
             [
               "FIELD_ALLY",
-              "\u201cWe've been through worse. That doesn't mean I want to do it twice.\u201d"
+              "“We've been through worse. That doesn't mean I want to do it twice.”"
             ]
           ]
         }
@@ -1180,6 +1192,14 @@
       },
       "lastSystemId": null,
       "lastContractId": "marr"
+    },
+    "gmState": {
+      "version": 2,
+      "recentNpcLines": [],
+      "recentStageBeats": [],
+      "recentTopics": [],
+      "npcTurns": {},
+      "lastAnalysis": null
     }
   },
   "holonet": {
@@ -1201,7 +1221,7 @@
     ],
     "route": {
       "status": "STANDBY",
-      "originName": "The Raven \u2014 Current Position",
+      "originName": "The Raven — Current Position",
       "destinationId": "unknown",
       "destinationName": "Uncharted / Unknown",
       "quality": 0,

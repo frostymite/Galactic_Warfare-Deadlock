@@ -1,3 +1,7 @@
+# Deadlock Tactical OS v9.3.3 — Tabletop Dialogue
+
+Latest build adds one-finger unfolded scrolling and more personable offline tabletop dialogue while preserving the v9.3 consequence layer.
+
 # Deadlock Tactical OS v7 — Offline Narrative Director
 
 v7 makes offline play the primary game.
@@ -108,3 +112,7 @@ Existing v6 JSON saves can be imported. v7 automatically adds the offline dialog
 
 ## v7.1 integration fix
 The Story tab and on-device Story UI are explicitly wired into navigation. This fixes a merge regression in the first v7 package where the Offline Director data existed but the Story page could be absent from the navigation.
+
+
+## v9.3.3 — Procedural GM
+Freeform Story dialogue now uses an offline personality/memory layer that assembles NPC reactions from speech intent, mood, campaign state, recent history, and established memories. No API or paid service is required.

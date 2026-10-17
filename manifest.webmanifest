@@ -1,7 +1,7 @@
 {
-  "name": "Deadlock v9.3.2 \u2014 Tabletop Dialogue",
-  "short_name": "Deadlock 9.3.2",
-  "description": "Offline-first bounty hunter RPG dashboard with Holonet operations, hyperspace plotting, holo-pucks, and Raven diagnostics.",
+  "name": "Deadlock v9.3.3 — Procedural GM",
+  "short_name": "Deadlock 9.3.3",
+  "description": "Offline-first bounty hunter RPG with a procedural GM personality layer, persistent NPC memory, adaptive dialogue, Holonet operations, and foldable support.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

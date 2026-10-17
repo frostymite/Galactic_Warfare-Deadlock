@@ -156,10 +156,11 @@ function migrateOfflineData(current,defaults){
  if(drenNpc){drenNpc.portrait="assets/contact_dren.jpg";drenNpc.portraitType="Established Holonet portrait from user-approved reference";}
  s.interruptions=s.interruptions||[];
  s.consequences=s.consequences||structuredClone(defaults.story.consequences);
+ s.gmState=s.gmState||structuredClone(defaults.story.gmState||{version:2,recentNpcLines:[],recentStageBeats:[],recentTopics:[],npcTurns:{},lastAnalysis:null});
  s.activeContractId=s.activeContractId||"marr";
  const marrChoice=(s.choices||[]).find(c=>/marr/i.test(c.label||""));
  if(marrChoice){marrChoice.contractId="marr";marrChoice.actionType=marrChoice.actionType||"contract_review";}
- current.meta.version="9.3.2";
+ current.meta.version="9.3.3";
  return current;
 }
 
@@ -864,7 +865,7 @@ function pageStory(){
   <div class="story-topbar">
     <div><div class="micro">INTERACTIVE NARRATIVE // SCENE ${s.sceneNumber||1}</div><h3>${esc(s.sessionTitle||"Deadlock Campaign")}</h3></div>
     <div class="story-status">
-      <span class="pill cyan director-pulse">${offline?"OFFLINE DIRECTOR":"ONLINE AI ENHANCEMENT"}</span>
+      <span class="pill cyan director-pulse">${offline?"OFFLINE GM // PERSONALITY":"ONLINE AI ENHANCEMENT"}</span>
       <span class="pill">${esc(s.location||"Unknown")}</span>
     </div>
   </div>
@@ -1233,114 +1234,341 @@ function adjustNpcMood(npc,changes={}){
 function recentPlayerActionText(){
  return [...(DATA.story?.history||[])].reverse().find(h=>h.type==="player")?.text||"";
 }
-function dialogueTopic(context="",action=""){
- const t=`${context} ${action}`.toLowerCase();
- if(/marr/.test(t))return "marr";
- if(/nera|kade/.test(t))return "kade";
- if(/credit|pay|money|price|reward|split/.test(t))return "credits";
- if(/raven|ship|engine|thruster|hyperdrive|repair/.test(t))return "ship";
- if(/trust|lie|honest|truth|believe/.test(t))return "trust";
- if(/deal|agreement|contract|bounty/.test(t))return "deal";
- if(/where|who|what|intel|information|know|proof|trace|lead/.test(t))return "intel";
- if(/shoot|fight|hunter|patrol|danger|attack|fire/.test(t))return "danger";
- return context||"open";
+function ensureGmState(){
+ const s=DATA.story;
+ s.gmState=s.gmState||{version:2,recentNpcLines:[],recentStageBeats:[],recentTopics:[],npcTurns:{},lastAnalysis:null};
+ s.gmState.version=2;
+ s.gmState.recentNpcLines=s.gmState.recentNpcLines||[];
+ s.gmState.recentStageBeats=s.gmState.recentStageBeats||[];
+ s.gmState.recentTopics=s.gmState.recentTopics||[];
+ s.gmState.npcTurns=s.gmState.npcTurns||{};
+ return s.gmState;
 }
-const TABLETOP_NPC_LINES={
+function gmFreshPick(items,kind="line",npcId=""){
+ const list=(items||[]).filter(Boolean);if(!list.length)return null;
+ const state=ensureGmState();
+ const key=kind==="beat"?"recentStageBeats":"recentNpcLines";
+ const recent=(state[key]||[]).slice(0,8);
+ let candidates=list.filter(x=>!recent.includes(`${npcId}:${x}`));
+ if(!candidates.length)candidates=list;
+ const chosen=pick(candidates);
+ state[key].unshift(`${npcId}:${chosen}`);state[key]=state[key].slice(0,12);
+ return chosen;
+}
+function dialogueTopic(context="",action=""){
+ const a=String(action||"").toLowerCase(),c=String(context||"").toLowerCase();
+ const strong=t=>{
+  if(/\bmarr\b|staged turn-?in|turn-?in plan/.test(t))return "marr";
+  if(/kade[’'s]*\s+(contract|bounty|job)|nera kade[’'s]*\s+(contract|bounty|job)/.test(t))return "kade";
+  if(/credit|pay|money|price|reward|split|cut|fee|seventy thousand|70,?000|forty thousand|40,?000/.test(t))return "credits";
+  if(/raven|ship|engine|thruster|hyperdrive|repair|shield|system|diagnostic/.test(t))return "ship";
+  if(/trust|lie|lying|honest|truth|believe|loyal|loyalty/.test(t))return "trust";
+  if(/deal|agreement|contract|bounty|terms/.test(t))return "deal";
+  if(/shoot|fight|hunter|patrol|danger|attack|fire|ambush|threat|goes loud|shooting/.test(t))return "danger";
+  return null;
+ };
+ const explicit=strong(a);if(explicit)return explicit;
+ if(/\b(lead|trail|target)\b/.test(a)){const ac=DATA?.story?.activeContractId;if(ac==="marr"||ac==="kade")return ac;}
+ const contextTopic=strong(c)||(["marr","kade","ship","credits","trust","deal","danger","intel"].includes(c)?c:null);
+ if(contextTopic&&(/\b(him|her|it|them|that|this|lead|trail|job|target)\b/.test(a)||/^(who|what|where|when|why|how)\b/.test(a)||/what am i missing|your instinct|send me|tell me|give me/.test(a)))return contextTopic;
+ if(/where|who|what|intel|information|know|proof|trace|lead|name|location|missing/.test(a))return "intel";
+ return contextTopic||context||"open";
+}
+function analyzePlayerSpeech(text="",context="",npcId=null){
+ const raw=String(text||"").trim();
+ const t=raw.toLowerCase();
+ let speechAct="statement";
+ if(/\b(sorry|apologize|my fault|i was wrong)\b/.test(t))speechAct="apology";
+ else if(/\b(i'?m lying|i lie|bluff|pretend|fake it|tell .* a lie)\b/.test(t))speechAct="bluff";
+ else if(/\b(kill you|shoot you|put .* down|break you|hurt you|threat|or else|blackwake .* you)\b/.test(t)||(/blackwake/.test(t)&&/conversation|answer|talk|holding back/.test(t)))speechAct="threat";
+ else if(/\b(you'?re lying|you are lying|dodging|hiding .*|holding .* back|avoiding the question|bullshit|not telling me)\b/.test(t))speechAct="accusation";
+ else if(/\b(deal|offer|my cut|your cut|split|price|pay you|credits|renegotiate|forty thousand|seventy thousand|40,?000|70,?000)\b/.test(t)&&/\b(if|then|give|want|take|offer|split|pay|price|cut)\b/.test(t))speechAct="bargain";
+ else if(/\b(trust me|i trust you|i trust your|we'?re good|i'?ve got you|i got you|we can do this|i need you)\b/.test(t))speechAct="reassure";
+ else if(/\b(kidding|joking|joke|funny|cute|relax)\b/.test(t))speechAct="tease";
+ else if(/\b(prove it|try me|bet you|you can'?t|challenge)\b/.test(t))speechAct="challenge";
+ else if(/^\s*(tell me|give me|send me|show me|stop|quit|answer me)\b/.test(t))speechAct="demand";
+ else if(raw.includes("?")||/^\s*(who|what|where|when|why|how|do|does|did|are|is|can|could|would|will)\b/.test(t))speechAct="question";
+ let tone="professional";
+ if(speechAct==="threat"||speechAct==="accusation"||/\b(damn|hell|shit|screw|pissed)\b/.test(t))tone="hostile";
+ else if(speechAct==="apology"||speechAct==="reassure")tone="warm";
+ else if(/\b(now|hurry|quick|immediately|no time|running out|before they)\b/.test(t))tone="urgent";
+ else if(speechAct==="tease")tone="playful";
+ else if(speechAct==="bluff"||speechAct==="challenge")tone="guarded";
+ let questionType=null;
+ if(/\bwho\b|\bname\b/.test(t))questionType="who";
+ else if(/\bwhere\b|\blocation\b/.test(t))questionType="where";
+ else if(/\bwhen\b|\btime\b/.test(t))questionType="when";
+ else if(/\bwhy\b/.test(t))questionType="why";
+ else if(/\bhow\b|\bplan\b/.test(t))questionType="how";
+ else if(/\bprice\b|\bpay\b|\bcredits\b|\bcut\b|\bsplit\b/.test(t))questionType="price";
+ else if(/\bproof\b|\bevidence\b|\bverify\b/.test(t))questionType="proof";
+ else if(raw.includes("?")||speechAct==="demand")questionType="what";
+ let topic=dialogueTopic(context,raw);
+ if(npcId==="nera"&&/your (contract|bounty)|finish your|your terms|your job/.test(t))topic="kade";
+ return {text:raw,speechAct,tone,questionType,topic,npcId};
+}
+const GM_NPC_STYLE={
  dren:{
-  marr:["“Marr is still worth chasing. What I don't know is whether we're the only ones tightening the net.”","“You want Marr? Fine. Then stop treating the trail like it's static. Someone else is moving on it.”"],
-  credits:["“Credits are simple. People aren't. Tell me exactly what you're asking me to risk for my cut.”","“The payout matters. So does surviving long enough to collect it.”"],
-  trust:["“Trust is a word people use when they want you to stop checking their work.”","“I trust patterns, Deadlock. Yours are getting easier to read.”"],
-  ship:["“If the Raven is limping, fix it before you make me watch you call that confidence.”","“A bad system becomes a bad plan the second blaster fire starts.”"],
-  intel:["“I've got fragments, not miracles. Ask the right question and maybe one of them matters.”","“There is something you're missing. I'm deciding whether it's useful or just expensive.”"],
-  danger:["“Good. A problem I understand. Point me at the part that's trying to kill us.”","“If this turns loud, don't improvise the part where I get shot.”"]
+  address:"Deadlock",directness:.76,humor:.48,
+  stage:{neutral:["Dren lets the silence sit for a beat before answering.","Dren's eyes flick across something off-screen before settling back on Rovan.","Dren leans back, studying Rovan like he is checking the math on a bad idea."],highRespect:["Dren gives a small, reluctant nod before answering.","For once, Dren does not interrupt.","Dren's expression eases by half a degree—the closest thing he gives to approval."],irritated:["Dren exhales through his nose and looks away from the holo for half a second.","Dren's jaw sets before he answers.","Dren rubs a thumb across his lower lip, visibly deciding how much patience is left."]},
+  act:{threat:["If that's a threat, make it useful.","There it is. I was wondering when you'd stop being polite."],accusation:["I'm not dodging you. I'm deciding what you can actually use.","You think I'm holding something back? Ask the question cleanly."],apology:["Don't make it weird. We move on.","Fine. Accepted. Now get to the part that matters."],bargain:["Now we're talking numbers.","Good. Put a price on the risk instead of dressing it up."],reassure:["Save the reassurance for somebody who needs it.","I heard you. That doesn't mean I stopped checking the exits."],tease:["Cute. You done?","Keep that up and I'm charging you for morale support."],challenge:["Careful. I might take that personally.","You really want to make this competitive?"],demand:["Then ask for something I can actually give you.","Straight to it. Fine."],question:["Ask it.","Go on."]},
+  tail:{marr:["What are you doing with that?","So what's your move?","Are you chasing the lead or waiting for it to cool?"],credits:["What are you actually offering?","You changing the deal?"],ship:["Are we fixing it, or flying it?","How much risk are you willing to put on the Raven?"],trust:["You want honesty or comfort?","Does that answer the question you were really asking?"],intel:["Which piece do you want first?","What do you need badly enough to act on?"],danger:["How close is it?","Who shoots first?"],deal:["Are you changing the terms?","What part of the deal are you trying to move?"]}
  },
  nera:{
-  marr:["“Marr is your concern only if Marr interferes with what I am paying you to finish.”","“Do not let another contract make you careless with mine.”"],
-  credits:["“If you want more money, give me a reason that improves my odds, not yours.”","“Payment follows results. Renegotiation follows leverage.”"],
-  trust:["“I do not require trust. I require predictable outcomes.”","“Truth is useful because it shortens negotiations. Do not confuse that with sentiment.”"],
-  deal:["“The terms are already clear. If you want them changed, bring me something worth changing them for.”","“A contract is not a conversation, Deadlock. It is an obligation with a price.”"],
-  intel:["“Give me what is verified, then tell me what you only suspect.”","“Separate fact from instinct. I can price one of those.”"],
-  danger:["“If the situation has become dangerous, tell me whether the objective changed.”","“Risk is expected. Failure is not.”"]
+  address:"Deadlock",directness:.88,humor:.05,
+  stage:{neutral:["Kade pauses just long enough to weigh the value of the question.","Kade's expression remains still; only her attention sharpens.","Kade glances down at a private display before answering."],highRespect:["Kade gives the request more consideration than she usually allows.","A brief silence suggests Kade is actually recalculating.","Kade folds her hands and gives Rovan her full attention."],irritated:["Kade's expression barely changes; her voice gets colder instead.","Kade leaves a deliberate silence before replying.","Kade's eyes narrow by a fraction—the warning is entirely intentional."]},
+  act:{threat:["Threats are poor substitutes for leverage.","If you intend to intimidate me, improve the offer."],accusation:["Be precise. What, exactly, are you accusing me of?","Suspicion is useful only when it produces evidence."],apology:["Acknowledged. Continue.","Good. Then we will not spend more time on it."],bargain:["State the revised terms.","If you want the price moved, give me a reason that improves my odds."],reassure:["I do not require reassurance. I require delivery.","Confidence is not a substitute for verification."],tease:["We are not at the part of our relationship where that is useful.","If that was humor, it did not improve the numbers."],challenge:["Do not confuse restraint with reluctance.","If you want a contest, define the stakes."],demand:["You may ask. You may not confuse asking with entitlement.","Then be specific."],question:["Ask the useful version of the question.","Proceed."]},
+  tail:{kade:["Does that change how you intend to finish my contract?","What result are you bringing me next?"],credits:["What additional value are you offering?","Are you renegotiating, or merely complaining?"],trust:["Do you need trust, or do you need an answer?"],intel:["What is verified?","Which assumption are you asking me to price?"],danger:["Did the objective change?","Can you still complete the job?"],deal:["Which term are you proposing to change?"]}
  },
  renn:{
-  marr:["“Marr again? Fine. Just tell me this isn't another plan where I'm the believable part.”","“I remember the last setup. If we're doing this again, I want the exit planned first.”"],
-  trust:["“I believe you right up until your plan starts sounding clever.”","“I'm listening. That is not the same thing as feeling safe about it.”"],
-  intel:["“I heard something, but I don't know yet if it's a lead or bait.”","“There is a name floating around the edges of this. I haven't decided whether I trust it.”"],
-  danger:["“How bad?”","“Tell me where the shooting starts so I can be somewhere else when it does.”"]
+  address:"Rovan",directness:.58,humor:.28,
+  stage:{neutral:["Renn lowers his voice before answering.","Renn glances off-channel, then back.","Renn shifts like somebody just walked past a door Rovan cannot see."],highRespect:["Renn hesitates, then decides to be candid.","Renn gives a wary nod.","Renn looks uncomfortable, but not dishonest."],irritated:["Renn rubs a hand over his face before answering.","Renn looks like he already regrets staying on the line.","Renn's shoulders tense before the reply comes back."]},
+  act:{threat:["Okay. Definitely not loving that tone.","If that's aimed at me, maybe point it somewhere else."],accusation:["I'm not hiding it because it's funny, Rovan.","I'm telling you what I know, not what would make you happy."],apology:["Yeah. Okay. We're fine.","Accepted. Please don't make me regret that immediately."],bargain:["I knew credits were going to show up in this conversation.","Fine. What are you actually asking me to do?"],reassure:["That helps. A little.","I believe you. I just don't trust the universe around you."],tease:["Very funny. I feel safer already.","Great. Jokes. That usually means the plan is terrible."],challenge:["No. Absolutely not. I am not making this a competition.","That sounds like the beginning of something expensive."],demand:["All right. Just—give me a second.","Fine. Straight answer."],question:["Okay. What do you need?","Ask."]},
+  tail:{marr:["Tell me this is not another staged-turn-in situation.","What's the exit plan this time?"],credits:["And what exactly is my risk worth?"],trust:["You believe me?","Are we actually being honest now?"],intel:["Do you want the rumor or only what I can verify?","How much uncertainty can you work with?"],danger:["How bad is it?","Am I about to need a new hiding place?"],deal:["What part do you need me to play?"]}
  },
  jessa:{
-  ship:["“Give me the system, the percentage, and whether it is getting worse.”","“If the Raven can fly, I can work with ugly. If it can't, say that now.”"],
-  danger:["“Finally. Something with a clear answer. Who needs shooting?”","“Tell me range, cover, and how many. We can complain afterward.”"],
-  intel:["“Give me the useful version. Who, where, and what changes if we wait?”","“If this is a lead, tell me what makes it better than the last one.”"],
-  trust:["“You don't need to sell me on yourself, Rovan. Sell me on the plan.”","“I trust you. I still reserve the right to call a bad idea a bad idea.”"]
+  address:"Rovan",directness:.9,humor:.35,
+  stage:{neutral:["Jessa keeps working while she talks, voice steady over the channel.","Jessa answers without wasting a second.","Jessa glances at the nearest telemetry panel and keeps listening."],highRespect:["Jessa's attention shifts fully to Rovan.","Jessa gives a short nod, ready to move.","Jessa stops what she is doing long enough to make sure Rovan has her full answer."],irritated:["Jessa stops what she's doing and fixes Rovan with a flat look.","Jessa's reply comes back sharper than usual.","Jessa folds her arms, waiting for the useful part."]},
+  act:{threat:["Save it for the people shooting at us.","If you're trying to scare me, pick a quieter day."],accusation:["Then ask me straight instead of circling it.","If I knew something you needed, you'd have it."],apology:["We're good. Move.","Accepted. Next problem."],bargain:["If this is about money, make it quick.","Fine. What's the job and what's the risk?"],reassure:["I know, Rovan.","Good. Then give me the plan."],tease:["You can be funny after we survive this.","Keep talking. I'm almost entertained."],challenge:["You really want to make this a contest? Fine.","Careful. I actually enjoy winning."],demand:["Give me the useful version.","Go."],question:["Ask.","What do you need?"]},
+  tail:{ship:["Give me the system and the condition.","Can it fly?"],danger:["Range, cover, numbers. Start there.","Who needs shooting?"],intel:["Who, where, and what changes if we wait?","What's the part that changes the plan?"],trust:["You need reassurance or backup?"],credits:["Is the money worth the risk?"],deal:["What's our part?"]}
  }
 };
-function npcStageBeat(npc,topic,mood){
- const specific={
-  dren:{neutral:["Dren lets the silence sit for a beat before answering.","Dren's expression tightens, but he stays on the channel."],highRespect:["Dren studies Rovan for a moment, then gives a small, reluctant nod.","For once, Dren doesn't interrupt."],irritated:["Dren exhales through his nose and looks away from the holo for half a second.","Dren's jaw sets before he answers."]},
-  nera:{neutral:["Kade pauses just long enough to weigh the value of the question.","Kade's tone stays perfectly level."],highRespect:["Kade gives the request more consideration than she usually allows.","A brief silence suggests Kade is actually recalculating."],irritated:["Kade's expression barely changes; her voice gets colder instead.","Kade leaves a deliberate silence before replying."]},
-  renn:{neutral:["Renn lowers his voice before answering.","Renn glances off-channel, then back."],highRespect:["Renn hesitates, then decides to be candid.","Renn gives a wary nod."],irritated:["Renn rubs a hand over his face before answering.","Renn looks like he already regrets staying on the line."]},
-  jessa:{neutral:["Jessa keeps working while she talks, voice steady over the channel.","Jessa answers without wasting a second."],highRespect:["Jessa's attention shifts fully to Rovan.","Jessa gives a short nod, ready to move."],irritated:["Jessa stops what she's doing and fixes Rovan with a flat look.","Jessa's reply comes back sharper than usual."]}
- };
- const pool=specific[npc.id]?.[mood]||specific[npc.id]?.neutral||[];
- let beat=pick(pool)||`${npc.name} considers that.`;
- if(topic==="marr"&&npc.id==="dren"&&chance(.4))beat="Dren's eyes narrow the instant Marr comes up.";
- if(topic==="ship"&&npc.id==="jessa"&&chance(.4))beat="Jessa's attention snaps to the Raven's telemetry.";
+function npcStageBeat(npc,analysis){
+ const mood=npcMood(npc),style=GM_NPC_STYLE[npc.id]||{};
+ let pool=style.stage?.[mood]||style.stage?.neutral||[];
+ let beat=gmFreshPick(pool,"beat",npc.id)||`${npc.name} considers that.`;
+ if(analysis.topic==="marr"&&npc.id==="dren"&&chance(.34))beat="Dren's eyes narrow the instant Marr comes up.";
+ if(analysis.topic==="ship"&&npc.id==="jessa"&&chance(.34))beat="Jessa's attention snaps to the Raven's telemetry.";
+ if(analysis.tone==="hostile"&&npc.id==="nera"&&chance(.45))beat="Kade does not flinch. The silence that follows is colder than an argument.";
  return beat;
 }
-function proceduralNpcDialogue(npcId,context="",playerAction=""){
- const npc=storyNpc(npcId);if(!npc)return null;
- const tables=DATA.story.offlineTables?.dialogue?.[npc.id];if(!tables)return `${npc.name} waits for Deadlock to continue.`;
- const action=playerAction||recentPlayerActionText();
- const topic=dialogueTopic(context,action);
- const mood=npcMood(npc);
- const topical=TABLETOP_NPC_LINES[npc.id]?.[topic]||[];
- let line=topical.length&&chance(.78)?pick(topical):pick(tables[mood]||tables.neutral)||pick(tables.neutral);
- const memories=(tables.memory||[]).filter(([tag])=>(npc.memories||[]).some(m=>m.tag===tag));
- if(memories.length&&chance(.30)){
-  const memoryLine=pick(memories);
-  line=memoryLine?.[1]||line;
+function npcMemoryCallback(npc,analysis){
+ const tags=new Map((npc.memories||[]).map(m=>[m.tag,m]));
+ if(tags.has("CAUGHT_ROVAN_LYING")&&(analysis.topic==="trust"||analysis.speechAct==="bluff")){
+  return npc.id==="dren"?"Last time you tried to sell me a version of the truth, I caught it.":"I remember the last time your version of events did not survive inspection.";
  }
- const followups={
-  marr:" “So—what's your next move?”",
-  credits:" “What are you actually offering?”",
-  ship:" “Are we fixing it, or flying it?”",
-  trust:" “You want the truth, or reassurance?”",
-  intel:" “What do you want to know first?”",
-  danger:" “How close is it?”",
-  deal:" “Are you changing the deal?”"
- };
- if(!/[?]\s*[”"]?$/.test(line)&&followups[topic]&&chance(.42))line+=followups[topic];
+ if(npc.id==="dren"&&tags.has("MARR_SPLIT")&&["marr","credits","deal"].includes(analysis.topic))return "We talked about splitting Marr's payout. We never locked the percentage.";
+ if(npc.id==="dren"&&tags.has("RIFLE_RETURNED")&&analysis.topic==="trust")return "You gave my rifle back when you did not have to. I remember that.";
+ if(npc.id==="nera"&&tags.has("ACTIVE_CONTRACT")&&["kade","credits","deal"].includes(analysis.topic))return "You already have forty thousand reasons to finish my contract cleanly.";
+ if(npc.id==="renn"&&tags.has("STAGED_TURNIN")&&["marr","deal","danger"].includes(analysis.topic))return "I remember the staged turn-in. I would prefer the next clever plan include an exit.";
+ if(npc.id==="jessa"&&tags.has("FIELD_ALLY")&&["danger","trust","ship"].includes(analysis.topic))return "We've been under pressure together before. Give me the useful part and I am with you.";
+ return null;
+}
+function npcKnowledgeLine(npc,analysis){
+ const topic=analysis.topic;
+ const marr=contractById("marr"),kade=contractById("kade"),active=contractById(DATA.story.activeContractId)||marr;
+ const marrTarget=targetById("marr");
+ if(topic==="marr"&&marr){
+  const p=Number(marr.progress||0),t=String(analysis.text||"").toLowerCase();
+  if(npc.id==="nera")return "Marr is not my priority unless that recovery job starts interfering with mine.";
+  if(/send me|send it|send what you have|send the (packet|data|intel)/.test(t))return "You'll have the packet. Raw notes, timestamps, and the pieces I do not trust are marked separately.";
+  if(/what am i missing|what.*missing|your instinct/.test(t))return "You're missing certainty, not effort. My instinct says the quiet lead matters more than the obvious one, but instinct is not proof.";
+  if(/who else|another hunter|other hunter|competition|competing/.test(t)){
+   if(npc.id==="dren")return "I do not have a verified name. I do have enough movement around the same trail to assume we are not alone.";
+   return "There are signs of competition around the Marr trail, but no verified identity worth treating as fact yet.";
+  }
+  if(analysis.questionType==="where"||/where (is|would)|location|address/.test(t)){
+   if(p>=90)return "The trail is strong enough to move on, but I still want the last location check before we commit.";
+   if(p>=75)return "We have a search window, not a door number. That is close enough to stage, not close enough to shoot.";
+   if(p>=50)return "Closer than before, but not a location I would hand to a pilot yet.";
+   return "Not a location yet. Right now the trail tells us where Marr is not more reliably than where Marr is.";
+  }
+  if(/what.*trust|part.*trust|strongest lead|prove|proof|evidence|verified/.test(t)){
+   return p>=50?"I trust the pattern because independent pieces are starting to point the same way. I still do not trust a final location.":"I trust that the trail is real. I do not trust any single lead enough to make it the whole plan.";
+  }
+  if(/why.*wide|why.*trail|why.*not|what.*slow/.test(t)){
+   return "Because every useful lead still branches before it resolves. Somebody is either moving carefully or feeding the network noise.";
+  }
+  if(/what would you do|what do you do|your instinct|what.*next|where would you look/.test(t)){
+   return "I'd pressure the quietest lead, not the loudest one. Loud leads attract hunters; quiet ones usually belong to people who think nobody noticed them.";
+  }
+  if(/gets there first|beats us|before us|another hunter.*first/.test(t)){
+   return "Then recovery turns into interception. The seventy thousand does not change, and neither does the requirement that Marr comes back alive.";
+  }
+  if(/knows.*coming|expecting us|aware of us/.test(t)){
+   return "I have no proof Marr knows we're coming. That is not the same thing as believing he doesn't.";
+  }
+  if(/walk away|drop the job|quit/.test(t)){
+   return "I walk if the deal stops being the deal or the alive requirement becomes a suicide note. We're not there yet.";
+  }
+  if(npc.id==="jessa")return p>=75?"The Marr trail is tight enough that I would prep for contact, not another search.":"The Marr trail still looks like a hunt, not an intercept.";
+  if(npc.id==="renn")return p>=50?"The trail is narrowing. That makes me feel better about the intel and worse about who else may be watching it.":"We have a real trail, but not one I would bet my life on yet.";
+  if(p>=90)return "Marr's trail is hot enough to move on now. Alive still matters.";
+  if(p>=75)return "We've got a narrow search window on Marr. Wait too long and it closes.";
+  if(p>=50)return "The Marr trail is narrowing. We're past guessing, but not at a clean intercept.";
+  return "Marr's trail is still too wide. We have enough to know it is real, not enough to kick in a door.";
+ }
+ if(topic==="kade"&&kade){
+  if(npc.id==="nera")return `My contract is still active. Your payout is forty thousand credits, and I care about the result more than the theater around it.`;
+  return `Kade's job is still active. That is a separate forty-thousand-credit thread, and mixing it with Marr would be a mistake.`;
+ }
+ if(topic==="credits"){
+  if(npc.id==="nera")return "My contract pays you forty thousand credits under the current terms. If you want more, show me what changed.";
+  if(active?.id==="marr"){
+   if(npc.id==="dren")return "Marr is worth seventy thousand. The exact split between us is still not settled.";
+   return "The Marr recovery is worth seventy thousand credits, but the alive requirement limits the easy options.";
+  }
+  if(active?.id==="kade")return "Kade's payout to Rovan is forty thousand credits if the terms are met.";
+  return "There is money on the table, but no clean reason to change the numbers yet.";
+ }
+ if(topic==="ship"){
+  const sys=weakestShipSystem();
+  if(!sys)return "The Raven is not showing a clear weak system right now.";
+  return `${sys.name} is the weakest live system at ${Math.round(sys.condition)} percent. It is usable, but that is the number I would plan around.`;
+ }
+ if(topic==="trust"){
+  const m=npc.mood||{},t=String(analysis.text||"").toLowerCase();
+  if(/lead|intel|trail|marr/.test(t)){
+   if(npc.id==="nera")return "I trust verified information. This lead is not verified enough to stop checking it.";
+   if(npc.id==="renn")return "I trust the lead enough to keep listening. I do not trust it enough to stand in front of it.";
+   if(npc.id==="jessa")return "I trust the lead enough to prep for it, not enough to walk in blind.";
+   return "I trust the lead enough to keep working it. I do not trust it enough to stop checking for a trap.";
+  }
+  if(npc.id==="nera")return Number(m.irritation||0)>=60?"My confidence in you is not the same thing as patience. Do not confuse them.":"Trust is not the metric I use. Predictable results are.";
+  if(npc.id==="renn")return Number(m.trust||0)>=60?"I trust you. I just don't trust the plans that seem to form around you.":"I trust you more than I trust the situation. That is as generous as I can be right now.";
+  if(npc.id==="jessa")return Number(m.trust||0)>=65?"I trust you enough to follow the plan—and enough to tell you when the plan turns stupid.":"I trust you, Rovan. That does not make every idea a good one.";
+  if(Number(m.irritation||0)>=60)return "Right now, the problem is not whether I heard you. It is whether I believe the next thing you say will make this simpler.";
+  if(Number(m.trust||0)>=65)return "You've earned more room than most people get from me. Do not waste it.";
+  if(Number(m.trust||0)<40)return "We are not at trust. We are at mutually useful.";
+  return "I trust what you do more than what you promise. Keep it that way.";
+ }
+ if(topic==="danger"){
+  const intr=(DATA.story.interruptions||[])[0],t=String(analysis.text||"").toLowerCase();
+  if(intr)return `${intr.label} is the immediate problem. Everything else can wait until that stops getting worse.`;
+  if(/goes loud|shooting|fight|fire/.test(t)&&npc.id==="dren")return "If it goes loud, I keep Marr alive, keep you from getting surrounded, and complain about your plan afterward—in that order.";
+  if(/goes loud|shooting|fight|fire/.test(t)&&npc.id==="jessa")return "If it goes loud, give me lanes and targets. The alive requirement means we control the room instead of turning it into a crater.";
+  if(Number(DATA.story.danger||0)>=65)return "The situation is hot enough that the next choice needs an exit built into it.";
+  return "The pressure is real, but we still have room to choose how this gets ugly.";
+ }
+ if(topic==="deal"){
+  const dealContract=npc.id==="nera"?(kade||active):active;
+  if(dealContract)return `${dealContract.title} is still ${dealContract.status.toLowerCase()}. The objective has not changed: ${dealContract.objective}`;
+  return "There is no active deal on the board that needs rewriting.";
+ }
+ if(topic==="intel"){
+  const target=active?.targetId?targetById(active.targetId):marrTarget,t=String(analysis.text||"").toLowerCase();
+  if(/what am i missing|what.*missing|haven't said|part.*not saying/.test(t))return "You're missing certainty. We have enough pieces to make choices, not enough to pretend the choices are safe.";
+  const intel=(target?.intel||[]).slice(-2);
+  if(intel.length)return `The useful part is this: ${intel.join(" ")}`;
+  const recent=(DATA.story.consequences?.recent||[])[0];
+  if(recent)return `The newest useful change is ${recent.title.toLowerCase()}. ${recent.detail||""}`.trim();
+  return "I have fragments, not a verified breakthrough. Tell me which assumption you want tested.";
+ }
+ return null;
+}
+function npcActLead(npc,analysis){
+ const style=GM_NPC_STYLE[npc.id]||{};
+ const lines=style.act?.[analysis.speechAct]||[];
+ return gmFreshPick(lines,"line",npc.id);
+}
+function npcFollowup(npc,analysis){
+ const style=GM_NPC_STYLE[npc.id]||{};
+ const pool=style.tail?.[analysis.topic]||[];
+ if(!pool.length)return null;
+ return gmFreshPick(pool,"line",npc.id);
+}
+function applyFreeformSocialReaction(npc,analysis){
+ if(!npc||!analysis)return;
+ const m=npc.mood||{};
+ if(analysis.speechAct==="threat"){
+  if(npc.id==="dren")adjustNpcMood(npc,{respect:1,fear:1,irritation:1});
+  else if(npc.id==="renn")adjustNpcMood(npc,{fear:3,stress:2,irritation:1});
+  else if(npc.id==="nera")adjustNpcMood(npc,{fear:1,irritation:2});
+  else adjustNpcMood(npc,{irritation:1});
+  changeReputation("intimidation",1);
+ }
+ if(analysis.speechAct==="accusation")adjustNpcMood(npc,{trust:-1,irritation:2});
+ if(analysis.speechAct==="apology")adjustNpcMood(npc,{trust:1,irritation:-3,stress:-1});
+ if(analysis.speechAct==="reassure")adjustNpcMood(npc,{trust:1,irritation:-1});
+ if(analysis.speechAct==="bargain")adjustNpcMood(npc,{respect:1});
+ if(analysis.speechAct==="tease"){
+  if(npc.id==="dren"||npc.id==="jessa")adjustNpcMood(npc,{respect:1,irritation:-1});
+  if(npc.id==="nera")adjustNpcMood(npc,{irritation:1});
+ }
+}
+function proceduralNpcDialogue(npcId,context="",playerAction="",suppliedAnalysis=null){
+ const npc=storyNpc(npcId);if(!npc)return null;
+ const tables=DATA.story.offlineTables?.dialogue?.[npc.id];
+ const analysis=suppliedAnalysis||analyzePlayerSpeech(playerAction||recentPlayerActionText(),context,npc.id);
+ const mood=npcMood(npc);
+ let parts=[];
+ const lead=npcActLead(npc,analysis);if(lead)parts.push(lead);
+ const fact=npcKnowledgeLine(npc,analysis);
+ const tableFallback=tables?(gmFreshPick(tables[mood]||tables.neutral,"line",npc.id)||gmFreshPick(tables.neutral,"line",npc.id)):null;
+ if(fact)parts.push(fact);else if(tableFallback)parts.push(tableFallback);
+ const memory=npcMemoryCallback(npc,analysis);
+ if(memory&&chance(analysis.topic==="trust"||analysis.topic==="marr"?.65:.38))parts.push(memory);
+ const follow=npcFollowup(npc,analysis);
+ if(follow&&!parts.some(p=>/[?]\s*$/.test(p))&&chance(.72))parts.push(follow);
+ let line=parts.filter(Boolean).join(" ").replace(/\s+/g," ").trim();
+ if(!line)line=`${npc.name} waits for Deadlock to continue.`;
+ const gm=ensureGmState();gm.lastAnalysis=analysis;gm.npcTurns[npc.id]=Number(gm.npcTurns[npc.id]||0)+1;
+ gm.recentTopics.unshift(analysis.topic);gm.recentTopics=gm.recentTopics.slice(0,12);
  return line;
 }
-function pushNpcExchange(npc,context="",playerAction=""){
+function pushNpcExchange(npc,context="",playerAction="",suppliedAnalysis=null){
  const action=playerAction||recentPlayerActionText();
- const topic=dialogueTopic(context,action);
- const mood=npcMood(npc);
- storyPush("narration","Narrator",npcStageBeat(npc,topic,mood));
- storyPush("dialogue",npc.name,proceduralNpcDialogue(npc.id,context,action));
+ const analysis=suppliedAnalysis||analyzePlayerSpeech(action,typeof context==="string"?context:"",npc.id);
+ storyPush("narration","Narrator",npcStageBeat(npc,analysis));
+ storyPush("dialogue",npc.name,proceduralNpcDialogue(npc.id,analysis.topic,action,analysis));
+ return analysis;
 }
-function dialogueChoicesForNpc(npc,context=""){
+function dialogueChoicesForNpc(npc,context="",playerAction="",suppliedAnalysis=null){
  const s=DATA.story;
+ const analysis=suppliedAnalysis||ensureGmState().lastAnalysis||analyzePlayerSpeech(playerAction||recentPlayerActionText(),context,npc.id);
  const active=contractById(s.activeContractId);
- const topic=dialogueTopic(context,recentPlayerActionText());
- const activeTarget=active?.targetId?DATA.targets.find(t=>t.id===active.targetId):null;
- const target=activeTarget?.name||(active?.title||"this job").replace(/^Recover\s+/i,"");
- const first=topic==="marr"&&npc.id==="dren"
-  ?"“Tell me what you think I'm missing about Marr.”"
-  :`“Give me the part about ${target} you haven't said yet.”`;
- const second=topic==="credits"
-  ?"“Then name your price and what I get for it.”"
-  :"“I need something concrete—a name, a location, or a time.”";
- const third="“That's enough. Send me what you have. I'll handle the rest.”";
- const fourth="“I've already got more of this figured out than you think.”";
+ const topic=analysis.topic;
+ let labels;
+ if(topic==="marr")labels=[
+  "“Give me the strongest lead you actually trust.”",
+  "“Who else is moving on Marr?”",
+  npc.id==="dren"?"“We never settled the split. What are you expecting?”":"“What part of the Marr job worries you most?”",
+  "“Send me what you have. I’m moving on it.”"
+ ];
+ else if(topic==="credits")labels=[
+  "“Then name the number you think is fair.”",
+  "“Tell me what extra risk you’re pricing in.”",
+  "“The payout stays where it is unless you give me a reason.”",
+  "“Fine. Forget the credits—what’s the useful intel?”"
+ ];
+ else if(topic==="ship")labels=[
+  "“Give me the weakest system first.”",
+  "“Would you fly the Raven like this?”",
+  "“Tell me what fails if I push her hard.”",
+  "“Good enough. I’ll handle the repair.”"
+ ];
+ else if(topic==="kade")labels=[
+  "“Then tell me what makes your timeline more urgent.”",
+  "“What changes if I finish Marr first?”",
+  "“Give me a reason your contract moves to the top.”",
+  "“Fine. Restate the terms and the deadline.”"
+ ];
+ else if(topic==="trust")labels=[
+  "“Then tell me what you think I’m hiding.”",
+  "“I’m asking for the truth, not reassurance.”",
+  "“You’ve had chances to burn me. You didn’t.”",
+  "“Fine. We don’t need trust—just a deal that holds.”"
+ ];
+ else if(analysis.speechAct==="accusation"||analysis.speechAct==="threat")labels=[
+  "“Then answer me straight. What are you holding back?”",
+  "“Fine. Start with what you can prove.”",
+  "“I’m not here to fight you. Help me solve this.”",
+  "“Keep dodging and I’ll find the answer without you.”"
+ ];
+ else labels=[
+  "“Give me the part you haven’t said yet.”",
+  "“I need something concrete—a name, a location, or a time.”",
+  "“Tell me what you would do in my place.”",
+  "“That’s enough. Send me what you have.”"
+ ];
  return [
-  {id:uid("choice"),label:first,intent:"dialogue",npcId:npc.id,skill:"Negotiation",dc:12,contractId:s.activeContractId||null},
-  {id:uid("choice"),label:second,intent:"dialogue",npcId:npc.id,skill:"Negotiation",dc:13,contractId:s.activeContractId||null},
-  {id:uid("choice"),label:third,intent:"action",contractId:s.activeContractId||null},
-  {id:uid("choice"),label:fourth,intent:"deception",npcId:npc.id,skill:"Deception",dc:13,contractId:s.activeContractId||null}
+  {id:uid("choice"),label:labels[0],intent:"dialogue",npcId:npc.id,skill:"Negotiation",dc:12,contractId:active?.id||null},
+  {id:uid("choice"),label:labels[1],intent:"dialogue",npcId:npc.id,skill:"Negotiation",dc:13,contractId:active?.id||null},
+  {id:uid("choice"),label:labels[2],intent:"dialogue",npcId:npc.id,skill:"Insight",dc:12,contractId:active?.id||null},
+  {id:uid("choice"),label:labels[3],intent:labels[3].includes("holding back")?"deception":"action",npcId:labels[3].includes("holding back")?npc.id:null,skill:labels[3].includes("holding back")?"Deception":null,dc:labels[3].includes("holding back")?13:null,contractId:active?.id||null}
  ];
 }
+
 function availableComplications(){
  const table=DATA.story.offlineTables?.complications||[];
  const hasActive=activeContracts().length>0;
@@ -1399,19 +1627,38 @@ function consequenceFromRoll(roll,choice){
  return pick(roll.success?tables.success:tables.failure);
 }
 function inferIntent(text=""){
- const t=text.toLowerCase();
- if(/\bdren\b/.test(t))return {intent:"dialogue",npcId:"dren"};
- if(/\bnera\b|\bkade\b/.test(t))return {intent:"contracts",contractId:"kade",npcId:"nera"};
- if(/\brenn\b/.test(t))return {intent:"dialogue",npcId:"renn"};
- if(/\bjessa\b/.test(t))return {intent:"dialogue",npcId:"jessa"};
- if(/\bmarr\b/.test(t))return {intent:"contracts",contractId:"marr"};
- if(/repair|fix|patch/.test(t))return {intent:"ship",actionType:"repair"};
- if(/raven|ship|engine|thruster|hyperdrive|diagnostic/.test(t))return {intent:"ship",actionType:"diagnostic"};
- if(/contract|bounty/.test(t))return {intent:"contracts"};
- if(/scan|trace|investigate|search|check/.test(t))return {intent:"investigate"};
- if(/shoot|draw|attack|fire|blackwake|luna|sol/.test(t))return {intent:"action"};
- if(/wait|watch|listen/.test(t))return {intent:"wait"};
- return {intent:"action"};
+ const raw=String(text||"");
+ const t=raw.toLowerCase();
+ let npcId=null;
+ if(/\bdren\b/.test(t))npcId="dren";
+ else if(/\bnera\b|\bkade\b/.test(t))npcId="nera";
+ else if(/\brenn\b/.test(t))npcId="renn";
+ else if(/\bjessa\b/.test(t))npcId="jessa";
+ const analysis=analyzePlayerSpeech(raw,DATA?.story?.director?.lastTopic||"open",npcId);
+ const currentNpc=storyNpc(DATA?.story?.currentNpc);
+ const recent=(DATA?.story?.history||[]).slice(-4);
+ const conversationActive=!npcId&&currentNpc&&recent.some(h=>h.type==="dialogue"&&h.speaker===currentNpc.name);
+ const conversationalActs=new Set(["question","demand","accusation","threat","bargain","reassure","apology","tease","challenge","bluff"]);
+ const explicitPhysical=/\b(i|we)\s+(repair|fix|patch|shoot|draw|attack|fire|leave|launch|walk|move|scan|search|investigate|check|open|head|go)\b/.test(t)||/^\s*(repair|fix|patch|shoot|draw|attack|fire|leave|launch|scan|search|investigate|check)\b/.test(t);
+ if(conversationActive&&!explicitPhysical){
+  const a=analyzePlayerSpeech(raw,DATA?.story?.director?.lastTopic||"open",currentNpc.id);
+  return {intent:a.speechAct==="bluff"?"deception":"dialogue",npcId:currentNpc.id,...a};
+ }
+ if(npcId){
+  if(analysis.speechAct==="bluff")return {intent:"deception",npcId,...analysis};
+  const explicitKadeContract=npcId==="nera"&&(/kade'?s?\s+(contract|bounty)|nera kade bounty|kade bounty/.test(t));
+  if(explicitKadeContract&&!/[?]|\b(tell|ask|say|why|who|where|what|how|need|want|think|trust)\b/.test(t))return {intent:"contracts",contractId:"kade",npcId,...analysis};
+  return {intent:"dialogue",npcId,...analysis};
+ }
+ if(/\bmarr\b/.test(t))return {intent:"contracts",contractId:"marr",...analysis};
+ if(/\bkade\b|\bnera\b/.test(t))return {intent:"contracts",contractId:"kade",...analysis};
+ if(/repair|fix|patch/.test(t))return {intent:"ship",actionType:"repair",...analysis};
+ if(/raven|ship|engine|thruster|hyperdrive|diagnostic/.test(t))return {intent:"ship",actionType:"diagnostic",...analysis};
+ if(/contract|bounty/.test(t))return {intent:"contracts",...analysis};
+ if(/scan|trace|investigate|search|check/.test(t))return {intent:"investigate",...analysis};
+ if(/shoot|draw|attack|fire|blackwake|luna|sol/.test(t))return {intent:"action",...analysis};
+ if(/wait|watch|listen/.test(t))return {intent:"wait",...analysis};
+ return {intent:"action",...analysis};
 }
 
 function reactToPlayerAction(action,choice,roll){
@@ -1426,7 +1673,10 @@ function reactToPlayerAction(action,choice,roll){
   if(inferred.npcId){
     const npc=storyNpc(inferred.npcId);
     if(npc){
-      pushNpcExchange(npc,it?.eventId||"interrupt",action||choice?.label||"");
+      const playerText=action||choice?.label||"";
+      const analysis=analyzePlayerSpeech(playerText,it?.eventId||"interrupt",npc.id);
+      pushNpcExchange(npc,analysis.topic,playerText,analysis);
+      if(!roll)applyFreeformSocialReaction(npc,analysis);
       applyNpcChoiceConsequence(npc,{...inferred,intent:"dialogue"},roll);
     }
   }else{
@@ -1439,12 +1689,15 @@ function reactToPlayerAction(action,choice,roll){
  if(intent==="dialogue"||(intent==="deception"&&inferred.npcId)){
   const npc=storyNpc(inferred.npcId||s.currentNpc);
   if(npc){
-   pushNpcExchange(npc,s.director.lastTopic,action||choice?.label||"");
+   const playerText=action||choice?.label||"";
+   const analysis=analyzePlayerSpeech(playerText,inferred.topic||s.director.lastTopic,npc.id);
+   pushNpcExchange(npc,analysis.topic,playerText,analysis);
    s.currentSpeaker=npc.name;s.currentNpc=npc.id;
    setTimeout(()=>uiBeep(430,.035,.015),20);
+   if(!roll)applyFreeformSocialReaction(npc,analysis);
    applyNpcChoiceConsequence(npc,inferred,roll);
-   s.choices=dialogueChoicesForNpc(npc,s.director.lastTopic);
-   s.objective=`Decide how far to press ${npc.name}.`;
+   s.choices=dialogueChoicesForNpc(npc,analysis.topic,playerText,analysis);
+   s.objective=`Continue the conversation with ${npc.name}, or act on what was said.`;
    return;
   }
  }
@@ -1539,7 +1792,7 @@ function localStoryGenerate(action="",choice=null){
  const preservedChoices=choice?.interruptId?structuredClone(s.choices||[]):null;
  if(text){
   const inferred=choice||inferIntent(text);
-  d.lastTopic=inferred.intent||d.lastTopic;
+  d.lastTopic=inferred.topic||inferred.intent||d.lastTopic;
   if(inferred.npcId)d.lastNpc=inferred.npcId;
  }
  reactToPlayerAction(text,choice,roll);
