@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "9.3.0",
-    "campaign": "Deadlock \u2014 Interactive Consequence Layer",
+    "version": "9.3.2",
+    "campaign": "Deadlock \u2014 Tabletop Dialogue",
     "note": "Established story facts are filled in. Mechanical values that were never firmly established remain editable.",
     "rulesNote": "Combat and dogfight numeric formulas are dashboard mechanics, not story canon. Edit them in GM Controls."
   },

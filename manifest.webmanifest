@@ -1,6 +1,6 @@
 {
-  "name": "Deadlock v9.3 \u2014 Interactive Consequence Layer",
-  "short_name": "Deadlock 9.3",
+  "name": "Deadlock v9.3.2 \u2014 Tabletop Dialogue",
+  "short_name": "Deadlock 9.3.2",
   "description": "Offline-first bounty hunter RPG dashboard with Holonet operations, hyperspace plotting, holo-pucks, and Raven diagnostics.",
   "start_url": "./index.html",
   "scope": "./",

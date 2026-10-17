@@ -1,4 +1,4 @@
-const CACHE="deadlock-v9-3-1-rovan-portrait-cache-1";
+const CACHE="deadlock-v9-3-2-tabletop-dialogue-cache-1";
 const APP_SHELL=[
  "./","./index.html","./styles.css","./app.js","./character-data.json","./manifest.webmanifest",
  "./assets/rovan.jpg","./assets/raven.jpg","./assets/raven_dedicated.jpg","./assets/contact_dren.jpg","./assets/hud_bg.jpg",

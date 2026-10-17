@@ -159,7 +159,7 @@ function migrateOfflineData(current,defaults){
  s.activeContractId=s.activeContractId||"marr";
  const marrChoice=(s.choices||[]).find(c=>/marr/i.test(c.label||""));
  if(marrChoice){marrChoice.contractId="marr";marrChoice.actionType=marrChoice.actionType||"contract_review";}
- current.meta.version="9.3.0";
+ current.meta.version="9.3.2";
  return current;
 }
 
@@ -1009,12 +1009,12 @@ function startNewStoryScene(){
 }
 function wireStory(){
  if($("#storySend"))$("#storySend").onclick=()=>{const v=$("#storyInput").value.trim();if(v)storySubmit(v,null)};
- if($("#storyContinue"))$("#storyContinue").onclick=()=>storySubmit("Continue from the current situation.",null);
+ if($("#storyContinue"))$("#storyContinue").onclick=()=>storySubmit("",null);
  if($("#storyRollBtn"))$("#storyRollBtn").onclick=openStoryRoll;
  $$("[data-storychoice]").forEach(b=>b.onclick=()=>{const c=DATA.story.choices.find(x=>x.id===b.dataset.storychoice);if(c)storySubmit("",c)});
  $$("[data-storyinterrupt]").forEach(b=>b.onclick=()=>{const [iid,cid]=b.dataset.storyinterrupt.split(":");const it=interruptionById(iid);const c=it?.choices?.find(x=>x.id===cid);if(c)storySubmit("",c)});
  if($("#storyNpcSelect"))$("#storyNpcSelect").onchange=e=>{DATA.story.currentNpc=e.target.value;save();render("Story")};
- if($("#storyTalk"))$("#storyTalk").onclick=()=>{const n=storyNpc(DATA.story.currentNpc);storySubmit(`Open an encrypted dialogue with ${n?.name||"the selected contact"}.`,{intent:"dialogue",npcId:n?.id})};
+ if($("#storyTalk"))$("#storyTalk").onclick=()=>{const n=storyNpc(DATA.story.currentNpc);storySubmit(`“${n?.name||"You"}, talk to me. What's changed?”`,{intent:"dialogue",npcId:n?.id})};
  if($("#storySceneSettings"))$("#storySceneSettings").onclick=openStorySceneSettings;
  if($("#storyRecap"))$("#storyRecap").onclick=()=>openModal("Session Recap",`<textarea rows="22">${esc(storyRecapText())}</textarea>`);
  if($("#storyNewScene"))$("#storyNewScene").onclick=startNewStoryScene;
@@ -1230,28 +1230,116 @@ function adjustNpcMood(npc,changes={}){
  const contact=DATA.contacts.find(c=>c.id===npc.id);
  if(contact&&npc.mood.trust!=null)contact.trust=Math.round(npc.mood.trust);
 }
-function proceduralNpcDialogue(npcId,context=""){
+function recentPlayerActionText(){
+ return [...(DATA.story?.history||[])].reverse().find(h=>h.type==="player")?.text||"";
+}
+function dialogueTopic(context="",action=""){
+ const t=`${context} ${action}`.toLowerCase();
+ if(/marr/.test(t))return "marr";
+ if(/nera|kade/.test(t))return "kade";
+ if(/credit|pay|money|price|reward|split/.test(t))return "credits";
+ if(/raven|ship|engine|thruster|hyperdrive|repair/.test(t))return "ship";
+ if(/trust|lie|honest|truth|believe/.test(t))return "trust";
+ if(/deal|agreement|contract|bounty/.test(t))return "deal";
+ if(/where|who|what|intel|information|know|proof|trace|lead/.test(t))return "intel";
+ if(/shoot|fight|hunter|patrol|danger|attack|fire/.test(t))return "danger";
+ return context||"open";
+}
+const TABLETOP_NPC_LINES={
+ dren:{
+  marr:["“Marr is still worth chasing. What I don't know is whether we're the only ones tightening the net.”","“You want Marr? Fine. Then stop treating the trail like it's static. Someone else is moving on it.”"],
+  credits:["“Credits are simple. People aren't. Tell me exactly what you're asking me to risk for my cut.”","“The payout matters. So does surviving long enough to collect it.”"],
+  trust:["“Trust is a word people use when they want you to stop checking their work.”","“I trust patterns, Deadlock. Yours are getting easier to read.”"],
+  ship:["“If the Raven is limping, fix it before you make me watch you call that confidence.”","“A bad system becomes a bad plan the second blaster fire starts.”"],
+  intel:["“I've got fragments, not miracles. Ask the right question and maybe one of them matters.”","“There is something you're missing. I'm deciding whether it's useful or just expensive.”"],
+  danger:["“Good. A problem I understand. Point me at the part that's trying to kill us.”","“If this turns loud, don't improvise the part where I get shot.”"]
+ },
+ nera:{
+  marr:["“Marr is your concern only if Marr interferes with what I am paying you to finish.”","“Do not let another contract make you careless with mine.”"],
+  credits:["“If you want more money, give me a reason that improves my odds, not yours.”","“Payment follows results. Renegotiation follows leverage.”"],
+  trust:["“I do not require trust. I require predictable outcomes.”","“Truth is useful because it shortens negotiations. Do not confuse that with sentiment.”"],
+  deal:["“The terms are already clear. If you want them changed, bring me something worth changing them for.”","“A contract is not a conversation, Deadlock. It is an obligation with a price.”"],
+  intel:["“Give me what is verified, then tell me what you only suspect.”","“Separate fact from instinct. I can price one of those.”"],
+  danger:["“If the situation has become dangerous, tell me whether the objective changed.”","“Risk is expected. Failure is not.”"]
+ },
+ renn:{
+  marr:["“Marr again? Fine. Just tell me this isn't another plan where I'm the believable part.”","“I remember the last setup. If we're doing this again, I want the exit planned first.”"],
+  trust:["“I believe you right up until your plan starts sounding clever.”","“I'm listening. That is not the same thing as feeling safe about it.”"],
+  intel:["“I heard something, but I don't know yet if it's a lead or bait.”","“There is a name floating around the edges of this. I haven't decided whether I trust it.”"],
+  danger:["“How bad?”","“Tell me where the shooting starts so I can be somewhere else when it does.”"]
+ },
+ jessa:{
+  ship:["“Give me the system, the percentage, and whether it is getting worse.”","“If the Raven can fly, I can work with ugly. If it can't, say that now.”"],
+  danger:["“Finally. Something with a clear answer. Who needs shooting?”","“Tell me range, cover, and how many. We can complain afterward.”"],
+  intel:["“Give me the useful version. Who, where, and what changes if we wait?”","“If this is a lead, tell me what makes it better than the last one.”"],
+  trust:["“You don't need to sell me on yourself, Rovan. Sell me on the plan.”","“I trust you. I still reserve the right to call a bad idea a bad idea.”"]
+ }
+};
+function npcStageBeat(npc,topic,mood){
+ const specific={
+  dren:{neutral:["Dren lets the silence sit for a beat before answering.","Dren's expression tightens, but he stays on the channel."],highRespect:["Dren studies Rovan for a moment, then gives a small, reluctant nod.","For once, Dren doesn't interrupt."],irritated:["Dren exhales through his nose and looks away from the holo for half a second.","Dren's jaw sets before he answers."]},
+  nera:{neutral:["Kade pauses just long enough to weigh the value of the question.","Kade's tone stays perfectly level."],highRespect:["Kade gives the request more consideration than she usually allows.","A brief silence suggests Kade is actually recalculating."],irritated:["Kade's expression barely changes; her voice gets colder instead.","Kade leaves a deliberate silence before replying."]},
+  renn:{neutral:["Renn lowers his voice before answering.","Renn glances off-channel, then back."],highRespect:["Renn hesitates, then decides to be candid.","Renn gives a wary nod."],irritated:["Renn rubs a hand over his face before answering.","Renn looks like he already regrets staying on the line."]},
+  jessa:{neutral:["Jessa keeps working while she talks, voice steady over the channel.","Jessa answers without wasting a second."],highRespect:["Jessa's attention shifts fully to Rovan.","Jessa gives a short nod, ready to move."],irritated:["Jessa stops what she's doing and fixes Rovan with a flat look.","Jessa's reply comes back sharper than usual."]}
+ };
+ const pool=specific[npc.id]?.[mood]||specific[npc.id]?.neutral||[];
+ let beat=pick(pool)||`${npc.name} considers that.`;
+ if(topic==="marr"&&npc.id==="dren"&&chance(.4))beat="Dren's eyes narrow the instant Marr comes up.";
+ if(topic==="ship"&&npc.id==="jessa"&&chance(.4))beat="Jessa's attention snaps to the Raven's telemetry.";
+ return beat;
+}
+function proceduralNpcDialogue(npcId,context="",playerAction=""){
  const npc=storyNpc(npcId);if(!npc)return null;
  const tables=DATA.story.offlineTables?.dialogue?.[npc.id];if(!tables)return `${npc.name} waits for Deadlock to continue.`;
- const opener=pick(tables.openers)||"The channel opens.";
+ const action=playerAction||recentPlayerActionText();
+ const topic=dialogueTopic(context,action);
  const mood=npcMood(npc);
- let line=pick(tables[mood]||tables.neutral)||pick(tables.neutral);
+ const topical=TABLETOP_NPC_LINES[npc.id]?.[topic]||[];
+ let line=topical.length&&chance(.78)?pick(topical):pick(tables[mood]||tables.neutral)||pick(tables.neutral);
  const memories=(tables.memory||[]).filter(([tag])=>(npc.memories||[]).some(m=>m.tag===tag));
- if(memories.length&&chance(.42)){
+ if(memories.length&&chance(.30)){
   const memoryLine=pick(memories);
   line=memoryLine?.[1]||line;
  }
- if(context&&chance(.28)){
-  const tail={
-   investigate:" “If you've got proof, send it.”",
-   action:" “Then stop talking and move.”",
-   contracts:" “Money first. Details second.”",
-   ship:" “If the ship's hurt, fix it before you pretend it isn't.”",
-   bounty:" “A bigger number usually means a better trap.”"
-  }[context]||"";
-  line += tail;
- }
- return `${opener} ${line}`;
+ const followups={
+  marr:" “So—what's your next move?”",
+  credits:" “What are you actually offering?”",
+  ship:" “Are we fixing it, or flying it?”",
+  trust:" “You want the truth, or reassurance?”",
+  intel:" “What do you want to know first?”",
+  danger:" “How close is it?”",
+  deal:" “Are you changing the deal?”"
+ };
+ if(!/[?]\s*[”"]?$/.test(line)&&followups[topic]&&chance(.42))line+=followups[topic];
+ return line;
+}
+function pushNpcExchange(npc,context="",playerAction=""){
+ const action=playerAction||recentPlayerActionText();
+ const topic=dialogueTopic(context,action);
+ const mood=npcMood(npc);
+ storyPush("narration","Narrator",npcStageBeat(npc,topic,mood));
+ storyPush("dialogue",npc.name,proceduralNpcDialogue(npc.id,context,action));
+}
+function dialogueChoicesForNpc(npc,context=""){
+ const s=DATA.story;
+ const active=contractById(s.activeContractId);
+ const topic=dialogueTopic(context,recentPlayerActionText());
+ const activeTarget=active?.targetId?DATA.targets.find(t=>t.id===active.targetId):null;
+ const target=activeTarget?.name||(active?.title||"this job").replace(/^Recover\s+/i,"");
+ const first=topic==="marr"&&npc.id==="dren"
+  ?"“Tell me what you think I'm missing about Marr.”"
+  :`“Give me the part about ${target} you haven't said yet.”`;
+ const second=topic==="credits"
+  ?"“Then name your price and what I get for it.”"
+  :"“I need something concrete—a name, a location, or a time.”";
+ const third="“That's enough. Send me what you have. I'll handle the rest.”";
+ const fourth="“I've already got more of this figured out than you think.”";
+ return [
+  {id:uid("choice"),label:first,intent:"dialogue",npcId:npc.id,skill:"Negotiation",dc:12,contractId:s.activeContractId||null},
+  {id:uid("choice"),label:second,intent:"dialogue",npcId:npc.id,skill:"Negotiation",dc:13,contractId:s.activeContractId||null},
+  {id:uid("choice"),label:third,intent:"action",contractId:s.activeContractId||null},
+  {id:uid("choice"),label:fourth,intent:"deception",npcId:npc.id,skill:"Deception",dc:13,contractId:s.activeContractId||null}
+ ];
 }
 function availableComplications(){
  const table=DATA.story.offlineTables?.complications||[];
@@ -1338,8 +1426,7 @@ function reactToPlayerAction(action,choice,roll){
   if(inferred.npcId){
     const npc=storyNpc(inferred.npcId);
     if(npc){
-      const text=proceduralNpcDialogue(npc.id,it?.eventId||"interrupt");
-      storyPush("dialogue",npc.name,text);
+      pushNpcExchange(npc,it?.eventId||"interrupt",action||choice?.label||"");
       applyNpcChoiceConsequence(npc,{...inferred,intent:"dialogue"},roll);
     }
   }else{
@@ -1352,17 +1439,11 @@ function reactToPlayerAction(action,choice,roll){
  if(intent==="dialogue"||(intent==="deception"&&inferred.npcId)){
   const npc=storyNpc(inferred.npcId||s.currentNpc);
   if(npc){
-   const text=proceduralNpcDialogue(npc.id,s.director.lastTopic);
-   storyPush("dialogue",npc.name,text);
+   pushNpcExchange(npc,s.director.lastTopic,action||choice?.label||"");
    s.currentSpeaker=npc.name;s.currentNpc=npc.id;
    setTimeout(()=>uiBeep(430,.035,.015),20);
    applyNpcChoiceConsequence(npc,inferred,roll);
-   s.choices=[
-    {id:uid("choice"),label:`Ask ${npc.name} what they know that Rovan does not.`,intent:"dialogue",npcId:npc.id,skill:"Negotiation",dc:12,contractId:s.activeContractId||null},
-    {id:uid("choice"),label:"Push for a concrete price, location, or name.",intent:"dialogue",npcId:npc.id,skill:"Negotiation",dc:13,contractId:s.activeContractId||null},
-    {id:uid("choice"),label:"End the call and act on what is already known.",intent:"action",contractId:s.activeContractId||null},
-    {id:uid("choice"),label:"Lie about how much information Deadlock already has.",intent:"deception",npcId:npc.id,skill:"Deception",dc:13,contractId:s.activeContractId||null}
-   ];
+   s.choices=dialogueChoicesForNpc(npc,s.director.lastTopic);
    s.objective=`Decide how far to press ${npc.name}.`;
    return;
   }

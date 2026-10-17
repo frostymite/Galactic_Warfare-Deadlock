@@ -1,6 +1,6 @@
 {
   "name": "deadlock-dashboard",
-  "version": "9.3.0",
+  "version": "9.3.2",
   "private": true,
   "scripts": {
     "android:init": "npm install @capacitor/core @capacitor/cli @capacitor/android && npx cap add android",
