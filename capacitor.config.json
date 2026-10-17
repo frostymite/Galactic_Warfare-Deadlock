@@ -1,0 +1,8 @@
+{
+  "appId": "com.deadlock.rovan",
+  "appName": "Deadlock",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  }
+}

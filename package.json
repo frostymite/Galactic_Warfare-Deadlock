@@ -1,0 +1,16 @@
+{
+  "name": "deadlock-dashboard",
+  "version": "9.3.0",
+  "private": true,
+  "scripts": {
+    "android:init": "npm install @capacitor/core @capacitor/cli @capacitor/android && npx cap add android",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android",
+    "story-server": "node story-server.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "openai": "^6.0.0"
+  }
+}

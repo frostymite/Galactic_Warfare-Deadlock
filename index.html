@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#030609">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Deadlock // Rovan Kes</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="bootScreen" class="boot-screen">
+  <div class="boot-core">
+    <div class="boot-sigil">D</div>
+    <div class="boot-title">DEADLOCK TACTICAL OS</div>
+    <div class="boot-sub">ROVAN KES // MERCENARY SYSTEMS LINK</div>
+    <div class="boot-bar"><span id="bootBar"></span></div>
+    <div id="bootLine" class="boot-line">INITIALIZING...</div>
+  </div>
+</div>
+<div id="screenFx" class="screen-fx"></div>
+<div id="flashFx" class="flash-fx"></div>
+<div id="floatingLayer" class="floating-layer"></div>
+<div id="levelBanner" class="event-banner"><div class="event-kicker">SYSTEM EVENT</div><div id="eventText" class="event-text">LEVEL UP</div></div>
+<div id="bountyCinematic" class="bounty-cinematic">
+  <div class="bounty-gridfx"></div>
+  <div class="bounty-frame">
+    <div class="bounty-kicker">CONTRACT NETWORK // VERIFIED HANDOFF</div>
+    <div class="bounty-title">BOUNTY ACQUIRED</div>
+    <div class="bounty-target" id="bountyTarget">UNKNOWN TARGET</div>
+    <div class="bounty-meta">
+      <span id="bountyStatus">WANTED</span>
+      <span id="bountyReward">0 CR</span>
+    </div>
+    <div class="bounty-scanline"></div>
+    <button class="btn bounty-dismiss" id="dismissBounty">CONTINUE</button>
+  </div>
+</div>
+<div id="weaponWheel" class="weapon-wheel-overlay">
+  <div class="weapon-wheel-backdrop" id="weaponWheelBackdrop"></div>
+  <div class="weapon-wheel">
+    <div class="wheel-ring"></div>
+    <button class="wheel-weapon wheel-blackwake" data-wheelweapon="blackwake">
+      <b>BLACKWAKE</b><span>HAND CANNON</span>
+    </button>
+    <button class="wheel-weapon wheel-luna" data-wheelweapon="luna">
+      <b>LUNA</b><span>PISTOL</span>
+    </button>
+    <button class="wheel-weapon wheel-sol" data-wheelweapon="sol">
+      <b>SOL</b><span>PISTOL</span>
+    </button>
+    <div class="wheel-center">
+      <div class="wheel-label">SELECTED</div>
+      <div id="wheelSelected">BLACKWAKE</div>
+      <button class="btn" id="wheelMode">MODE</button>
+      <button class="btn good" id="wheelFire">FIRE</button>
+      <button class="btn" id="wheelClose">CLOSE</button>
+    </div>
+  </div>
+</div>
+<div id="critOverlay" class="crit-overlay"><div class="crit-text">CRITICAL</div></div>
+<div id="modeFx" class="mode-fx"></div>
+
+<div id="holoTransmission" class="holo-transmission-overlay">
+  <div class="holocall-bg"></div>
+  <section class="holocall-shell" aria-label="Holonet Transmission">
+    <header class="holocall-header">
+      <div class="holocall-brand">
+        <div class="holocall-emblem">⌁</div>
+        <div>
+          <div class="holocall-title">HOLONET TRANSMISSION</div>
+          <div class="holocall-code">⟐ 7A // DEADLOCK CIPHER // ENCRYPTED RELAY</div>
+        </div>
+      </div>
+      <div class="holocall-header-status">
+        <div class="holocall-signal"><i></i><i></i><i></i><i></i></div>
+        <div><b>SECURE CHANNEL</b><span id="holoTxChannel">ENCRYPTED HOLO</span></div>
+      </div>
+      <div class="holocall-cycle">
+        <span>CYCLE <b id="holoTxTime">--:--</b></span>
+        <small>LOCAL TIME</small>
+      </div>
+      <button class="holocall-close" id="closeTransmission" aria-label="End transmission">×</button>
+    </header>
+
+    <div class="holocall-content">
+      <div class="holocall-profile">
+        <div class="holocall-portrait">
+          <img id="holoTxPortrait" src="assets/npc_unknown.svg" alt="Holonet contact">
+          <div class="holocall-scan"></div>
+          <div class="holocall-profile-tag">
+            <div class="holocall-contact-name" id="holoTxSender">UNKNOWN SIGNAL</div>
+            <div class="holocall-contact-role" id="holoTxRole">UNVERIFIED SOURCE</div>
+          </div>
+        </div>
+
+        <aside class="holocall-identity">
+          <div class="holocall-id-row"><span>ORIGIN</span><b id="holoTxOrigin">ENCRYPTED RELAY</b></div>
+          <div class="holocall-id-row"><span>CHANNEL</span><b id="holoTxIdentityChannel">COVERT</b></div>
+          <div class="holocall-id-row"><span>PRIORITY</span><b id="holoTxPriority">NORMAL</b></div>
+          <div class="holocall-id-row"><span>VERIFICATION</span><b class="good-text" id="holoTxVerification">KNOWN CONTACT</b></div>
+          <div class="holocall-contact-chip">
+            <div class="holocall-chip-mark">⌖</div>
+            <div><b id="holoTxKnown">CONTACT VERIFIED</b><span id="holoTxTrust">LOCAL DOSSIER</span></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="holocall-wave-wrap">
+        <div class="holocall-wave-label">LIVE AUDIO // <span id="holoTxWaveStatus">RECEIVING</span></div>
+        <div class="holo-transmission-wave" id="holoTxWave"></div>
+      </div>
+
+      <article class="holocall-dialogue">
+        <div class="holocall-dialogue-speaker" id="holoTxDialogueSpeaker">UNKNOWN:</div>
+        <div class="holocall-dialogue-text" id="holoTxDialogueText"></div>
+        <div class="holocall-dialogue-state" id="holoTxDialogueState">UNVERIFIED LOCAL SIGNAL</div>
+      </article>
+
+      <div class="holocall-responses" id="holoTxChoices"></div>
+    </div>
+
+    <footer class="holocall-footer">
+      <button class="holocall-action danger" id="endTransmission">
+        <span class="holocall-action-icon">●</span>
+        <span><b>END TRANSMISSION</b><small>Close without adding anything else</small></span>
+      </button>
+      <button class="holocall-action log" id="commitTransmission">
+        <span class="holocall-action-icon">▣</span>
+        <span><b>LOG TO STORY</b><small>Commit this exchange to campaign history</small></span>
+      </button>
+    </footer>
+  </section>
+</div>
+
+<div id="bountyPuckOverlay" class="bounty-puck-overlay">
+  <div class="puck-field"></div>
+  <div class="bounty-puck-device">
+    <div class="puck-rim rim-a"></div>
+    <div class="puck-rim rim-b"></div>
+    <div class="puck-holo">
+      <div class="puck-target-mark" id="puckTargetMark">?</div>
+      <div class="puck-target-name" id="puckTargetName">UNVERIFIED TARGET</div>
+      <div class="puck-target-meta" id="puckTargetMeta">0 CR // UNKNOWN</div>
+    </div>
+  </div>
+  <div class="bounty-puck-title">BOUNTY PUCK // UNVERIFIED LEAD</div>
+  <button class="btn" id="closePuck">DISMISS</button>
+</div>
+
+<div id="storyCinematic" class="story-cinematic">
+  <div class="story-cinematic-bg"></div>
+  <div class="story-cinematic-frame">
+    <div class="story-cine-kicker" id="storyCineKicker">TACTICAL EVENT</div>
+    <div class="story-cine-icon" id="storyCineIcon">◆</div>
+    <div class="story-cine-title" id="storyCineTitle">NEW INTEL</div>
+    <div class="story-cine-sub" id="storyCineSub">Campaign state updated</div>
+  </div>
+</div>
+
+
+<div class="fx-grid"></div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark">D</div>
+      <div><div class="micro">BOUNTY DOSSIER</div><h1>ROVAN KES</h1><div class="cyan">“DEADLOCK”</div></div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-foot"><span class="online"></span> LOCAL DATA LINK</div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div><div class="micro" id="crumb">DEADLOCK // OVERVIEW</div><h2 id="title">Overview</h2></div>
+      <div class="actions">
+        <button class="btn" id="installBtn" hidden>Install App</button><span id="layoutBadge" class="layout-badge">PHONE</span><button class="btn" id="fullscreenBtn">Immersive</button><button class="btn" id="soundBtn">Sound: On</button>
+        <button class="btn" id="wakeBtn">Keep Awake</button>
+        <button class="btn" id="quickRoll">D20</button>
+        <button class="btn" id="exportBtn">Export</button>
+        <button class="btn" id="importBtn">Import</button>
+        <input type="file" id="importFile" accept=".json" hidden>
+      </div>
+    </header>
+    <section id="content"></section>
+  </main>
+</div>
+
+<dialog id="modal">
+  <div class="modal-head"><h3 id="modalTitle"></h3><button class="icon" id="closeModal">×</button></div>
+  <div class="modal-body" id="modalBody"></div>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
