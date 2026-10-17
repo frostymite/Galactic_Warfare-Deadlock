@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="640" viewBox="0 0 192 240">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#07161d"/><stop offset="1" stop-color="#02070a"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#ff7cc8" opacity=".10"/></pattern>
+</defs>
+<rect width="192" height="240" rx="12" fill="url(#bg)" stroke="#ff7cc8" stroke-width="1.5"/>
+<path d="M35 174 Q53 137 96 137 Q139 137 157 174 V197 H35 Z" fill="#09151b" stroke="#ff7cc8" stroke-width="1.5"/>
+<g filter="url(#glow)"><path d="M60 61 Q73 38 98 37 Q121 39 135 62 L127 108 Q114 128 96 131 Q75 126 64 106 Z" fill="#27101f" stroke="#ff7cc8" stroke-width="2"/><path d="M70 75 L89 70 M104 70 L123 75 M82 104 L112 104" stroke="#ff7cc8" stroke-width="2"/></g>
+<rect x="7" y="7" width="178" height="226" rx="9" fill="url(#scan)" opacity=".65"/>
+<path d="M18 21 H54 M138 21 H174 M18 214 H54 M138 214 H174" stroke="#ff7cc8" opacity=".7"/>
+<text x="96" y="202" text-anchor="middle" fill="#ff7cc8" font-family="monospace" font-size="10" font-weight="bold">JESSA</text>
+<text x="96" y="218" text-anchor="middle" fill="#8db3bc" font-family="monospace" font-size="6">GUNNER // ALLY</text>
+</svg>

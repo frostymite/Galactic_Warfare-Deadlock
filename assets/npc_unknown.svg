@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="640" viewBox="0 0 192 240">
+<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#13090c"/><stop offset="1" stop-color="#030609"/></linearGradient></defs>
+<rect width="192" height="240" rx="12" fill="url(#bg)" stroke="#ff5c69"/>
+<circle cx="96" cy="76" r="38" fill="#170d11" stroke="#ff5c69"/>
+<path d="M58 181 Q69 138 96 138 Q123 138 134 181 V199 H58 Z" fill="#160b0f" stroke="#ff5c69"/>
+<text x="96" y="90" text-anchor="middle" fill="#ff9ba4" font-size="42" font-family="monospace" font-weight="bold">?</text>
+<text x="96" y="215" text-anchor="middle" fill="#ff7a86" font-size="8" font-family="monospace">UNVERIFIED TARGET</text>
+</svg>
