@@ -1,8 +1,1 @@
-{
-  "appId": "com.deadlock.rovan",
-  "appName": "Deadlock",
-  "webDir": ".",
-  "server": {
-    "androidScheme": "https"
-  }
-}
+{"appId":"com.deadlock.tacticalos","appName":"Deadlock Tactical OS","webDir":".","server":{"androidScheme":"https"}}

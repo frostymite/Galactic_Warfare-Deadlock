@@ -1,7 +1,7 @@
 {
-  "name": "Deadlock v9.4 \u2014 Guided Hunt Loop",
-  "short_name": "Deadlock 9.4",
-  "description": "Offline-first bounty hunter RPG with clear hunt stages, mission guidance, procedural GM dialogue, cinematic orchestral score, character voices, persistent consequences, and foldable support.",
+  "name": "Deadlock v10 — Living Galaxy",
+  "short_name": "Deadlock v10",
+  "description": "Offline-first bounty hunter RPG with a living galaxy, Blackglass Station HQ, guided hunts, procedural GM, adaptive score and foldable layouts.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,34 +9,9 @@
   "theme_color": "#030609",
   "orientation": "any",
   "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/maskable-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icons/maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ],
-  "display_override": [
-    "fullscreen",
-    "standalone",
-    "minimal-ui"
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"icons/maskable-192.png","sizes":"192x192","type":"image/png","purpose":"maskable"},
+    {"src":"icons/maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
   ]
 }

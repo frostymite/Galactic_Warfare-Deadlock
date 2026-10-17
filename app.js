@@ -1,6 +1,6 @@
 
 const STORAGE_KEY="deadlock_dashboard_v3";
-let DATA=null,currentPage="Overview",diceHistory=[],deferredInstall=null,wakeLock=null;
+let DATA=null,GALAXY=null,ASSET_MANIFEST=null,currentPage="Overview",diceHistory=[],deferredInstall=null,wakeLock=null;
 let uiSound=true;
 let AMBIENT=null;
 let AUDIO_UNLOCKED=false;
@@ -17,13 +17,30 @@ let notificationLog=[];
 let currentTargetLock=null;
 let selectedCombatWeapon="blackwake";
 let selectedCombatTarget=null;
-const pages=["Overview","Story","Holonet","Combat","Targets","Bounties","Galaxy","Dogfight","Character","Identities","Gear","Weapons","Ship","Contracts","Contacts","Inventory","Journal","Factions","Dice","GM Controls","Settings"];
+const pages=["Overview","Story","Holonet","Combat","Targets","Bounties","Galaxy","HQ","Dogfight","Character","Identities","Gear","Weapons","Ship","Contracts","Contacts","Inventory","Journal","Factions","Dice","GM Controls","Settings"];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const pct=(v,max)=>max?clamp(Math.round(v/max*100),0,100):0;
 const uid=(p="id")=>p+"_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7);
 const money=n=>new Intl.NumberFormat("en-US").format(Number(n||0))+" cr";
+function assetEntry(group,id){return ASSET_MANIFEST?.[group]?.[id]||null}
+function assetUrl(group,id,state="neutral"){
+ const e=assetEntry(group,id);if(!e)return null;
+ if(typeof e==="string")return e;
+ return e[state]||e.neutral||e.hero||e.flight||e.exterior||e.fallback||null;
+}
+function assetFallback(group,id){const e=assetEntry(group,id);return typeof e==="object"?(e.fallback||e.neutral||e.hero||null):null}
+function imgTag(src,alt="",fallback=null,cls=""){
+ const safe=esc(src||fallback||"");const fb=esc(fallback||"");
+ return `<img ${cls?`class="${esc(cls)}"`:""} src="${safe}" alt="${esc(alt)}" loading="lazy" ${fb&&fb!==safe?`onerror="this.onerror=null;this.src='${fb}'"`:""}>`;
+}
+function characterVisual(id,state="neutral",alt=""){
+ const e=assetEntry("characters",id)||{};return imgTag(e[state]||e.neutral||e.fallback,alt||id,e.fallback||null,"character-visual");
+}
+function ravenVisual(state="flight",alt="The Raven"){
+ const e=assetEntry("ships","raven")||{};return imgTag(e[state]||e.flight||e.fallback,alt,e.fallback||null,"raven-visual");
+}
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(DATA))}
 function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");navigator.vibrate?.(20);uiBeep(520,.035,.035);setTimeout(()=>t.classList.remove("show"),1500)}
 let AUDIO_CTX=null;
@@ -327,11 +344,104 @@ window.addEventListener("resize",handleFoldResize,{passive:true});
 window.addEventListener("orientationchange",handleFoldResize,{passive:true});
 window.visualViewport?.addEventListener("resize",handleFoldResize,{passive:true});
 
+
+function galaxyLocation(id){return GALAXY?.locations?.find(x=>x.id===id)||null}
+function galaxySystem(id){return GALAXY?.systems?.find(x=>x.id===id)||null}
+function galaxySystemForLocation(id){const l=galaxyLocation(id);return l?galaxySystem(l.systemId):null}
+function galaxyState(){return DATA.galaxyState}
+function ensureGalaxyState(){
+ const known=(GALAXY?.locations||[]).filter(x=>x.known).map(x=>x.id);
+ const home=GALAXY?.home?.locationId||"blackglass_station";
+ DATA.galaxyState=DATA.galaxyState||{version:1,homeId:home,currentLocationId:home,selectedLocationId:home,phase:"docked",route:null,transit:null,currentSiteId:"blackglass_hq",discovered:known,visited:[home],scanIntel:{},travelLog:[]};
+ const g=DATA.galaxyState;g.version=1;g.homeId=home;g.discovered=[...new Set([...(g.discovered||[]),...known,home])];g.visited=[...new Set(g.visited||[home])];g.selectedLocationId=g.selectedLocationId||g.currentLocationId||home;g.phase=g.phase||"idle";g.scanIntel=g.scanIntel||{};g.travelLog=g.travelLog||[];
+ DATA.locations=DATA.locations||[];
+ for(const l of GALAXY?.locations||[]){
+  const sys=galaxySystem(l.systemId);let existing=DATA.locations.find(x=>x.id===l.id);
+  if(!existing)DATA.locations.push({id:l.id,name:l.name,region:sys?.region||sys?.name||"Unknown",x:sys?.x??50,y:sys?.y??50,known:g.discovered.includes(l.id),notes:l.description});
+  else if(existing.id!=="unknown"){existing.x=sys?.x??existing.x;existing.y=sys?.y??existing.y;if(g.discovered.includes(l.id))existing.known=true}
+ }
+}
+function galaxyRouteEdges(id){return (GALAXY?.routes||[]).filter(r=>r.a===id||r.b===id).map(r=>({to:r.a===id?r.b:r.a,route:r}))}
+function galaxyPath(from,to){
+ if(!from||!to)return null;if(from===to)return {nodes:[from],routes:[],distance:0,fuel:0,risk:0,time:0};
+ const dist=new Map([[from,0]]),prev=new Map(),used=new Set();
+ while(true){let cur=null,best=Infinity;for(const [k,v] of dist)if(!used.has(k)&&v<best){cur=k;best=v}if(!cur)break;if(cur===to)break;used.add(cur);for(const e of galaxyRouteEdges(cur)){const nv=best+Number(e.route.distance||1);if(nv<(dist.get(e.to)??Infinity)){dist.set(e.to,nv);prev.set(e.to,{from:cur,route:e.route})}}}
+ if(!dist.has(to))return null;let nodes=[to],routes=[];let c=to;while(c!==from){const p=prev.get(c);if(!p)break;routes.unshift(p.route);c=p.from;nodes.unshift(c)}
+ return {nodes,routes,distance:Math.round(routes.reduce((a,r)=>a+Number(r.distance||0),0)),fuel:Math.round(routes.reduce((a,r)=>a+Number(r.fuel||0),0)),risk:Math.min(95,Math.round(routes.reduce((a,r)=>a+Number(r.risk||0),0)/Math.max(1,routes.length))),time:routes.reduce((a,r)=>a+Number(r.time||1),0)};
+}
+function selectedGalaxyLocation(){return galaxyLocation(galaxyState()?.selectedLocationId)||galaxyLocation(galaxyState()?.homeId)}
+function currentGalaxyLocation(){return galaxyLocation(galaxyState()?.currentLocationId)}
+function locationHeroAsset(loc){
+ if(!loc)return null;
+ if(loc.id==="blackglass_station")return assetEntry("blackglass","exterior");
+ const key=loc.asset;return ASSET_MANIFEST?.locations?.[key]?.hero||null;
+}
+function locationHero(loc){return imgTag(locationHeroAsset(loc),loc?.name||"Location",assetEntry("effects","starfield"),"location-hero-img")}
+function plotLivingRoute(destinationId){
+ const g=galaxyState(),from=g.currentLocationId||g.homeId,dest=galaxyLocation(destinationId);if(!dest)return toast("Destination unavailable");
+ const path=galaxyPath(from,destinationId);if(!path)return toast("No mapped route from current position");
+ g.selectedLocationId=destinationId;g.route={originId:from,destinationId,path:path.nodes,distance:path.distance,fuelCost:path.fuel,risk:path.risk,time:path.time,phase:"plotted"};g.phase="plotted";
+ if(DATA.holonet){const sys=galaxySystemForLocation(destinationId);DATA.holonet.route={status:"CALCULATED",originName:galaxyLocation(from)?.name||"The Raven",destinationId,destinationName:dest.name,quality:Math.max(35,100-path.risk),risk:path.risk,points:(path.nodes||[]).map(id=>{const s=galaxySystemForLocation(id);return [s?.x??50,s?.y??50]})}}
+ g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Course plotted: ${galaxyLocation(from)?.name||"Current Position"} → ${dest.name}. ${path.fuel} fuel // ${path.risk}% risk.`});g.travelLog=g.travelLog.slice(0,40);save();storyCinematic("hyperspace",`${dest.name} // route ready`);render("Galaxy");
+}
+function chooseTravelEncounter(risk=0){
+ if(Math.random()*100>Math.max(18,risk))return null;
+ const pool=GALAXY?.encounters||[];const weighted=[];for(const e of pool)for(let i=0;i<Number(e.weight||1);i++)weighted.push(e);return structuredClone(weighted[Math.floor(Math.random()*weighted.length)]||null);
+}
+function beginLivingTravel(){
+ const g=galaxyState(),r=g.route;if(!r||r.phase!=="plotted")return toast("Plot a route first");
+ if(DATA.ship.fuel<r.fuelCost)return toast(`Need ${r.fuelCost} fuel`);
+ DATA.ship.fuel-=r.fuelCost;r.phase="transit";g.phase="transit";g.transit={progress:0,encounter:chooseTravelEncounter(r.risk),encounterResolved:false};
+ g.travelLog.unshift({ts:new Date().toLocaleString(),text:`The Raven departed for ${galaxyLocation(r.destinationId)?.name}.`});storyPush("system","Navigation",`The Raven departs ${galaxyLocation(r.originId)?.name||"the current position"} for ${galaxyLocation(r.destinationId)?.name}.`);save();eventBanner("HYPERSPACE");render("Galaxy");
+}
+function resolveTravelEncounter(mode){
+ const g=galaxyState(),t=g.transit,e=t?.encounter;if(!t||!e)return;
+ const skill=mode==="evade"?"Piloting":mode==="investigate"?"Investigation":"Survival";const score=Math.round(Number(DATA.character.skills?.[skill]||50)/10);const total=rollDie(20)+score,dc=10+Math.round(Number(e.danger||0)/4);const ok=mode==="ignore"?true:total>=dc;
+ if(!ok){DATA.story.danger=clamp(Number(DATA.story.danger||0)+4,0,100);if(mode==="evade")DATA.ship.shields=clamp(DATA.ship.shields-8,0,DATA.ship.shieldsMax);g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${e.name}: ${skill} check ${total} vs ${dc} failed.`});}
+ else{g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${e.name}: ${mode} resolved (${total}${mode==="ignore"?"":" vs "+dc}).`});}
+ storyPush("narration","Narrator",ok?`The Raven clears the ${e.name.toLowerCase()} without losing the route.`:`The ${e.name.toLowerCase()} complicates the crossing before the Raven breaks free.`);t.encounterResolved=true;save();render("Galaxy");
+}
+function continueLivingTravel(){
+ const g=galaxyState(),t=g.transit,r=g.route;if(!t||!r||r.phase!=="transit")return;
+ if(t.encounter&&!t.encounterResolved)return toast("Resolve the transit event first");
+ t.progress=Math.min(100,Number(t.progress||0)+50);if(t.progress<100){g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Transit ${t.progress}% — route stable.`});save();return render("Galaxy")}
+ r.phase="arrived";g.phase="orbit";g.currentLocationId=r.destinationId;g.selectedLocationId=r.destinationId;g.discovered=[...new Set([...(g.discovered||[]),r.destinationId])];g.visited=[...new Set([...(g.visited||[]),r.destinationId])];const l=galaxyLocation(r.destinationId);const dl=DATA.locations.find(x=>x.id===r.destinationId);if(dl)dl.known=true;g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Arrived in orbit: ${l?.name}.`});storyPush("system","Navigation",`The Raven arrives in orbit of ${l?.name}.`);g.transit=null;save();storyCinematic("hyperspace",`${l?.name} // ARRIVAL`);render("Galaxy");
+}
+function commitGalaxyLocationToStory(){const l=currentGalaxyLocation();if(!l)return;DATA.story.location=l.name;storyPush("narration","Narrator",`The current operation is now established at ${l.name}.`);save();toast(`${l.name} committed to Story`);render("Story")}
+function performLocalAction(action){
+ const g=galaxyState(),l=currentGalaxyLocation();if(!l)return toast("No current destination");
+ if(action==="scan"){g.scanIntel[l.id]=(g.scanIntel[l.id]||0)+1;g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Orbital scan completed at ${l.name}.`});storyPush("system","The Raven",`Orbital scan of ${l.name} completed. Traffic, local services, and approach vectors updated.`)}
+ if(action==="dock"){g.phase=l.type.includes("Station")?"docked":"surface";g.currentSiteId=l.id==="blackglass_station"?"blackglass_hq":null;g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${l.landing||"Approach"} completed at ${l.name}.`});storyPush("system","Navigation",`${l.landing||"Landing"} completed at ${l.name}.`)}
+ if(action==="hq")return render("HQ");
+ if(action==="story")return commitGalaxyLocationToStory();
+ save();render("Galaxy");
+}
+function startLocalSite(siteName){
+ const g=galaxyState(),l=currentGalaxyLocation();if(!l)return toast("No current location");if(!["docked","surface"].includes(g.phase))return toast(`Dock or land at ${l.name} first`);
+ DATA.story.sceneNumber=Number(DATA.story.sceneNumber||1)+1;DATA.story.currentSceneId=uid("scene");DATA.story.location=`${l.name} — ${siteName}`;DATA.story.objective=`Operate at ${siteName}.`;
+ storyPush("narration","Narrator",`The Raven's local operation shifts to ${siteName} on ${l.name}. The location is now part of the active scene.`);g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Local operation opened: ${l.name} / ${siteName}.`});save();eventBanner(String(siteName).toUpperCase());render("Story");
+}
+function handleWorldService(service){
+ const s=String(service||"").toLowerCase();if(/bounty/.test(s))return render("Bounties");if(/repair|parts|salvage/.test(s))return render("Ship");if(/black market|market|trade|broker/.test(s))return render("Inventory");if(/medical/.test(s))return render("Character");if(/research|information|forged|smuggler/.test(s)){const l=currentGalaxyLocation();DATA.story.objective=`Gather local intelligence on ${l?.name||"the current world"}.`;storyPush("system","Local Network",`Deadlock opens a local intelligence channel through ${service}.`);save();return render("Story")};return toast(`${service}: local hook ready`)
+}
+function hqSite(id){return GALAXY?.hq?.sites?.find(x=>x.id===id)||null}
+function hqSiteAsset(site){if(!site)return assetEntry("blackglass","hq");const key=site.asset?.replace("blackglass_","")||"hq";return assetEntry("blackglass",key)||assetEntry("blackglass","hq")}
+function handleHqSite(id){const g=galaxyState();g.currentSiteId=id;save();render("HQ")}
+function handleHqAction(action){
+ const a=String(action).toLowerCase();if(/contract/.test(a))return render("Contracts");if(/target/.test(a))return render("Targets");if(/journal/.test(a))return render("Journal");if(/identity/.test(a))return render("Identities");if(/gear/.test(a))return render("Gear");if(/diagnostic|repair|raven/.test(a))return render("Ship");if(/contact|call/.test(a))return render("Holonet");if(/galaxy|intel/.test(a))return render("Galaxy");return toast(action)
+}
+function galaxyMapSvg(){
+ const g=galaxyState(),route=g.route?.path||[];
+ const routeIds=new Set(route);const lines=(GALAXY?.routes||[]).map(r=>{const a=galaxySystemForLocation(r.a),b=galaxySystemForLocation(r.b);return `<line x1="${a?.x}" y1="${a?.y}" x2="${b?.x}" y2="${b?.y}" class="galaxy-link ${routeIds.has(r.a)&&routeIds.has(r.b)?"active":""}"/>`}).join("");
+ const nodes=(GALAXY?.locations||[]).map(l=>{const sys=galaxySystemForLocation(l.id),disc=g.discovered.includes(l.id),current=g.currentLocationId===l.id,selected=g.selectedLocationId===l.id,home=l.id===g.homeId;return `<button class="galaxy-node ${disc?"known":"unknown"} ${current?"current":""} ${selected?"selected":""} ${home?"home":""}" style="left:${sys?.x}%;top:${sys?.y}%" data-galaxy-node="${l.id}" title="${esc(l.name)}"><i></i><span>${disc?esc(l.name):"UNKNOWN"}</span></button>`}).join("");
+ return `<div class="living-galaxy-map"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${nodes}<div class="galaxy-map-legend"><span><i class="legend-dot home"></i>HQ</span><span><i class="legend-dot current"></i>Raven</span><span><i class="legend-dot unknown"></i>Unverified</span></div></div>`
+}
+
 async function load(){
- const defaults=await fetch("character-data.json").then(r=>r.json());
+ const [defaults,galaxy,assets]=await Promise.all([fetch("character-data.json").then(r=>r.json()),fetch("galaxy-data.json").then(r=>r.json()),fetch("asset-manifest.json").then(r=>r.json())]);
+ GALAXY=galaxy;ASSET_MANIFEST=assets;
  const local=localStorage.getItem(STORAGE_KEY);
- DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);
- ensureMissionLoopState();
+ DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);ensureGalaxyState();ensureMissionLoopState();
  uiSound=DATA.settings.sound!==false;
  save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");
  if($("#soundBtn"))$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;
@@ -357,7 +467,7 @@ function healthControls(key,maxKey,label){
 function pageOverview(){
  let c=DATA.character,s=DATA.ship;
  return `<div class="grid">
- <div class="card hero"><img src="assets/rovan.jpg"><div class="overlay"><div class="micro">${esc(c.species)} // ${esc(c.role)}</div><h2>${esc(c.name)}</h2><div class="cyan">CALLSIGN: ${esc(c.callsign)}</div><p>${esc(c.appearance)}</p></div></div>
+ <div class="card hero">${characterVisual("rovan","neutral","Rovan Kes")}<div class="overlay"><div class="micro">${esc(c.species)} // ${esc(c.role)}</div><h2>${esc(c.name)}</h2><div class="cyan">CALLSIGN: ${esc(c.callsign)}</div><p>${esc(c.appearance)}</p></div></div>
  <div class="card span3"><h3>Status</h3><div class="row"><span class="muted">Level</span><b>${c.level}</b></div><div class="row"><span class="muted">XP</span><b>${c.xp}/${c.xpNext}</b></div>${meter(c.xp,c.xpNext)}
  <div class="row"><span class="muted">Credits</span><b class="reward">${money(c.credits)}</b></div><div class="controls"><button class="btn" data-open="credits">Adjust Credits</button><button class="btn" data-open="xp">Add XP</button></div></div>
  <div class="card span4"><h3>Loadout</h3>${DATA.weapons.map(w=>`<div class="tile" data-weapon="${w.id}"><div class="name">${w.name}</div><div class="sub">${w.type}</div><div class="row small"><span>Mode</span><b>${w.mode}</b></div>${meter(w.charge,w.chargeMax)}</div>`).join("")}</div>
@@ -441,11 +551,11 @@ function generateHolonetTransmission(senderId=null){
 function holoContactMeta(tx){
  const npc=holoContact(tx.senderId);
  const contact=DATA.contacts.find(c=>c.id===tx.senderId);
- if(tx.senderId==="dren")return {portrait:"assets/contact_dren.jpg",role:"RIVAL // OCCASIONAL ALLY",origin:"ENCRYPTED RELAY",identityChannel:"COVERT",priority:"NORMAL",verification:"KNOWN CONTACT",known:"IDENTITY VERIFIED",trust:`TRUST ${npc?.mood?.trust??contact?.trust??50}%`};
- if(tx.senderId==="nera")return {portrait:npc?.portrait||"assets/npc_nera.svg",role:"CONTRACT ISSUER",origin:"PRIVATE CONTRACT RELAY",identityChannel:"SECURE",priority:"BUSINESS",verification:"KNOWN CONTACT",known:"IDENTITY VERIFIED",trust:`TRUST ${npc?.mood?.trust??contact?.trust??40}%`};
- if(tx.senderId==="renn")return {portrait:npc?.portrait||"assets/npc_renn.svg",role:"OPERATIONAL CONTACT",origin:"MASKED FIELD RELAY",identityChannel:"COVERT",priority:"NORMAL",verification:"KNOWN CONTACT",known:"IDENTITY VERIFIED",trust:`TRUST ${npc?.mood?.trust??contact?.trust??45}%`};
- if(tx.senderId==="jessa")return {portrait:npc?.portrait||"assets/npc_jessa.svg",role:"GUNNER // ALLY",origin:"FIELD COMMS",identityChannel:"SECURE",priority:"TACTICAL",verification:"KNOWN CONTACT",known:"IDENTITY VERIFIED",trust:`TRUST ${npc?.mood?.trust??contact?.trust??55}%`};
- return {portrait:"assets/npc_unknown.svg",role:"UNVERIFIED SOURCE",origin:"UNKNOWN RELAY",identityChannel:"MASKED",priority:"UNKNOWN",verification:"UNVERIFIED",known:"IDENTITY UNKNOWN",trust:"NO DOSSIER MATCH"};
+ if(tx.senderId==="dren")return {portrait:assetUrl("characters","dren","holo")||assetUrl("characters","dren","neutral"),role:"RIVAL // OCCASIONAL ALLY",origin:"ENCRYPTED RELAY",identityChannel:"COVERT",priority:"NORMAL",verification:"KNOWN CONTACT",known:"IDENTITY VERIFIED",trust:`TRUST ${npc?.mood?.trust??contact?.trust??50}%`};
+ if(tx.senderId==="nera")return {portrait:assetUrl("characters","nera","holo")||npc?.portrait,role:"CONTRACT ISSUER",origin:"PRIVATE CONTRACT RELAY",identityChannel:"SECURE",priority:"BUSINESS",verification:"KNOWN CONTACT",known:"IDENTITY VERIFIED",trust:`TRUST ${npc?.mood?.trust??contact?.trust??40}%`};
+ if(tx.senderId==="renn")return {portrait:assetUrl("characters","renn","holo")||npc?.portrait,role:"OPERATIONAL CONTACT",origin:"MASKED FIELD RELAY",identityChannel:"COVERT",priority:"NORMAL",verification:"KNOWN CONTACT",known:"IDENTITY VERIFIED",trust:`TRUST ${npc?.mood?.trust??contact?.trust??45}%`};
+ if(tx.senderId==="jessa")return {portrait:assetUrl("characters","jessa","holo")||npc?.portrait,role:"GUNNER // ALLY",origin:"FIELD COMMS",identityChannel:"SECURE",priority:"TACTICAL",verification:"KNOWN CONTACT",known:"IDENTITY VERIFIED",trust:`TRUST ${npc?.mood?.trust??contact?.trust??55}%`};
+ return {portrait:assetEntry("effects","starfield"),role:"UNVERIFIED SOURCE",origin:"UNKNOWN RELAY",identityChannel:"MASKED",priority:"UNKNOWN",verification:"UNVERIFIED",known:"IDENTITY UNKNOWN",trust:"NO DOSSIER MATCH"};
 }
 function holoReplyChoices(tx){
  const turn=(tx.exchange||[]).filter(x=>x.speaker==="Deadlock").length;
@@ -486,6 +596,7 @@ function renderHoloTransmission(tx){
  $("#holoTxSender").textContent=tx.sender;
  $("#holoTxRole").textContent=meta.role;
  $("#holoTxPortrait").src=meta.portrait;
+ $("#holoTxPortrait").onerror=()=>{const id=tx.senderId==="kade"?"nera":tx.senderId;const fb=assetFallback("characters",id)||assetUrl("characters","unknown","holo");if(fb&&$("#holoTxPortrait").src!==fb)$("#holoTxPortrait").src=fb};
  $("#holoTxPortrait").alt=`${tx.sender} Holonet portrait`;
  $("#holoTxOrigin").textContent=meta.origin;
  $("#holoTxChannel").textContent=tx.channel||"ENCRYPTED HOLO";
@@ -619,23 +730,35 @@ function pageBounties(){
  <div class="card span7"><h3>Generator Notes</h3><p class="muted">Generated names, crimes, danger ratings, and rewards are intentionally marked unverified so they do not overwrite established campaign lore unless you save them.</p><div class="pills"><span class="pill">Unverified Leads</span><span class="pill">Alive / Dead-or-Alive</span><span class="pill">Editable Reward</span></div></div></div>`
 }
 function pageGalaxy(){
- let cur=DATA.missions.find(m=>m.status==="Active"),currentLoc=cur?.locationId,h=DATA.holonet||{},route=h.route||{};
- return `<div class="grid"><div class="card span8"><div class="row"><h3>Hyperspace Navigation / Mission Map</h3><span class="pill cyan">${esc(route.status||"STANDBY")}</span></div><div class="aurebesh-strip">NAV-CODE ⟐ 7A // HYPERLANE CACHE // ⌖ ${esc(h.encryption||"D7")} // LOCAL ASTROGATION</div><div class="galaxy holomap">${routeSvg()}${DATA.locations.map(l=>`<button class="planet ${!l.known?"unknown":""} ${l.id===currentLoc?"current":""}" style="left:${l.x}%;top:${l.y}%" data-location="${l.id}"><span class="planet-dot"></span>${esc(l.name)}</button>`).join("")}<div class="ship-blip" style="left:14%;top:76%" title="The Raven — current position"></div></div>
- <div class="route-readout"><div><span class="small muted">CORRIDOR QUALITY</span><div class="big">${route.quality||0}%</div></div><div><span class="small muted">ROUTE RISK</span><div class="big">${route.risk||0}%</div></div><div><span class="small muted">DESTINATION</span><div class="big">${esc(route.destinationName||"UNKNOWN")}</div></div></div>
- <div class="controls"><select id="routeDestination">${DATA.locations.map(l=>`<option value="${l.id}" ${l.id===route.destinationId?"selected":""}>${esc(l.name)}</option>`).join("")}</select><button class="btn good" id="plotRoute">Plot Hyperspace Course</button><button class="btn" onclick="render('Holonet')">Holonet Ops</button></div></div>
- <div class="card span4"><h3>Active Missions</h3>${DATA.missions.map(m=>{let l=DATA.locations.find(x=>x.id===m.locationId);return `<div class="tile" data-mission="${m.id}"><div class="name">${esc(m.title)}</div><div class="sub">${esc(l?.name||"Unknown")}</div><p>${esc(m.notes)}</p><span class="pill ${m.status==="Active"?"cyan":""}">${m.status}</span></div>`}).join("")}<div class="controls"><button class="btn" data-open="newLocation">Add Location</button><button class="btn" data-open="newMission">Add Mission</button></div><div class="holonet-mini"><div class="small muted">ASTROGATION NOTE</div><p class="small">Route plotting is a local navigation aid. Unverified nodes are not campaign canon until established during play.</p></div></div></div>`
+ const g=galaxyState(),sel=selectedGalaxyLocation(),cur=currentGalaxyLocation(),route=g.route,path=sel?galaxyPath(g.currentLocationId||g.homeId,sel.id):null,sys=galaxySystemForLocation(sel?.id),scan=Number(g.scanIntel?.[sel?.id]||0);
+ const inTransit=g.phase==="transit"&&g.transit;
+ return `<div class="grid living-galaxy-shell">
+  <div class="card span8 galaxy-map-card"><div class="row"><div><div class="micro">LIVING GALAXY // NAVIGATION NETWORK</div><h3>Deadlock Reach</h3></div><span class="pill cyan">${cur?`RAVEN // ${esc(cur.name)}`:"POSITION UNKNOWN"}</span></div>${galaxyMapSvg()}</div>
+  <div class="card span4 galaxy-dossier">${locationHero(sel)}<div class="galaxy-dossier-body"><div class="micro">${esc(sys?.region||"UNKNOWN REGION")}</div><h3>${esc(sel?.name||"Unknown")}</h3><div class="cyan">${esc(sel?.type||"")} ${sel?.home?"// HOME BASE":""}</div><p>${esc(sel?.description||"")}</p><div class="pills">${(sel?.services||[]).map(x=>`<span class="pill">${esc(x)}</span>`).join("")}</div><div class="row"><span class="muted">Danger</span><b>${Number(sel?.danger||0)}%</b></div>${meter(sel?.danger||0,100,statusClass(sel?.danger||0,100))}<div class="small muted">ORBITAL SCANS: ${scan} // VISITED: ${g.visited.includes(sel?.id)?"YES":"NO"}</div></div></div>
+  <div class="card span8"><div class="row"><h3>Flight Plan</h3><span class="pill ${g.phase==="transit"?"warn":"cyan"}">${String(g.phase||"idle").toUpperCase()}</span></div>
+   ${inTransit?`<div class="transit-stage"><div class="transit-stars"></div><div class="transit-raven">${ravenVisual("flight","The Raven in hyperspace")}</div><div class="micro">HYPERSPACE TRANSIT</div><div class="big-number">${g.transit.progress}%</div>${meter(g.transit.progress,100,"good")}${g.transit.encounter&&!g.transit.encounterResolved?`<div class="travel-event"><b>${esc(g.transit.encounter.name)}</b><p>Something has entered the route. Resolve it before continuing.</p><div class="controls"><button class="btn good" data-travel-encounter="evade">Evade</button><button class="btn" data-travel-encounter="investigate">Investigate</button><button class="btn warn" data-travel-encounter="ignore">Stay on Course</button></div></div>`:`<button class="btn good" data-travel="continue">Continue Transit</button>`}</div>`:
+   `<div class="route-summary"><div><span class="small muted">ORIGIN</span><b>${esc(cur?.name||"Unknown")}</b></div><div><span class="small muted">DESTINATION</span><b>${esc(sel?.name||"Unknown")}</b></div><div><span class="small muted">DISTANCE</span><b>${path?.distance??0}</b></div><div><span class="small muted">FUEL</span><b>${path?.fuel??0}</b></div><div><span class="small muted">RISK</span><b>${path?.risk??0}%</b></div></div><div class="controls"><button class="btn" data-travel="plot">Plot Course</button>${route?.phase==="plotted"?`<button class="btn good" data-travel="depart">Depart // ${route.fuelCost} Fuel</button>`:""}</div>`}
+  </div>
+  <div class="card span4"><h3>Local Operations</h3>${cur?`<div class="name">${esc(cur.name)}</div><p class="small muted">${esc(cur.subtitle||cur.type)}</p><div class="controls"><button class="btn" data-local-action="scan">Orbital Scan</button><button class="btn good" data-local-action="dock">${cur.type.includes("Station")?"Dock":"Land"}</button>${cur.id==="blackglass_station"?'<button class="btn" data-local-action="hq">Enter HQ</button>':""}<button class="btn" data-local-action="story">Commit to Story</button></div><h4>Local Services</h4><div class="world-service-grid">${(cur.services||[]).map(x=>`<button class="world-service" data-world-service="${esc(x)}">${esc(x)}</button>`).join("")}</div><h4>Sites</h4><div class="world-site-grid">${(cur.sites||[]).map(x=>{const n=hqSite(x)?.name||x;return `<button class="world-site" data-world-site="${esc(n)}" ${!["docked","surface"].includes(g.phase)?"disabled":""}><b>${esc(n)}</b><small>${["docked","surface"].includes(g.phase)?"Start local scene":"Dock / land to access"}</small></button>`}).join("")}</div>`:'<p class="muted">Plot and complete a route to establish a local operating area.</p>'}<h4>Travel Log</h4><div class="log galaxy-log">${(g.travelLog||[]).slice(0,8).map(x=>`<div>${esc(x.ts)} — ${esc(x.text)}</div>`).join("")||"No travel events yet."}</div></div>
+ </div>`
+}
+function pageHQ(){
+ const g=galaxyState(),atHome=g.currentLocationId===g.homeId,site=hqSite(g.currentSiteId)||GALAXY.hq.sites[0];
+ return `<div class="grid hq-shell"><div class="card full hq-hero"><div class="hq-image">${imgTag(hqSiteAsset(site),site.name,assetEntry("blackglass","hq"),"hq-scene-img")}<div class="hq-ambient"><i></i><i></i><i></i></div></div><div class="hq-copy"><div class="micro">BLACKGLASS STATION // DEADLOCK HQ</div><h2>${esc(site.name)}</h2><div class="cyan">${atHome?"PHYSICAL ACCESS":"REMOTE SECURE LINK"}</div><p>${esc(site.description)}</p><div class="controls">${(site.actions||[]).map(a=>`<button class="btn" data-hq-action="${esc(a)}">${esc(a)}</button>`).join("")}</div></div></div>
+ <div class="card span8"><h3>HQ Spaces</h3><div class="hq-site-grid">${GALAXY.hq.sites.map(x=>`<button class="hq-site ${x.id===site.id?"active":""}" data-hq-site="${x.id}">${imgTag(hqSiteAsset(x),x.name,assetEntry("blackglass","hq"))}<span><b>${esc(x.name)}</b><small>${esc(x.description)}</small></span></button>`).join("")}</div></div>
+ <div class="card span4"><h3>Blackglass Status</h3><div class="row"><span class="muted">Home Base</span><b>BLACKGLASS</b></div><div class="row"><span class="muted">Raven</span><b>${atHome?"DOCKED":"AWAY"}</b></div><div class="row"><span class="muted">Active Contracts</span><b>${activeContracts().length}</b></div><div class="row"><span class="muted">Known Systems</span><b>${g.discovered.length}/${GALAXY.locations.length}</b></div><div class="controls">${atHome?'<button class="btn good" onclick="render(\'Ship\')">Board The Raven</button>':'<button class="btn" onclick="galaxyState().selectedLocationId=galaxyState().homeId;save();render(\'Galaxy\')">Plot Course Home</button>'}<button class="btn" onclick="render('Contracts')">Contract Board</button></div><div class="holonet-mini"><div class="small muted">HQ CANON</div><p class="small">Blackglass Station is Deadlock's established headquarters. Interior details are gameplay defaults and remain editable as the campaign develops.</p></div></div></div>`
 }
 function pageDogfight(){
  let s=DATA.ship,d=DATA.dogfight;
  return `<div class="grid"><div class="card span7"><div class="row"><h3>The Raven — Dogfight HUD</h3><span class="pill ${d.active?'cyan':''}">${d.active?`ROUND ${d.round}`:"STANDBY"}</span></div>
- <div class="ship-layout"><img src="assets/raven.jpg"><div><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="row"><span>Fuel</span><b>${s.fuel}/${s.fuelMax}</b></div>${meter(s.fuel,s.fuelMax,statusClass(s.fuel,s.fuelMax))}</div></div>
+ <div class="ship-layout">${ravenVisual("flight","The Raven") }<div><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="row"><span>Fuel</span><b>${s.fuel}/${s.fuelMax}</b></div>${meter(s.fuel,s.fuelMax,statusClass(s.fuel,s.fuelMax))}</div></div>
  <div class="controls"><button class="btn good" data-dogcmd="start">${d.active?"Restart":"Start Dogfight"}</button><button class="btn" data-dogcmd="fire">Fire Forward Cannons</button><button class="btn" data-dogcmd="evade">Evasive Maneuvers</button><button class="btn warn" data-dogcmd="boost">Boost</button><button class="btn" data-dogcmd="overcharge">Shield Overcharge</button><button class="btn danger" data-dogcmd="end">End</button></div></div>
  <div class="card span5"><h3>Tactical Radar</h3><div class="reticle"><div class="lock"></div></div><div class="radar"><div class="ship-blip"></div>${d.enemies.map((e,i)=>`<div class="blip" style="left:${28+(i*19)%55}%;top:${24+(i*27)%58}%" title="${esc(e.name)}"></div>`).join("")}</div><div class="controls"><button class="btn" data-open="newEnemyShip">Add Enemy Ship</button></div></div>
  <div class="card span6"><h3>Hostiles</h3>${d.enemies.map(e=>`<div class="tile no-click"><div class="row"><b>${esc(e.name)}</b><span>${e.hp}/${e.hpMax}</span></div>${meter(e.hp,e.hpMax,statusClass(e.hp,e.hpMax))}<div class="controls"><button class="btn" data-dogenemy="${e.id}:damage">Damage</button><button class="btn danger" data-dogenemy="${e.id}:remove">Remove</button></div></div>`).join("")||"<p class='muted'>No hostile craft tracked.</p>"}</div>
  <div class="card span6"><h3>Flight Log</h3><div class="log">${d.log.map(x=>`<div>${x.ts} — ${esc(x.text)}</div>`).join("")||"No dogfight events yet."}</div></div></div>`
 }
 function pageCharacter(){
- let c=DATA.character;return `<div class="grid"><div class="card hero"><img src="assets/rovan.jpg"><div class="overlay"><h2>${c.name}</h2><div class="cyan">“${c.callsign}”</div><p>${esc(c.armor)}</p></div></div><div class="card span7"><h3>Profile</h3>
+ let c=DATA.character;return `<div class="grid"><div class="card hero">${characterVisual("rovan","neutral","Rovan Kes")}<div class="overlay"><h2>${c.name}</h2><div class="cyan">“${c.callsign}”</div><p>${esc(c.armor)}</p></div></div><div class="card span7"><h3>Profile</h3>
  ${["species","role","affiliation","status"].map(k=>`<div class="row"><span class="muted">${k.toUpperCase()}</span><b>${esc(c[k])}</b></div>`).join("")}
  <div class="field"><label>Appearance</label><textarea data-bind="character.appearance">${esc(c.appearance)}</textarea></div><div class="field"><label>Armor / Clothing</label><textarea data-bind="character.armor">${esc(c.armor)}</textarea></div></div>
  <div class="card full"><h3>Attributes</h3><div class="tile-grid">${Object.entries(c.attributes).map(([k,v])=>`<div class="tile no-click"><div class="row"><b>${k}</b><b>${v}</b></div>${meter(v,20)}<div class="controls"><button class="btn step" data-attr="${k}:-1">-</button><button class="btn step" data-attr="${k}:1">+</button></div></div>`).join("")}</div></div>
@@ -648,10 +771,10 @@ function pageWeapons(){return `<div class="grid">${DATA.weapons.map(w=>`<div cla
 function pageShip(){
  let s=DATA.ship;
  const node=(id,label,left,top)=>{let x=s.systems.find(q=>q.id===id);return `<button class="schematic-node ${!x?.online?"offline":Number(x?.condition||100)<70?"warn":""}" style="left:${left}%;top:${top}%" data-hotspot="${id}" title="${esc(x?.name||label)}">${label}</button>`};
- return `<div class="grid"><div class="card full"><div class="ship-layout"><div class="raven-hero-frame"><img src="${esc(s.visualAsset||'assets/raven_dedicated.jpg')}" alt="The Raven in hangar"><div class="raven-hero-code">RVN // DEADLOCK // CUSTOM HULL</div><div class="raven-hero-label"><div><div class="raven-hero-name">THE RAVEN</div><div class="small cyan">DEADLOCK'S PERSONAL SHIP</div></div><div class="raven-hero-type">LIGHT FREIGHTER / FIGHTER HYBRID<br>BOUNTY RECOVERY CONFIGURATION</div></div></div><div><h3>${s.name}</h3><div class="cyan">${esc(s.class)}</div><p>${esc(s.role)}</p><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="controls"><button class="btn step" data-shipstep="hull:-5">-5</button><button class="btn step" data-shipstep="hull:5">+5</button></div><div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="controls"><button class="btn step" data-shipstep="shields:-5">-5</button><button class="btn step" data-shipstep="shields:5">+5</button></div><div class="row"><span>Fuel</span><b>${s.fuel}/${s.fuelMax}</b></div>${meter(s.fuel,s.fuelMax,statusClass(s.fuel,s.fuelMax))}<div class="controls"><button class="btn step" data-shipstep="fuel:-5">-5</button><button class="btn step" data-shipstep="fuel:5">+5</button></div></div></div></div>
+ return `<div class="grid"><div class="card full"><div class="ship-layout"><div class="raven-hero-frame">${ravenVisual("landed","The Raven in hangar")}<div class="raven-hero-code">RVN // DEADLOCK // CUSTOM HULL</div><div class="raven-hero-label"><div><div class="raven-hero-name">THE RAVEN</div><div class="small cyan">DEADLOCK'S PERSONAL SHIP</div></div><div class="raven-hero-type">LIGHT FREIGHTER / FIGHTER HYBRID<br>BOUNTY RECOVERY CONFIGURATION</div></div></div><div><h3>${s.name}</h3><div class="cyan">${esc(s.class)}</div><p>${esc(s.role)}</p><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="controls"><button class="btn step" data-shipstep="hull:-5">-5</button><button class="btn step" data-shipstep="hull:5">+5</button></div><div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="controls"><button class="btn step" data-shipstep="shields:-5">-5</button><button class="btn step" data-shipstep="shields:5">+5</button></div><div class="row"><span>Fuel</span><b>${s.fuel}/${s.fuelMax}</b></div>${meter(s.fuel,s.fuelMax,statusClass(s.fuel,s.fuelMax))}<div class="controls"><button class="btn step" data-shipstep="fuel:-5">-5</button><button class="btn step" data-shipstep="fuel:5">+5</button></div></div></div></div>
  <div class="card span6"><h3>Ship Systems</h3>${s.systems.map(x=>`<div class="system-row ${!x.online?"offline":""}" data-system="${x.id}"><div><b>${esc(x.name)}</b><div class="small">${x.online?"ONLINE":"OFFLINE"} • ${x.condition}%</div></div>${meter(x.condition,100,statusClass(x.condition))}</div>`).join("")}</div>
  <div class="card span6"><h3>Raven Specs</h3>${Object.entries(s.specs).map(([k,v])=>`<div class="row"><span class="muted">${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}</div>
- <div class="card full"><div class="row"><h3>Holographic Diagnostic Schematic</h3><span class="pill cyan">LIVE TELEMETRY</span></div><div class="aurebesh-strip">RAVEN // ⌖ SYS-7 // ⟐ POWER BUS // ⌁ FLIGHT CONTROL // DEADLOCK</div><div class="raven-schematic"><img src="assets/raven.jpg" alt="The Raven holographic schematic"><div class="schematic-sweep"></div>
+ <div class="card full"><div class="row"><h3>Holographic Diagnostic Schematic</h3><span class="pill cyan">LIVE TELEMETRY</span></div><div class="aurebesh-strip">RAVEN // ⌖ SYS-7 // ⟐ POWER BUS // ⌁ FLIGHT CONTROL // DEADLOCK</div><div class="raven-schematic">${ravenVisual("schematic","The Raven holographic schematic")}<div class="schematic-sweep"></div>
  ${node("engines","ENG",15,61)}${node("thrusters","THR",35,72)}${node("hyperdrive","HYP",49,55)}${node("comms","COM",70,26)}${node("overcharge","SHD",55,39)}${node("bench","WPN",66,68)}${node("cells","CEL",43,31)}${node("smuggling","HID",28,42)}
  <div class="schematic-caption"><div><div class="schematic-title">THE RAVEN // SYSTEM MAP</div><div class="schematic-code">HOLOGRAPHIC DIAGNOSTIC // TAP NODES FOR CONTROL</div></div><button class="btn" onclick="render('Dogfight')">FLIGHT HUD</button></div></div></div>
  </div>`
@@ -687,6 +810,14 @@ function wire(){
  if($("#generateTransmission"))$("#generateTransmission").onclick=()=>{const tx=generateHolonetTransmission();render("Holonet");setTimeout(()=>openHoloTransmission(tx.id),80)};
  if($("#holoPlotRoute"))$("#holoPlotRoute").onclick=()=>{plotHyperspaceRoute(DATA.holonet.route?.destinationId);render("Holonet")};
  if($("#plotRoute"))$("#plotRoute").onclick=()=>{plotHyperspaceRoute($("#routeDestination").value);render("Galaxy")};
+ $$("[data-galaxy-node]").forEach(b=>b.onclick=()=>{galaxyState().selectedLocationId=b.dataset.galaxyNode;save();render("Galaxy")});
+ $$("[data-travel]").forEach(b=>b.onclick=()=>{const a=b.dataset.travel;if(a==="plot")plotLivingRoute(galaxyState().selectedLocationId);if(a==="depart")beginLivingTravel();if(a==="continue")continueLivingTravel()});
+ $$("[data-travel-encounter]").forEach(b=>b.onclick=()=>resolveTravelEncounter(b.dataset.travelEncounter));
+ $$("[data-local-action]").forEach(b=>b.onclick=()=>performLocalAction(b.dataset.localAction));
+ $$("[data-hq-site]").forEach(b=>b.onclick=()=>handleHqSite(b.dataset.hqSite));
+ $$("[data-hq-action]").forEach(b=>b.onclick=()=>handleHqAction(b.dataset.hqAction));
+ $$("[data-world-site]").forEach(b=>b.onclick=()=>startLocalSite(b.dataset.worldSite));
+ $$("[data-world-service]").forEach(b=>b.onclick=()=>handleWorldService(b.dataset.worldService));
 
  $$("[data-charstep]").forEach(b=>b.onclick=()=>{let[k,d]=b.dataset.charstep.split(":");let c=DATA.character;c[k]=clamp(c[k]+Number(d),0,c[k+"Max"]||9999);if(k==="health"){let r=DATA.combat.participants.find(x=>x.id==="rovan");if(r){r.hp=c[k];r.hpMax=c[k+"Max"]}}save();render()});
  $$("[data-attr]").forEach(b=>b.onclick=()=>{let[k,d]=b.dataset.attr.split(":");DATA.character.attributes[k]=clamp(DATA.character.attributes[k]+Number(d),1,30);save();render()});
@@ -948,19 +1079,19 @@ function currentStoryVisualNpc(){
  return storyNpc(s.currentNpc);
 }
 function storyPortrait(npc){
- if(npc?.portrait)return npc.portrait;
- return "assets/npc_unknown.svg";
+ if(npc){const id=npc.id==="kade"?"nera":npc.id;const mood=npcMood(npc);const state=mood==="irritated"?"angry":mood==="highRespect"?"talking":"neutral";return npc.portrait||assetUrl("characters",id,state)||assetFallback("characters",id)||assetUrl("characters","unknown","holo");}
+ return assetUrl("characters","dren","holo")||"assets/npc_unknown.svg";
 }
 function speakerVisualHTML(){
  const s=DATA.story,npc=currentStoryVisualNpc();
  if(!npc){
   return `<div class="story-stage-visual">
-   <div class="story-speaker-portrait"><img src="assets/rovan.jpg" alt="Rovan Kes"></div>
+   <div class="story-speaker-portrait">${characterVisual("rovan","focused","Rovan Kes")}</div>
    <div class="story-speaker-info"><div class="micro">ACTIVE DOSSIER</div><div class="story-speaker-name">ROVAN KES</div><div class="story-speaker-role">DEADLOCK // PLAYER CHARACTER</div><div class="story-speaker-tone">Clawdite bounty hunter. Player-controlled dialogue and decisions.</div><div class="dialogue-wave">${"<i></i>".repeat(18)}</div></div>
   </div>`;
  }
  return `<div class="story-stage-visual">
-  <div class="story-speaker-portrait"><img src="${storyPortrait(npc)}" alt="${esc(npc.name)} abstract dossier"></div>
+  <div class="story-speaker-portrait">${imgTag(storyPortrait(npc),`${npc.name} dossier`,assetFallback("characters",npc.id==="kade"?"nera":npc.id)||assetUrl("characters","unknown","holo"))}</div>
   <div class="story-speaker-info">
    <div class="micro">DIALOGUE FOCUS // ABSTRACT DOSSIER</div>
    <div class="story-speaker-name">${esc(npc.name)}</div>

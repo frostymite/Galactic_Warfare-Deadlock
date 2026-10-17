@@ -1,151 +1,35 @@
-# Deadlock Tactical OS v9.4 — Guided Hunt Loop
+# Deadlock Tactical OS v10.0 — Living Galaxy Foundation
 
-The gameplay clarity update. Contract percentages are now explained as **Trail / Operation Confidence**, while the playable loop is organized into concrete mission phases: lead gathering, trail building, narrowed search, search window, target located, target secured, and turn-in.
+Offline-first solo bounty-hunter RPG/PWA centered on **Rovan Kes / Deadlock**, **The Raven**, and now **Blackglass Station HQ**.
 
-## What changed
-- Active mission brief explains the current stage, goal, next unlock, reward, and established intel.
-- Choices state their purpose and what success is expected to accomplish.
-- Contract milestones change the available actions instead of only filling a bar.
-- At 90% on a target recovery, capture approaches unlock. A successful resolution secures the target and unlocks turn-in.
-- Turn-in closes the contract and pays the listed gross reward. Marr's planned Dren split remains unresolved because no percentage is established in campaign canon.
-- Contracts page no longer exposes the confusing +10% gameplay button.
-- Existing procedural GM, fold scrolling, orchestral score, TTS voices, consequences, and offline support remain intact.
+## v10 headline changes
 
-# Deadlock Tactical OS v9.3.3 — Tabletop Dialogue
+- Data-driven visual asset registry (`asset-manifest.json`).
+- Persistent Blackglass Station HQ with five operational spaces.
+- Twelve navigation destinations across a connected route network.
+- Real travel loop with route distance, fuel cost, route risk, transit events, arrival, orbit, docking/landing, and local operations.
+- Named local sites can launch Story scenes directly.
+- Navigation state stays separate from Story canon until the player commits it through play.
+- Character/ship/location asset-state hooks for future high-fidelity animation batches.
+- Procedural idle motion, HQ scans, star drift, and hyperspace motion.
+- Keeps v9.4 Guided Hunt Loop, procedural GM, NPC voices, cinematic orchestral score, consequence layer, Holonet, combat, Raven systems, and Razr Fold layouts.
 
-Latest build adds one-finger unfolded scrolling and more personable offline tabletop dialogue while preserving the v9.3 consequence layer.
+## Blackglass Station
 
-# Deadlock Tactical OS v7 — Offline Narrative Director
+Blackglass Station in the Kaelor System is Deadlock's home base. The HQ currently contains a Command Lounge, Briefing Room, Rovan's Quarters, Hangar Access, and Contract Board.
 
-v7 makes offline play the primary game.
+## Starter galaxy
 
-Once the PWA has been installed and loaded successfully at least once, the core campaign requires **no internet connection, no API key, and no server**.
+The navigation database contains Blackglass Station, Veyra Prime, Drekthar, Nerath, Cindar, Talos, Orivon, Xerra, the Sable Belt, Thalos, Rethis, and Umber. Blackglass HQ is established; other generated world details remain editable gameplay/worldbuilding defaults until established through play.
 
-## Offline-first story engine
+## Offline
 
-The on-device Narrative Director tracks:
-- current scene
-- contracts and targets
-- ship condition
-- NPC trust / respect / irritation / stress / fear
-- NPC memories
-- recent player actions
-- active campaign threads
-- danger
-- director tension
-- recent procedural encounters
-- skill checks
-- current dialogue focus
+After the PWA caches successfully, the new JSON databases, starter visual library, Story Mode, travel loop, HQ, procedural GM, and score are designed to work without a network connection.
 
-It combines these systems to generate new story beats, NPC dialogue, complications, and 3–5 choices.
+## Android / GitHub Pages
 
-## NPC memory
-NPCs carry persistent event tags.
+Upload the project at the repository root. Enable GitHub Pages from `main` / `/(root)`, open the Pages URL once online, then install from Chrome. Export campaign JSON before major version changes.
 
-Examples:
-- RIFLE_RETURNED
-- MARR_SPLIT
-- ACTIVE_CONTRACT
-- STAGED_TURNIN
-- FIELD_ALLY
+## Important asset policy
 
-Those memories can be referenced in generated dialogue later.
-
-NPC emotional values also move over time and feed their tone.
-
-## Procedural encounters
-The offline director includes weighted encounter templates such as:
-- rival bounty hunter
-- anonymous encrypted transmission
-- Raven subsystem fault
-- suspicious bounty posting
-- security patrol sweep
-- paid informant offer
-
-The engine considers current campaign state before drawing an event.
-
-Generated encounters become part of the campaign only once they actually occur during play.
-
-## Dialogue
-Dialogue is generated from:
-- NPC voice profile
-- relationship state
-- emotion
-- campaign memories
-- current topic
-- recent success/failure
-- scene context
-
-It is procedural rather than a fixed conversation tree.
-
-## Skill checks
-The director can attach skills and DCs to choices.
-Failure creates complications instead of simply ending the scene.
-
-## Android / no-signal play
-Install the PWA while online once.
-
-After installation:
-1. Launch Deadlock once while online so the app shell caches.
-2. Export a campaign backup if desired.
-3. Airplane mode can be enabled.
-4. Story, combat, contracts, NPC dialogue, ship systems, bounty generation, dice, saves, and procedural encounters continue to work locally.
-
-The service worker uses a cache-first offline app shell and navigation fallback.
-
-## Optional online AI
-Online AI remains available as a secondary enhancement only.
-
-Story → Narrative Engine → Online AI Enhancement
-
-If the AI bridge disappears or the phone loses signal, the app falls back to the local narrative system instead of stopping the game.
-
-Never store an API key inside the PWA.
-
-## Current canon preserved
-- Rovan Kes / Deadlock
-- Clawdite
-- diagonal facial scar
-- obsidian + electric-cyan mercenary look
-- hard armor only on vitals, shoulders, knees
-- Blackwake
-- Luna
-- Sol
-- The Raven
-- Dren Voss
-- Nera Kade
-- Renn
-- Jessa
-- Marr recovery contract
-- mercy circuit
-- datacore extraction / destruction rule
-
-## v6 save migration
-Existing v6 JSON saves can be imported. v7 automatically adds the offline dialogue tables, NPC mood/memory state, and director state when those fields are missing.
-
-## v7.1 integration fix
-The Story tab and on-device Story UI are explicitly wired into navigation. This fixes a merge regression in the first v7 package where the Offline Director data existed but the Story page could be absent from the navigation.
-
-
-## v9.3.3 — Procedural GM
-Freeform Story dialogue now uses an offline personality/memory layer that assembles NPC reactions from speech intent, mood, campaign state, recent history, and established memories. No API or paid service is required.
-
-
-
-## v9.3.5 — Cinematic Orchestral Score
-
-- Replaces the sustained ambient drone with an original adaptive space-opera score.
-- Adds musical chord progressions, melodic motifs, layered string-like pads, low brass accents, bass movement, pizzicato/ostinato figures, timpani and cymbal-style percussion.
-- Story/Overview remain restrained; Combat and Dogfight increase tempo and rhythmic density.
-- Score is synthesized locally with Web Audio: no streaming, music files, API key, subscription, or network connection required.
-- NPC speech still ducks the score automatically.
-- No franchise themes or copyrighted melodies are included.
-
-## v9.3.4 — Ambient Soundscape & Character Voices
-
-- Procedural low-volume ambient soundtrack generated locally with Web Audio.
-- Adaptive tone for Story, Holonet, Combat, Dogfight, Ship, and danger.
-- Automatic music ducking while NPCs speak.
-- Device text-to-speech for Dren, Nera Kade, Renn, Jessa, and unknown Holonet contacts.
-- Separate music/voice toggles and volume controls under Settings.
-- No paid service, streaming audio, or network connection required for the music layer.
+High-fidelity existing art in the user's repository is intentionally preserved by the update patch. The new prototype vectors are fallback/state-system assets and do not replace established character canon.

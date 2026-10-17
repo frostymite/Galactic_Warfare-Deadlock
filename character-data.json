@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "9.4.0",
-    "campaign": "Deadlock \u2014 Guided Hunt Loop",
+    "version": "10.0.0",
+    "campaign": "Deadlock \u2014 Living Galaxy Foundation",
     "note": "Established story facts are filled in. Mechanical values that were never firmly established remain editable.",
     "rulesNote": "Combat and dogfight numeric formulas are dashboard mechanics, not story canon. Edit them in GM Controls."
   },
@@ -454,7 +454,8 @@
     "music": true,
     "musicVolume": 55,
     "characterVoices": true,
-    "voiceVolume": 78
+    "voiceVolume": 78,
+    "livingGalaxy": true
   },
   "targets": [
     {
@@ -1257,5 +1258,37 @@
       ]
     },
     "lastPuck": null
+  },
+  "galaxyState": {
+    "version": 1,
+    "homeId": "blackglass_station",
+    "currentLocationId": "blackglass_station",
+    "selectedLocationId": "blackglass_station",
+    "phase": "docked",
+    "route": null,
+    "transit": null,
+    "currentSiteId": "blackglass_hq",
+    "discovered": [
+      "blackglass_station",
+      "veyra_prime",
+      "drekthar",
+      "nerath",
+      "cindar",
+      "talos",
+      "orivon",
+      "xerra",
+      "sable_belt",
+      "thalos"
+    ],
+    "visited": [
+      "blackglass_station"
+    ],
+    "scanIntel": {},
+    "travelLog": [
+      {
+        "ts": "LOCAL",
+        "text": "Blackglass Station registered as Deadlock HQ."
+      }
+    ]
   }
 }

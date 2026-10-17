@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "version": "10.0.0",
+    "fallbackPolicy": "Missing state assets fall back to neutral or procedural visual. UI is never baked into scene art."
+  },
+  "characters": {
+    "rovan": {
+      "neutral": "assets/rovan.jpg",
+      "portrait": "assets/characters/rovan/neutral.svg",
+      "states": [
+        "neutral",
+        "talking",
+        "focused",
+        "injured"
+      ],
+      "fallback": "assets/characters/rovan/neutral.svg"
+    },
+    "dren": {
+      "neutral": "assets/contact_dren.jpg",
+      "talking": "assets/characters/dren/talking.svg",
+      "suspicious": "assets/characters/dren/suspicious.svg",
+      "angry": "assets/characters/dren/angry.svg",
+      "holo": "assets/contact_dren.jpg",
+      "fallback": "assets/characters/dren/neutral.svg"
+    },
+    "nera": {
+      "neutral": "assets/npc_nera.svg",
+      "talking": "assets/characters/nera/talking.svg",
+      "suspicious": "assets/characters/nera/suspicious.svg",
+      "angry": "assets/characters/nera/angry.svg",
+      "holo": "assets/npc_nera.svg",
+      "fallback": "assets/characters/nera/neutral.svg"
+    },
+    "renn": {
+      "neutral": "assets/npc_renn.svg",
+      "talking": "assets/characters/renn/talking.svg",
+      "suspicious": "assets/characters/renn/suspicious.svg",
+      "holo": "assets/npc_renn.svg",
+      "fallback": "assets/characters/renn/neutral.svg"
+    },
+    "jessa": {
+      "neutral": "assets/npc_jessa.svg",
+      "talking": "assets/characters/jessa/talking.svg",
+      "focused": "assets/characters/jessa/focused.svg",
+      "holo": "assets/npc_jessa.svg",
+      "fallback": "assets/characters/jessa/neutral.svg"
+    },
+    "unknown": {
+      "neutral": "assets/characters/unknown/holo.svg",
+      "holo": "assets/characters/unknown/holo.svg",
+      "fallback": "assets/characters/unknown/holo.svg"
+    }
+  },
+  "ships": {
+    "raven": {
+      "flight": "assets/raven_dedicated.jpg",
+      "orbit": "assets/raven_dedicated.jpg",
+      "landed": "assets/raven_dedicated.jpg",
+      "schematic": "assets/raven.jpg",
+      "fallback": "assets/ships/raven_flight.svg"
+    }
+  },
+  "locations": {
+    "veyra_prime": {
+      "hero": "assets/planets/veyra_prime.svg"
+    },
+    "drekthar": {
+      "hero": "assets/planets/drekthar.svg"
+    },
+    "nerath": {
+      "hero": "assets/planets/nerath.svg"
+    },
+    "cindar": {
+      "hero": "assets/planets/cindar.svg"
+    },
+    "talos": {
+      "hero": "assets/planets/talos.svg"
+    },
+    "orivon": {
+      "hero": "assets/planets/orivon.svg"
+    },
+    "xerra": {
+      "hero": "assets/planets/xerra.svg"
+    },
+    "sable_belt": {
+      "hero": "assets/planets/sable_belt.svg"
+    },
+    "thalos": {
+      "hero": "assets/planets/thalos.svg"
+    },
+    "rethis": {
+      "hero": "assets/planets/rethis.svg"
+    },
+    "umber": {
+      "hero": "assets/planets/umber.svg"
+    }
+  },
+  "blackglass": {
+    "exterior": "assets/locations/blackglass/exterior.svg",
+    "hq": "assets/locations/blackglass/hq.svg",
+    "briefing": "assets/locations/blackglass/briefing.svg",
+    "quarters": "assets/locations/blackglass/quarters.svg",
+    "hangar": "assets/locations/blackglass/hangar.svg",
+    "contracts": "assets/locations/blackglass/contracts.svg"
+  },
+  "effects": {
+    "starfield": "assets/effects/starfield.svg",
+    "hyperspace": "assets/effects/hyperspace.svg"
+  }
+}
