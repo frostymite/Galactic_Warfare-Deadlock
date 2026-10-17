@@ -2,6 +2,16 @@
 const STORAGE_KEY="deadlock_dashboard_v3";
 let DATA=null,currentPage="Overview",diceHistory=[],deferredInstall=null,wakeLock=null;
 let uiSound=true;
+let AMBIENT=null;
+let AUDIO_UNLOCKED=false;
+let LAST_SPOKEN={speaker:"",text:"",at:0};
+const NPC_VOICE_PROFILES={
+ dren:{pitch:.76,rate:.96,index:0},
+ nera:{pitch:1.08,rate:.91,index:1},
+ renn:{pitch:.91,rate:.94,index:2},
+ jessa:{pitch:1.02,rate:1.04,index:3},
+ unknown:{pitch:.82,rate:.89,index:4}
+};
 let lastCredits=0;
 let notificationLog=[];
 let currentTargetLock=null;
@@ -36,6 +46,128 @@ function uiBeep(freq=440,dur=.05,vol=.025,type="sine"){
   o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+dur+.01);
  }catch(e){}
 }
+
+function audioPrefs(){return DATA?.settings||{}}
+function ambientGainTarget(){
+ const v=clamp(Number(audioPrefs().musicVolume??16),0,100)/100;
+ return .045*v;
+}
+function ambientProfile(){
+ const danger=clamp(Number(DATA?.story?.danger||0),0,100);
+ const profiles={
+  Story:[110,164.8,220,520],Holonet:[123.5,185,247,650],Combat:[82.4,123.5,164.8,420],Dogfight:[92.5,138.6,185,470],
+  Ship:[103.8,155.6,207.7,560],Overview:[110,164.8,220,600]
+ };
+ const p=profiles[currentPage]||profiles.Overview;
+ return {freqs:p.slice(0,3),filter:p[3]+danger*3.2,danger};
+}
+function setAmbientDuck(ducked){
+ if(!AMBIENT?.master||!AUDIO_CTX)return;
+ AMBIENT.ducked=!!ducked;
+ const now=AUDIO_CTX.currentTime,target=ambientGainTarget()*(ducked?.32:1);
+ AMBIENT.master.gain.cancelScheduledValues(now);
+ AMBIENT.master.gain.setTargetAtTime(Math.max(.0001,target),now,.22);
+}
+function retuneAmbient(){
+ if(!AMBIENT?.running||!AUDIO_CTX)return;
+ const p=ambientProfile(),now=AUDIO_CTX.currentTime;
+ AMBIENT.osc.forEach((o,i)=>o.frequency.setTargetAtTime(p.freqs[i]*(1+((Math.random()-.5)*.018)),now,2.5));
+ AMBIENT.filter.frequency.setTargetAtTime(p.filter,now,2.2);
+ if(!AMBIENT.ducked){
+  AMBIENT.master.gain.setTargetAtTime(ambientGainTarget(),now,.6);
+ }
+ // Sparse, quiet upper tone for movement; more likely when tension rises.
+ if(Math.random()<.34+(p.danger/100)*.22){
+  try{
+   const o=AUDIO_CTX.createOscillator(),g=AUDIO_CTX.createGain();
+   o.type="sine";o.frequency.value=p.freqs[2]*(2+(Math.random()>.5?.5:0));
+   g.gain.setValueAtTime(.0001,now);
+   g.gain.linearRampToValueAtTime(.0035*(clamp(Number(audioPrefs().musicVolume??16),0,100)/100),now+.45);
+   g.gain.exponentialRampToValueAtTime(.0001,now+2.8);
+   o.connect(g);g.connect(AMBIENT.master);o.start(now);o.stop(now+3);
+  }catch(e){}
+ }
+}
+function startAmbientMusic(){
+ if(!uiSound||audioPrefs().music===false)return;
+ const ctx=audioContext();if(!ctx)return;
+ if(AMBIENT?.running){retuneAmbient();return}
+ try{
+  const master=ctx.createGain(),filter=ctx.createBiquadFilter();
+  master.gain.value=.0001;filter.type="lowpass";filter.Q.value=.7;
+  filter.connect(master);master.connect(ctx.destination);
+  const p=ambientProfile();
+  const osc=p.freqs.map((f,i)=>{
+   const o=ctx.createOscillator(),g=ctx.createGain();
+   o.type=i===1?"triangle":"sine";o.frequency.value=f;
+   g.gain.value=i===0?.20:i===1?.10:.055;
+   o.connect(g);g.connect(filter);o.start();return o;
+  });
+  AMBIENT={master,filter,osc,running:true,ducked:false,timer:null};
+  master.gain.setTargetAtTime(ambientGainTarget(),ctx.currentTime,.8);
+  AMBIENT.timer=setInterval(retuneAmbient,7200);retuneAmbient();
+ }catch(e){AMBIENT=null}
+}
+function stopAmbientMusic(){
+ if(!AMBIENT)return;
+ try{
+  if(AMBIENT.timer)clearInterval(AMBIENT.timer);
+  if(AUDIO_CTX&&AMBIENT.master){
+   const now=AUDIO_CTX.currentTime;AMBIENT.master.gain.setTargetAtTime(.0001,now,.08);
+   setTimeout(()=>{try{AMBIENT?.osc?.forEach(o=>o.stop())}catch(e){} AMBIENT=null},280);
+  }else AMBIENT=null;
+ }catch(e){AMBIENT=null}
+}
+function unlockGameAudio(){
+ AUDIO_UNLOCKED=true;
+ if(uiSound&&audioPrefs().music!==false)startAmbientMusic();
+}
+function syncAudioState(){
+ if(!uiSound){stopAmbientMusic();try{window.speechSynthesis?.cancel()}catch(e){};return}
+ if(audioPrefs().music===false)stopAmbientMusic();else if(AUDIO_UNLOCKED)startAmbientMusic();
+}
+function availableSpeechVoices(){
+ try{return (window.speechSynthesis?.getVoices?.()||[]).filter(v=>/^en([_-]|$)/i.test(v.lang||"en"))}catch(e){return []}
+}
+function speakerNpcId(speaker=""){
+ const s=String(speaker).toLowerCase();
+ if(/dren/.test(s))return "dren";
+ if(/nera|kade/.test(s))return "nera";
+ if(/renn/.test(s))return "renn";
+ if(/jessa/.test(s))return "jessa";
+ if(/unknown|unidentified/.test(s))return "unknown";
+ return null;
+}
+function speechVoiceFor(id){
+ const voices=availableSpeechVoices();if(!voices.length)return null;
+ const p=NPC_VOICE_PROFILES[id]||NPC_VOICE_PROFILES.unknown;
+ // Prefer local/device voices so installed Android TTS packs can keep working offline.
+ const local=voices.filter(v=>v.localService!==false);
+ const pool=local.length?local:voices;
+ return pool[p.index%pool.length]||pool[0]||null;
+}
+function cleanSpokenText(text=""){
+ return String(text).replace(/[⌖⟐⌁⫷◆]+/g," ").replace(/\s+/g," ").trim().slice(0,650);
+}
+function speakCharacter(speaker,text,{force=false}={}){
+ const id=speakerNpcId(speaker);
+ if(!id||!uiSound||audioPrefs().characterVoices===false||!("speechSynthesis" in window))return false;
+ const clean=cleanSpokenText(text);if(!clean)return false;
+ const now=Date.now();
+ if(!force&&LAST_SPOKEN.speaker===speaker&&LAST_SPOKEN.text===clean&&now-LAST_SPOKEN.at<2500)return false;
+ LAST_SPOKEN={speaker,text:clean,at:now};
+ try{
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(clean),p=NPC_VOICE_PROFILES[id]||NPC_VOICE_PROFILES.unknown;
+  const voice=speechVoiceFor(id);if(voice)u.voice=voice;
+  u.lang=voice?.lang||"en-US";u.pitch=p.pitch;u.rate=p.rate;u.volume=clamp(Number(audioPrefs().voiceVolume??78),0,100)/100;
+  u.onstart=()=>setAmbientDuck(true);
+  u.onend=u.onerror=()=>setAmbientDuck(false);
+  window.speechSynthesis.speak(u);return true;
+ }catch(e){setAmbientDuck(false);return false}
+}
+window.speechSynthesis?.addEventListener?.("voiceschanged",()=>availableSpeechVoices());
+document.addEventListener("pointerdown",unlockGameAudio,{passive:true,once:true});
 function weaponSound(id){
  if(id==="blackwake"){uiBeep(92,.10,.055,"square");setTimeout(()=>uiBeep(58,.09,.035,"sawtooth"),35)}
  else{uiBeep(id==="luna"?310:270,.075,.04,"square");setTimeout(()=>uiBeep(170,.045,.02,"sawtooth"),25)}
@@ -101,6 +233,8 @@ function logDogfight(text){DATA.dogfight.log.unshift({ts:new Date().toLocaleTime
 function migrateOfflineData(current,defaults){
  if(!current)return defaults;
  current.story=current.story||structuredClone(defaults.story);
+ current.settings=current.settings||structuredClone(defaults.settings||{});
+ for(const [k,v] of Object.entries(defaults.settings||{}))if(current.settings[k]===undefined)current.settings[k]=structuredClone(v);
  const s=current.story, ds=defaults.story;
 
  if(s.provider==="local")s.provider="offline";
@@ -196,7 +330,10 @@ async function load(){
  const defaults=await fetch("character-data.json").then(r=>r.json());
  const local=localStorage.getItem(STORAGE_KEY);
  DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);
- save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");requestAnimationFrame(detectFoldLayout)
+ uiSound=DATA.settings.sound!==false;
+ save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");
+ if($("#soundBtn"))$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;
+ requestAnimationFrame(detectFoldLayout)
 }
 function buildNav(){
  $("#nav").innerHTML="";
@@ -208,6 +345,7 @@ function render(page=currentPage){
  $("#title").textContent=page;$("#crumb").textContent=`DEADLOCK // ${page.toUpperCase()}`;
  const content=$("#content");content.classList.remove("page-transition");void content.offsetWidth;content.classList.add("page-transition");
  let key="page"+page.replace(/\s/g,"");content.innerHTML=(window[key]||(()=>`<div class="card">No renderer.</div>`))();wire();
+ if(AMBIENT?.running)retuneAmbient();
  setTimeout(()=>content.classList.remove("page-transition"),300)
 }
 function healthControls(key,maxKey,label){
@@ -370,7 +508,8 @@ function openHoloTransmission(id){
  $("#holoTransmission").dataset.tx=id;
  renderHoloTransmission(tx);
  $("#holoTransmission").classList.add("open");
- uiBeep(520,.06,.025);navigator.vibrate?.(18)
+ uiBeep(520,.06,.025);navigator.vibrate?.(18);
+ setTimeout(()=>speakCharacter(tx.sender,currentTxLine(tx)),90)
 }
 function closeHoloTransmission(){$("#holoTransmission").classList.remove("open")}
 function commitHoloTransmission(){
@@ -529,7 +668,8 @@ function pageGMControls(){
  <div class="card full"><h3>Raw Campaign Data</h3><p class="muted">Advanced: edit the entire save. This is the fastest way to change anything the UI does not expose yet.</p><button class="btn" id="rawEdit">Open Raw JSON Editor</button></div></div>`
 }
 function pageSettings(){return `<div class="grid"><div class="card span6"><h3>Android / PWA</h3><p>This build is installable as a Progressive Web App when served over HTTPS. On Android Chrome, use <b>Install App</b> or <b>Add to Home screen</b>.</p><div class="controls"><button class="btn" id="installSettings">Install App</button><button class="btn" id="wakeSettings">Keep Screen Awake</button></div></div>
- <div class="card span6"><h3>Interface</h3><div class="row"><span>Compact mode</span><input id="compactToggle" type="checkbox" ${DATA.settings.compact?'checked':''} style="width:auto"></div><div class="row"><span>Animations</span><input id="animToggle" type="checkbox" ${DATA.settings.animations!==false?'checked':''} style="width:auto"></div><div class="row"><span>Sound</span><input id="soundToggle" type="checkbox" ${uiSound?'checked':''} style="width:auto"></div><div class="row"><span>Fold Optimization</span><input id="foldToggle" type="checkbox" ${DATA.settings.foldOptimization!==false?'checked':''} style="width:auto"></div><div class="field"><label>Center-crease gutter (px)</label><input id="hingeGutterInput" type="number" min="12" max="48" value="${Number(DATA.settings.hingeGutter||22)}"></div><div class="small muted">Razr Fold mode activates automatically on square-ish unfolded viewports. Increase the gutter if you want more room around the crease.</div></div>
+ <div class="card span6"><h3>Interface</h3><div class="row"><span>Compact mode</span><input id="compactToggle" type="checkbox" ${DATA.settings.compact?'checked':''} style="width:auto"></div><div class="row"><span>Animations</span><input id="animToggle" type="checkbox" ${DATA.settings.animations!==false?'checked':''} style="width:auto"></div><div class="row"><span>Fold Optimization</span><input id="foldToggle" type="checkbox" ${DATA.settings.foldOptimization!==false?'checked':''} style="width:auto"></div><div class="field"><label>Center-crease gutter (px)</label><input id="hingeGutterInput" type="number" min="12" max="48" value="${Number(DATA.settings.hingeGutter||22)}"></div><div class="small muted">Razr Fold mode activates automatically on square-ish unfolded viewports. Increase the gutter if you want more room around the crease.</div></div>
+ <div class="card span6 audio-settings"><h3>Audio</h3><div class="row"><span>Master sound</span><input id="soundToggle" type="checkbox" ${uiSound?'checked':''} style="width:auto"></div><div class="row"><span>Ambient music</span><input id="musicToggle" type="checkbox" ${DATA.settings.music!==false?'checked':''} style="width:auto"></div><div class="field"><label>Music volume <span id="musicVolumeLabel">${Number(DATA.settings.musicVolume??16)}%</span></label><input id="musicVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.musicVolume??16)}"></div><div class="row"><span>NPC spoken dialogue</span><input id="voiceToggle" type="checkbox" ${DATA.settings.characterVoices!==false?'checked':''} style="width:auto"></div><div class="field"><label>Voice volume <span id="voiceVolumeLabel">${Number(DATA.settings.voiceVolume??78)}%</span></label><input id="voiceVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.voiceVolume??78)}"></div><div class="controls"><button class="btn" id="testNpcVoice">Test Dren Voice</button></div><div class="small muted">Dialogue uses your device's installed text-to-speech voices. Offline speech depends on having an Android TTS voice downloaded; the procedural ambient soundtrack itself needs no network or audio files.</div></div>
  <div class="card full"><h3>Data</h3><p class="muted">Campaign state auto-saves locally. Export a JSON backup before major changes.</p><div class="controls"><button class="btn" id="saveNow">Save Now</button><button class="btn warn" id="resetData">Reset Included Data</button></div></div></div>`}
 
 function roll(sides=20,count=1,mod=0){let rolls=Array.from({length:count},()=>rollDie(sides)),total=rolls.reduce((a,b)=>a+b,0)+mod;diceHistory.unshift({sides,count,mod,rolls,total,time:new Date().toLocaleTimeString()});diceHistory=diceHistory.slice(0,25);return {rolls,total}}
@@ -585,7 +725,12 @@ function wire(){
  if($("#rollBtn"))$("#rollBtn").onclick=()=>{let r=roll(Number($("#dieSides").value),Number($("#dieCount").value),Number($("#dieMod").value));$("#diceResult").textContent=r.total;render("Dice")};
  if($("#compactToggle"))$("#compactToggle").onchange=e=>{DATA.settings.compact=e.target.checked;document.body.classList.toggle("compact",e.target.checked);save()};
  if($("#animToggle"))$("#animToggle").onchange=e=>{DATA.settings.animations=e.target.checked;document.body.classList.toggle("no-anim",!e.target.checked);save()};
- if($("#soundToggle"))$("#soundToggle").onchange=e=>{uiSound=e.target.checked;$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`};
+ if($("#soundToggle"))$("#soundToggle").onchange=e=>{uiSound=e.target.checked;DATA.settings.sound=uiSound;$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;save();syncAudioState()};
+ if($("#musicToggle"))$("#musicToggle").onchange=e=>{DATA.settings.music=e.target.checked;save();syncAudioState()};
+ if($("#voiceToggle"))$("#voiceToggle").onchange=e=>{DATA.settings.characterVoices=e.target.checked;if(!e.target.checked)window.speechSynthesis?.cancel();save()};
+ if($("#musicVolumeInput"))$("#musicVolumeInput").oninput=e=>{DATA.settings.musicVolume=clamp(Number(e.target.value),0,100);$("#musicVolumeLabel").textContent=DATA.settings.musicVolume+"%";if(AMBIENT?.running)setAmbientDuck(false);save()};
+ if($("#voiceVolumeInput"))$("#voiceVolumeInput").oninput=e=>{DATA.settings.voiceVolume=clamp(Number(e.target.value),0,100);$("#voiceVolumeLabel").textContent=DATA.settings.voiceVolume+"%";save()};
+ if($("#testNpcVoice"))$("#testNpcVoice").onclick=()=>{unlockGameAudio();speakCharacter("Dren Voss","Channel's open, Deadlock. Try not to make me regret it.",{force:true})};
  if($("#foldToggle"))$("#foldToggle").onchange=e=>{DATA.settings.foldOptimization=e.target.checked;if(!e.target.checked){document.body.classList.remove("fold-unfolded","fold-flex")}else detectFoldLayout();save()};
  if($("#hingeGutterInput"))$("#hingeGutterInput").onchange=e=>{DATA.settings.hingeGutter=clamp(Number(e.target.value||22),12,48);save();detectFoldLayout();toast("Fold gutter updated")};
  if($("#saveNow"))$("#saveNow").onclick=()=>{save();toast("Dashboard saved")};
@@ -686,7 +831,15 @@ $("#quickRoll").onclick=()=>{let r=roll(20,1,0);toast(`d20: ${r.total}`);if(curr
 $("#exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(DATA,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="deadlock-campaign-save-v3.json";a.click();URL.revokeObjectURL(a.href)};
 $("#importBtn").onclick=()=>$("#importFile").click();
 $("#importFile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=async()=>{try{let imported=JSON.parse(r.result);let defaults=await fetch("character-data.json").then(x=>x.json());DATA=migrateOfflineData(imported,defaults);save();render("Overview");toast("Campaign save imported + upgraded for offline play")}catch(err){alert("Invalid JSON save file.")}};r.readAsText(f)};
-document.addEventListener("visibilitychange",async()=>{if(document.visibilityState==="visible"&&wakeLock){try{wakeLock=await navigator.wakeLock.request("screen")}catch(e){}}});
+document.addEventListener("visibilitychange",async()=>{
+ if(document.visibilityState==="visible"){
+  if(wakeLock){try{wakeLock=await navigator.wakeLock.request("screen")}catch(e){}}
+  if(uiSound&&audioPrefs().music!==false&&AUDIO_UNLOCKED)startAmbientMusic();
+ }else{
+  try{window.speechSynthesis?.cancel()}catch(e){}
+  stopAmbientMusic();
+ }
+});
 
 
 $("#dismissBounty").onclick=()=>{closeBountyCinematic();render("Contracts")};
@@ -720,7 +873,7 @@ $("#fullscreenBtn").onclick=async()=>{
 };
 document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement){document.body.classList.remove("fullscreen-ui");$("#fullscreenBtn").textContent="Immersive"}});
 
-$("#soundBtn").onclick=()=>{uiSound=!uiSound;$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;if(uiSound)uiBeep(560,.06,.025)};
+$("#soundBtn").onclick=()=>{uiSound=!uiSound;if(DATA?.settings)DATA.settings.sound=uiSound;$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;if(uiSound){unlockGameAudio();uiBeep(560,.06,.025)}syncAudioState();save()};
 
 load();
 function storyNpc(id){
@@ -738,6 +891,7 @@ function storyPush(type,speaker,text,extra={}){
   ...extra
  });
  if(DATA.story.history.length>200)DATA.story.history=DATA.story.history.slice(-200);
+ if(type==="dialogue")setTimeout(()=>speakCharacter(speaker,text),30);
 }
 function storyTranscript(){
  return (DATA.story.history||[]).slice(-40).map(h=>{

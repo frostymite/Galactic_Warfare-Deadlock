@@ -116,3 +116,13 @@ The Story tab and on-device Story UI are explicitly wired into navigation. This 
 
 ## v9.3.3 — Procedural GM
 Freeform Story dialogue now uses an offline personality/memory layer that assembles NPC reactions from speech intent, mood, campaign state, recent history, and established memories. No API or paid service is required.
+
+
+## v9.3.4 — Ambient Soundscape & Character Voices
+
+- Procedural low-volume ambient soundtrack generated locally with Web Audio.
+- Adaptive tone for Story, Holonet, Combat, Dogfight, Ship, and danger.
+- Automatic music ducking while NPCs speak.
+- Device text-to-speech for Dren, Nera Kade, Renn, Jessa, and unknown Holonet contacts.
+- Separate music/voice toggles and volume controls under Settings.
+- No paid service, streaming audio, or network connection required for the music layer.

@@ -1,7 +1,7 @@
 {
-  "name": "Deadlock v9.3.3 — Procedural GM",
-  "short_name": "Deadlock 9.3.3",
-  "description": "Offline-first bounty hunter RPG with a procedural GM personality layer, persistent NPC memory, adaptive dialogue, Holonet operations, and foldable support.",
+  "name": "Deadlock v9.3.4 \u2014 Ambient Voices",
+  "short_name": "Deadlock 9.3.4",
+  "description": "Offline-first bounty hunter RPG with procedural GM dialogue, subtle generated ambient music, device TTS character voices, persistent consequences, and foldable support.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
