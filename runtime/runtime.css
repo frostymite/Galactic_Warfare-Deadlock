@@ -27,3 +27,18 @@ body.fold-flex .dh-left,body.fold-flex .dh-right{top:54px}.fold-flex .dh-bottom{
 body.no-anim .diegetic-hud *{animation:none!important}
 body[data-graphics="performance"] .scene-particle:nth-child(n+13),body[data-graphics="performance"] .scene-ship:nth-child(n+3),body[data-graphics="performance"] .scene-crowd i:nth-child(n+4){display:none!important}
 body[data-graphics="performance"] .deadlock-gpu-stage{opacity:.72}body[data-graphics="balanced"] .deadlock-gpu-stage{opacity:.9}
+
+/* v13 HUD ownership: scene-local HUD replaces viewport-stacked instrumentation. */
+.diegetic-hud.scene-mounted{position:absolute;inset:0;z-index:20;overflow:hidden;border-radius:inherit}
+.living-scene>.diegetic-hud.scene-mounted .dh-left{position:absolute;top:14px;left:14px}
+.living-scene>.diegetic-hud.scene-mounted .dh-right{position:absolute;top:14px;right:14px}
+.living-scene>.diegetic-hud.scene-mounted .dh-center-top{position:absolute;top:12px}
+.living-scene>.diegetic-hud.scene-mounted .dh-bottom{position:absolute;bottom:52px}
+.living-scene>.diegetic-hud.scene-mounted .dh-corner{position:absolute}
+@media(max-width:700px){
+ .living-scene>.diegetic-hud.scene-mounted .dh-left{top:8px;left:7px;width:116px}
+ .living-scene>.diegetic-hud.scene-mounted .dh-right{top:8px;right:7px;width:126px}
+ .living-scene>.diegetic-hud.scene-mounted .dh-center-top{top:7px;max-width:52%}
+ .living-scene>.diegetic-hud.scene-mounted .dh-bottom{bottom:44px;left:7px;right:7px}
+}
+body.fold-flex .living-scene>.diegetic-hud.scene-mounted .dh-bottom{display:none}
