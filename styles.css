@@ -14,6 +14,8 @@ body:after{content:"";position:fixed;inset:0;background:radial-gradient(circle a
 .app{position:relative;z-index:2;display:grid;grid-template-columns:270px 1fr;min-height:100vh}
 .sidebar{height:100vh;position:sticky;top:0;padding:20px 15px;border-right:1px solid var(--line2);background:linear-gradient(180deg,#041016f5,#020609f6)}
 .brand{display:flex;gap:12px;align-items:center;margin-bottom:20px}.brand h1{margin:1px 0;font-size:22px;letter-spacing:1.5px}.micro{font-size:10px;letter-spacing:2px;color:#76aeba}.cyan{color:var(--cyan);font-weight:800}
+/* v13.0.1: the page title already identifies context; suppress the legacy sticky DEADLOCK // PAGE breadcrumb. */
+.topbar #crumb{display:none!important}
 .mark{width:50px;height:50px;border:1px solid var(--cyan);display:grid;place-items:center;color:var(--cyan);font-size:22px;font-weight:900;clip-path:polygon(12% 0,88% 0,100% 14%,100% 86%,88% 100%,12% 100%,0 86%,0 14%)}
 nav{display:flex;flex-direction:column;gap:6px}
 nav button{min-height:44px;background:#061219;color:#a7dae3;border:1px solid #143945;border-radius:7px;padding:11px 13px;text-align:left;cursor:pointer;font-weight:750;transition:.16s}
