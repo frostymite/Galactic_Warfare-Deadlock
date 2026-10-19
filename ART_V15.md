@@ -4,7 +4,7 @@ Created with the built-in image generation tool. Original v14 art is retained.
 
 ## Raven sprite
 
-Saved project asset: `assets/ships/raven_cutout_v15.svg`
+Saved project asset: `assets/ships/raven_cutout_v15.png`
 
 Prompt:
 
@@ -12,7 +12,7 @@ Use case: stylized-concept. Asset type: transparent game ship sprite for the Dea
 
 ## Orbital backdrop
 
-Saved project asset: `assets/scenes/veyra_orbit_v15.svg`
+Saved project asset: `assets/scenes/veyra_orbit_v15.png`
 
 Prompt:
 

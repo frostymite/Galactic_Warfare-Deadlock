@@ -1,11 +1,12 @@
-const CACHE="deadlock-v17-apex-1";
+const CACHE="deadlock-v17-shipforge-components-2";
 const APP_SHELL=[
- "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.svg",
- "./runtime/port-engine.js", "./runtime/lower-port.js", "./runtime/lower-port.css", "./assets/scenes/port_market_v16.svg", "./assets/scenes/port_cantina_v16.svg", "./assets/scenes/port_tunnels_v16.svg", "./assets/scenes/port_hideout_v16.svg",
- "./assets/ships/beacon_vector_v15.svg", "./runtime/engagement.js", "./runtime/engagement.css", "./assets/ships/raven_cutout_v15.svg", "./assets/scenes/veyra_orbit_v15.svg", "./assets/ships/raven_vector_v15.svg", "./assets/ships/courier_vector_v15.svg", "./assets/ships/patrol_vector_v15.svg",
- "./runtime/world-polish.js", "./assets/scenes/veyra_upper_v14.svg", "./assets/scenes/veyra_undercity_v14.svg",
- "./assets/scenes/raven_cockpit_v14.svg",
- "./runtime/polish.js", "./runtime/polish.css", "./assets/scenes/blackglass_command_v14.svg", "./assets/scenes/veyra_port_v14.svg",
+ "./ship-parts.json", "./ship-component-visuals.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge-visuals.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./component-library.html", "./component-library.css", "./component-library.js",
+ "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.png",
+ "./runtime/port-engine.js", "./runtime/lower-port.js", "./runtime/lower-port.css", "./assets/scenes/port_market_v16.png", "./assets/scenes/port_cantina_v16.png", "./assets/scenes/port_tunnels_v16.png", "./assets/scenes/port_hideout_v16.png",
+ "./assets/ships/beacon_vector_v15.svg", "./runtime/engagement.js", "./runtime/engagement.css", "./assets/ships/raven_cutout_v15.png", "./assets/scenes/veyra_orbit_v15.png", "./assets/ships/raven_vector_v15.svg", "./assets/ships/courier_vector_v15.svg", "./assets/ships/patrol_vector_v15.svg",
+ "./runtime/world-polish.js", "./assets/scenes/veyra_upper_v14.png", "./assets/scenes/veyra_undercity_v14.png",
+ "./assets/scenes/raven_cockpit_v14.png",
+ "./runtime/polish.js", "./runtime/polish.css", "./assets/scenes/blackglass_command_v14.png", "./assets/scenes/veyra_port_v14.png",
  './',
  './app.js',
  './asset-packs.json',

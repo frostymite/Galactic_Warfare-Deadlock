@@ -1,0 +1,11 @@
+/* ShipForge traffic renderer. SVG parts stay cheap enough for browser/PWA while sharing deterministic data with native builds. */
+.shipforge-ship{display:block;width:100%;height:100%;filter:drop-shadow(-5px 0 7px #39ddff55);transform-origin:50% 50%}.shipforge-svg{display:block;width:100%;height:100%;overflow:visible}.shipforge-fighter{filter:drop-shadow(-3px 0 5px #5adfff55)}.shipforge-cargo,.shipforge-freighter{filter:drop-shadow(-7px 0 8px #ffb05a33)}
+.scene-shipforge{position:absolute;width:clamp(58px,8vw,104px);height:42px;top:calc(7% + (var(--lane)*13%));left:-18%;opacity:.64;animation:sceneForgeFly var(--flight,15s) linear infinite;animation-delay:var(--delay);transform:scale(var(--ship-scale,.72));transform-origin:center;will-change:transform}.scene-shipforge.from-right{left:auto;right:-18%;animation-name:sceneForgeFlyReverse}.scene-shipforge .shipforge-ship{width:100%;height:100%}
+@keyframes sceneForgeFly{0%{transform:translate3d(0,0,0) scale(calc(var(--ship-scale,.72)*.72));opacity:0}8%{opacity:.68}55%{transform:translate3d(62vw,-5px,0) scale(var(--ship-scale,.72));opacity:.72}100%{transform:translate3d(132vw,4px,0) scale(calc(var(--ship-scale,.72)*1.16));opacity:0}}
+@keyframes sceneForgeFlyReverse{0%{transform:translate3d(0,0,0) scaleX(-1) scale(calc(var(--ship-scale,.72)*.72));opacity:0}8%{opacity:.64}55%{transform:translate3d(-62vw,-4px,0) scaleX(-1) scale(var(--ship-scale,.72));opacity:.69}100%{transform:translate3d(-132vw,4px,0) scaleX(-1) scale(calc(var(--ship-scale,.72)*1.16));opacity:0}}
+.port-shipforge{position:absolute;width:17%;height:13%;left:-22%;top:13%;opacity:.72;animation:portForgeTraffic 22s linear infinite;pointer-events:none}.port-shipforge .shipforge-ship{width:100%;height:100%;filter:brightness(.62) drop-shadow(-6px 0 8px #44dfff44)}
+@keyframes portForgeTraffic{0%{transform:translateX(0) scale(.72);opacity:0}7%{opacity:.72}85%{opacity:.62}100%{transform:translateX(720%) scale(1.05);opacity:0}}
+body[data-graphics="performance"] .scene-shipforge:nth-child(n+3){display:none!important}
+@media(max-width:700px){.scene-shipforge{width:58px;height:30px}.port-shipforge{width:22%}}
+
+.shipforge-component{display:block;width:100%;height:100%;overflow:visible}

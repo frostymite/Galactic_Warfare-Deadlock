@@ -42,7 +42,7 @@ function characterVisual(id,state="neutral",alt=""){
  const e=assetEntry("characters",id)||{};return imgTag(e[state]||e.neutral||e.fallback,alt||id,e.fallback||null,"character-visual");
 }
 function ravenVisual(state="flight",alt="The Raven"){
- if(state!=="schematic")return imgTag("assets/ships/raven_cutout_v15.svg",alt,null,"raven-visual");
+ if(state!=="schematic")return imgTag("assets/ships/raven_cutout_v15.png",alt,null,"raven-visual");
  const e=assetEntry("ships","raven")||{};return imgTag(e[state]||e.flight||e.fallback,alt,e.fallback||null,"raven-visual");
 }
 function validCampaignSave(value){return !!value&&typeof value==="object"&&!Array.isArray(value)&&!!value.character&&Number.isFinite(value.character.health)&&Number.isFinite(value.character.credits)&&!!value.ship&&Number.isFinite(value.ship.hull)&&!!value.combat&&Array.isArray(value.combat.participants)&&["weapons","contracts","targets","contacts","inventory","gear","identities","factions","journal","locations"].every(k=>Array.isArray(value[k]));}
@@ -2570,9 +2570,14 @@ function actorMarkup(id,side,state="neutral",label="",mood="mood-neutral"){
  const interactive=side==="right"&&id!=="rovan"?` data-scene-contact="${esc(id)}" role="button" tabindex="0" aria-label="Interact with ${esc(label||id)}"`:"";
  return `<div class="scene-actor actor-${side} ${esc(mood)}${injury}" data-scene-actor="${esc(id)}"${interactive}><div class="actor-shadow"></div><img src="${esc(src)}" alt="${esc(label||id)}" ${fallback&&fallback!==src?`onerror="this.onerror=null;this.src='${esc(fallback)}'"`:""}><div class="actor-rim"></div><div class="actor-breath"></div></div>`;
 }
-function sceneTraffic(count=3){return Array.from({length:count},(_,i)=>`<i class="scene-ship ship-${i%4}" style="--lane:${i};--delay:${-(i*2.7)}s"></i>`).join("")}
+function sceneTraffic(count=3){
+ const forge=window.ShipForge;if(!forge)return Array.from({length:count},(_,i)=>`<i class="scene-ship ship-${i%4}" style="--lane:${i};--delay:${-(i*2.7)}s"></i>`).join("");
+ const seed=forge.hashSeed(`${currentPage||"scene"}|${DATA?.story?.location||"deadlock"}|${DATA?.world?.seed||DATA?.created||"0"}`);
+ const classes=["fighter","shuttle","light_freighter","freighter","cargo","patrol"];
+ return forge.population(seed,count,classes).map((ship,i)=>`<i class="scene-shipforge ${i%2?"from-right":"from-left"}" style="--lane:${i};--delay:${-(i*3.1)}s;--flight:${13+(i%4)*2}s;--ship-scale:${.62+(i%4)*.09}">${forge.renderMarkup(ship,{label:`${forge.catalog.classes[ship.classId].label} traffic`})}</i>`).join("");
+}
 function sceneParticles(count=18,theme="hq"){return Array.from({length:count},(_,i)=>`<i class="scene-particle p-${i%6}" style="--i:${i};--x:${(i*37)%101};--y:${(i*61)%97};--delay:${-(i*.41)}s"></i>`).join("")}
-function sceneCrowd(count=4){return `<div class="scene-crowd">${Array.from({length:count},(_,i)=>`<i style="--i:${i};--delay:${-(i*1.7)}s"></i>`).join("")}</div>`}
+function sceneCrowd(count=4){return `<div class="scene-crowd">${Array.from({length:count},(_,i)=>{const dir=i%2?"from-right":"from-left",variant=`person-${i%4}`,speed=13+(i%5)*2.2,depth=3+(i*17)%18,scale=.62+((i*7)%5)*.07;return `<i class="scene-person ${dir} ${variant}" style="--i:${i};--delay:${-(i*2.9)}s;--walk-speed:${speed}s;--depth:${depth};--person-scale:${scale}"><span class="person-rig"><span class="person-head"></span><span class="person-body"></span><span class="person-arm arm-a"></span><span class="person-arm arm-b"></span><span class="person-leg leg-a"></span><span class="person-leg leg-b"></span></span></i>`}).join("")}</div>`}
 function sceneHotspots(ctx){
  const id=ctx.presetId;let spots=[];
  if(id==="blackglass")spots=[["Galaxy","HOLO TABLE",50,58],["Holonet","COMMS",20,36],["Contracts","CONTRACT NET",82,42]];
@@ -2617,7 +2622,7 @@ function livingSceneMarkup(ctx){
     ${theme==="hq"?'<div class="scene-holo-table"><i></i><b></b><em></em></div><div class="scene-window-reflection"></div>':""}
     ${theme==="cockpit"?'<div class="scene-cockpit-glass"></div><div class="scene-instruments"><i></i><i></i><i></i><i></i><i></i></div>':""}
     ${theme==="combat"?`<div class="scene-cover cover-a"></div><div class="scene-cover cover-b"></div><div class="scene-enemies">${groundEnemyMarkup}</div>`:""}
-    ${page==="Dogfight"?`<div class="scene-raven-flight"><img src="assets/ships/raven_cutout_v15.svg" alt="The Raven"></div><div class="scene-enemy-fighters">${dogEnemyMarkup}</div>`:""}
+    ${page==="Dogfight"?`<div class="scene-raven-flight"><img src="assets/ships/raven_cutout_v15.png" alt="The Raven"></div><div class="scene-enemy-fighters">${dogEnemyMarkup}</div>`:""}
     ${inTransit?`<div class="scene-hyperspace">${Array.from({length:28},(_,i)=>`<i style="--i:${i};--a:${(i*47)%360}deg;--delay:${-(i*.11)}s"></i>`).join("")}</div>`:""}
     ${page==="Galaxy"&&ctx.presetId==="orbit"?'<div class="scene-orbit-raven"><img src="assets/raven_dedicated.jpg" alt="The Raven in orbit"></div>':""}
     ${sceneCrowd(Number(p.crowd||0))}

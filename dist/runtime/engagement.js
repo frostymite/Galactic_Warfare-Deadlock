@@ -1,7 +1,7 @@
 /* v15 — presentation and optional, persistent passive-scanning loop. No combat modifiers. */
 (() => {
  'use strict';
- const shipArt='assets/ships/raven_cutout_v15.svg';
+ const shipArt='assets/ships/raven_cutout_v15.png';
  const colors={cyan:'#73e5ff',amber:'#ffb969',violet:'#b99bff'};
  const signals=[
   {id:'courier',title:'Needle-class courier',kind:'Civilian vessel',art:'assets/ships/courier_vector_v15.svg',text:'A narrow signature crosses the shipping lane. The pilot broadcasts a valid civilian transponder and keeps the engines cold near port. Fast delivery, light armor, no reason to interfere.'},
