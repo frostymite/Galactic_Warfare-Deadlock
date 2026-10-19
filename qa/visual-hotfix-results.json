@@ -1,0 +1,94 @@
+{
+  "checks": 15,
+  "passed": 15,
+  "failed": 0,
+  "results": [
+    {
+      "label": "v17.6 package version",
+      "pass": true,
+      "detail": "17.6.0"
+    },
+    {
+      "label": "all 64 parts have generated art metadata",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "label": "all generated part assets exist",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "label": "generated part assets are nontrivial",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "label": "five generated HQ images exist",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "label": "HQ spaces use distinct images",
+      "pass": true,
+      "detail": [
+        "85014522faf4c05a0000d2fb238bb588d685cc79",
+        "e13feb05121bae24035d375a2f5063883e14a6bb",
+        "4f069713c91ab5f1e70fc6846911af30fdb2d1cd",
+        "c13ccd197f8477eb9c0710a3232b907fbe3832e0",
+        "8382bc7850997fed9873776ef87b4a1667aa63b6"
+      ]
+    },
+    {
+      "label": "HQ site routing uses generated art",
+      "pass": true,
+      "detail": [
+        "assets/locations/blackglass/generated/hq.webp",
+        "assets/locations/blackglass/generated/briefing.webp",
+        "assets/locations/blackglass/generated/hangar.webp",
+        "assets/locations/blackglass/generated/quarters.webp",
+        "assets/locations/blackglass/generated/contracts.webp"
+      ]
+    },
+    {
+      "label": "HQ living scene overrides background per selected room",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "HQ hologram is room-specific",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "Galaxy normal map no longer injects living-scene layer",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "Galaxy hotfix stylesheet is loaded",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "ShipForge v4 renders generated art",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "offline cache includes generated HQ art",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "offline cache dynamically includes part art",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "offline cache key bumped",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

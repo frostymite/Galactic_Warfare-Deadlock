@@ -1,7 +1,7 @@
-const CACHE="deadlock-v17-4-shipforge-phase2-complete";
+const CACHE="deadlock-v17-6-generated-shipforge-visual-hotfix";
 const APP_SHELL=[
- "./ship-parts.json", "./ship-component-visuals.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge-visuals.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./runtime/shipforge-world.js", "./runtime/shipforge-world.css", "./component-library.html", "./component-library.css", "./component-library.js",
- "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.png",
+ "./ship-parts.json", "./ship-component-visuals.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge-visuals.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./runtime/shipforge-world.js", "./runtime/shipforge-world.css", "./runtime/living-world.js", "./runtime/living-world.css", "./runtime/visual-hotfix.css", "./component-library.html", "./component-library.css", "./component-library.js",
+ "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.png", "./assets/locations/blackglass/generated/hq.webp", "./assets/locations/blackglass/generated/briefing.webp", "./assets/locations/blackglass/generated/hangar.webp", "./assets/locations/blackglass/generated/quarters.webp", "./assets/locations/blackglass/generated/contracts.webp",
  "./runtime/port-engine.js", "./runtime/lower-port.js", "./runtime/lower-port.css", "./assets/scenes/port_market_v16.png", "./assets/scenes/port_cantina_v16.png", "./assets/scenes/port_tunnels_v16.png", "./assets/scenes/port_hideout_v16.png",
  "./assets/ships/beacon_vector_v15.svg", "./runtime/engagement.js", "./runtime/engagement.css", "./assets/ships/raven_cutout_v15.svg", "./assets/scenes/veyra_orbit_v15.png", "./assets/ships/raven_vector_v15.svg", "./assets/ships/courier_vector_v15.svg", "./assets/ships/patrol_vector_v15.svg",
  "./runtime/world-polish.js", "./assets/scenes/veyra_upper_v14.png", "./assets/scenes/veyra_undercity_v14.png",
@@ -125,7 +125,7 @@ self.addEventListener("install",event=>{
   await cache.addAll(APP_SHELL);
   try{
    const response=await cache.match("./ship-parts.json");
-   if(response){const catalog=await response.clone().json();const vectors=(catalog.parts||[]).map(p=>"./"+p.visual).filter(Boolean);if(vectors.length)await cache.addAll(vectors);}
+   if(response){const catalog=await response.clone().json();const assets=[...new Set((catalog.parts||[]).flatMap(p=>[p.visual,p.art]).filter(Boolean).map(x=>"./"+x))];if(assets.length)await cache.addAll(assets);}
   }catch(err){console.warn("ShipForge component precache skipped",err);}
   await self.skipWaiting();
  })());

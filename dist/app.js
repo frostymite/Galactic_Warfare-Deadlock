@@ -467,7 +467,7 @@ function migrateOfflineData(current,defaults){
  if(marrChoice){marrChoice.contractId="marr";marrChoice.actionType=marrChoice.actionType||"contract_review";}
  window.DeadlockShipForge?.ensure?.(current);
  window.DeadlockShipForge?.syncLegacyShip?.(current);
- current.meta.version="17.4.0";
+ current.meta.version="17.6.0";
  window.ApexEngine?.ensure(current);
  return current;
 }
@@ -589,7 +589,14 @@ function handleWorldService(service){
  const s=String(service||"").toLowerCase();if(/bounty/.test(s))return render("Bounties");if(/repair|parts|salvage/.test(s))return render("Ship");if(/black market|market|trade|broker/.test(s))return render("Inventory");if(/medical/.test(s))return render("Character");if(/research|information|forged|smuggler/.test(s)){const l=currentGalaxyLocation();DATA.story.objective=`Gather local intelligence on ${l?.name||"the current world"}.`;storyPush("system","Local Network",`Deadlock opens a local intelligence channel through ${service}.`);save();return render("Story")};return toast(`${service}: local hook ready`)
 }
 function hqSite(id){return GALAXY?.hq?.sites?.find(x=>x.id===id)||null}
-function hqSiteAsset(site){if(!site)return assetEntry("blackglass","hq");const key=site.asset?.replace("blackglass_","")||"hq";return assetEntry("blackglass",key)||assetEntry("blackglass","hq")}
+const HQ_GENERATED_ART={
+ blackglass_hq:"assets/locations/blackglass/generated/hq.webp",
+ blackglass_briefing:"assets/locations/blackglass/generated/briefing.webp",
+ blackglass_hangar:"assets/locations/blackglass/generated/hangar.webp",
+ blackglass_quarters:"assets/locations/blackglass/generated/quarters.webp",
+ blackglass_contracts:"assets/locations/blackglass/generated/contracts.webp"
+};
+function hqSiteAsset(site){if(!site)return HQ_GENERATED_ART.blackglass_hq;return HQ_GENERATED_ART[site.id]||assetEntry("blackglass",site.asset?.replace("blackglass_","")||"hq")||HQ_GENERATED_ART.blackglass_hq}
 function handleHqSite(id){const g=galaxyState();g.currentSiteId=id;save();render("HQ")}
 function handleHqAction(action){
  if(action==='Open Syndicate command')return render('Syndicate');
@@ -2539,10 +2546,10 @@ function scenePresetFor(page){
  return theme;
 }
 function sceneContext(page){
- const presetId=scenePresetFor(page),preset=SCENES?.presets?.[presetId]||SCENES?.presets?.unknown||{};
+ const presetId=scenePresetFor(page);let preset={...(SCENES?.presets?.[presetId]||SCENES?.presets?.unknown||{})};
  const g=galaxyState?.(),loc=galaxyLocation?.(sceneLocationId()),npc=currentStoryVisualNpc?.();
  let title=loc?.name||DATA?.story?.location||"Deadlock Reach",sub="LIVING SCENE";
- if(page==="HQ"){const site=hqSite?.(g?.currentSiteId)||hqSite?.("blackglass_hq");title=site?.name||"Blackglass Station";sub=`DEADLOCK HQ // ${String(preset.room||"COMMAND").toUpperCase()}`}
+ if(page==="HQ"){const site=hqSite?.(g?.currentSiteId)||hqSite?.("blackglass_hq");preset={...preset,background:hqSiteAsset(site)};title=site?.name||"Blackglass Station";sub=`DEADLOCK HQ // ${String(preset.room||"COMMAND").toUpperCase()}`}
  if(page==="Ship"){title="The Raven";sub=`INTERIOR // ${String(preset.room||"COCKPIT").toUpperCase()}`}
  if(page==="Combat"){title=DATA?.combat?.reason||"Hostile Contact";sub="GROUND ENCOUNTER // LIVE"}
  if(page==="Dogfight"){title=DATA?.dogfight?.reason||"The Raven";sub="SPACE COMBAT // LIVE"}
@@ -2574,14 +2581,15 @@ function actorMarkup(id,side,state="neutral",label="",mood="mood-neutral"){
  const interactive=side==="right"&&id!=="rovan"?` data-scene-contact="${esc(id)}" role="button" tabindex="0" aria-label="Interact with ${esc(label||id)}"`:"";
  return `<div class="scene-actor actor-${side} ${esc(mood)}${injury}" data-scene-actor="${esc(id)}"${interactive}><div class="actor-shadow"></div><img src="${esc(src)}" alt="${esc(label||id)}" ${fallback&&fallback!==src?`onerror="this.onerror=null;this.src='${esc(fallback)}'"`:""}><div class="actor-rim"></div><div class="actor-breath"></div></div>`;
 }
-function sceneTraffic(count=3){
+function sceneTraffic(count=3,ctx=null){
+ if(ctx&&window.DeadlockLivingWorld)return window.DeadlockLivingWorld.trafficMarkup(DATA,ctx,count);
  const forge=window.ShipForge;if(!forge)return Array.from({length:count},(_,i)=>`<i class="scene-ship ship-${i%4}" style="--lane:${i};--delay:${-(i*2.7)}s"></i>`).join("");
  const seed=forge.hashSeed(`${currentPage||"scene"}|${DATA?.story?.location||"deadlock"}|${DATA?.world?.seed||DATA?.created||"0"}`);
  const classes=["fighter","shuttle","light_freighter","freighter","cargo","patrol"];
  const key=`${currentPage||"scene"}|${DATA?.galaxyState?.currentLocationId||DATA?.story?.location||"deadlock"}|traffic`;const hadPersistent=!!DATA?.shipForge?.traffic?.[key]?.length;const persistent=window.DeadlockShipForge?.trafficPopulation?.(DATA,key,count,classes);if(!hadPersistent&&persistent?.length)save();const ships=persistent?.map(x=>x.blueprint)||forge.population(seed,count,classes);return ships.map((ship,i)=>`<i class="scene-shipforge ${i%2?"from-right":"from-left"}" style="--lane:${i};--delay:${-(i*3.1)}s;--flight:${13+(i%4)*2}s;--ship-scale:${.62+(i%4)*.09}">${forge.renderMarkup(ship,{label:`${forge.catalog.classes[ship.classId].label} traffic`})}</i>`).join("");
 }
 function sceneParticles(count=18,theme="hq"){return Array.from({length:count},(_,i)=>`<i class="scene-particle p-${i%6}" style="--i:${i};--x:${(i*37)%101};--y:${(i*61)%97};--delay:${-(i*.41)}s"></i>`).join("")}
-function sceneCrowd(count=4){return `<div class="scene-crowd">${Array.from({length:count},(_,i)=>{const dir=i%2?"from-right":"from-left",variant=`person-${i%4}`,speed=13+(i%5)*2.2,depth=3+(i*17)%18,scale=.62+((i*7)%5)*.07;return `<i class="scene-person ${dir} ${variant}" style="--i:${i};--delay:${-(i*2.9)}s;--walk-speed:${speed}s;--depth:${depth};--person-scale:${scale}"><span class="person-rig"><span class="person-head"></span><span class="person-body"></span><span class="person-arm arm-a"></span><span class="person-arm arm-b"></span><span class="person-leg leg-a"></span><span class="person-leg leg-b"></span></span></i>`}).join("")}</div>`}
+function sceneCrowd(count=4,ctx=null){if(ctx&&window.DeadlockLivingWorld)return window.DeadlockLivingWorld.sceneMarkup(DATA,ctx,count);return `<div class="scene-crowd">${Array.from({length:count},(_,i)=>{const dir=i%2?"from-right":"from-left",variant=`person-${i%4}`,speed=13+(i%5)*2.2,depth=3+(i*17)%18,scale=.62+((i*7)%5)*.07;return `<i class="scene-person ${dir} ${variant}" style="--i:${i};--delay:${-(i*2.9)}s;--walk-speed:${speed}s;--depth:${depth};--person-scale:${scale}"><span class="person-rig"><span class="person-head"></span><span class="person-body"></span><span class="person-arm arm-a"></span><span class="person-arm arm-b"></span><span class="person-leg leg-a"></span><span class="person-leg leg-b"></span></span></i>`}).join("")}</div>`}
 function sceneHotspots(ctx){
  const id=ctx.presetId;let spots=[];
  if(id==="blackglass")spots=[["Galaxy","HOLO TABLE",50,58],["Holonet","COMMS",20,36],["Contracts","CONTRACT NET",82,42]];
@@ -2598,7 +2606,8 @@ function sceneHotspots(ctx){
  return spots.map(([page,label,x,y])=>`<button type="button" class="scene-hotspot" data-scene-page-link="${esc(page)}" style="--hx:${x}%;--hy:${y}%"><i></i><span>${esc(label)}</span></button>`).join("");
 }
 function livingSceneMarkup(ctx){
- const p=ctx.preset||{},page=ctx.page,theme=p.theme||ctx.presetId;
+ const p=ctx.preset||{},page=ctx.page,theme=p.theme||ctx.presetId,room=String(p.room||"");
+ const hqHolo=theme==="hq"&&["command","briefing","contracts"].includes(room);
  const recent=[...(DATA?.story?.history||[])].reverse().find(h=>h.type==="dialogue");
  const npc=ctx.npc, npcId=npc?.id||null, npcState=sceneActorState(npc);
  const actors=[];
@@ -2621,15 +2630,15 @@ function livingSceneMarkup(ctx){
    <div class="scene-world">
     <img class="scene-backdrop" src="${esc(p.background||"assets/scenes/unknown.svg")}" alt="${esc(ctx.title)} environment">
     <div class="scene-stars"></div><div class="scene-depth-haze"></div>
-    <div class="scene-traffic">${sceneTraffic(Number(p.traffic||0))}</div>
+    <div class="scene-traffic">${sceneTraffic(Number(p.traffic||0),ctx)}</div>
     <div class="scene-atmosphere">${sceneParticles(Number(p.particles||12),theme)}</div>
-    ${theme==="hq"?'<div class="scene-holo-table"><i></i><b></b><em></em></div><div class="scene-window-reflection"></div>':""}
+    ${hqHolo?'<div class="scene-holo-table"><i></i><b></b><em></em></div>':""}${theme==="hq"?'<div class="scene-window-reflection"></div>':""}
     ${theme==="cockpit"?'<div class="scene-cockpit-glass"></div><div class="scene-instruments"><i></i><i></i><i></i><i></i><i></i></div>':""}
     ${theme==="combat"?`<div class="scene-cover cover-a"></div><div class="scene-cover cover-b"></div><div class="scene-enemies">${groundEnemyMarkup}</div>`:""}
     ${page==="Dogfight"?`<div class="scene-raven-flight"><img src="assets/ships/raven_cutout_v15.svg" alt="The Raven"></div><div class="scene-enemy-fighters">${dogEnemyMarkup}</div>`:""}
     ${inTransit?`<div class="scene-hyperspace">${Array.from({length:28},(_,i)=>`<i style="--i:${i};--a:${(i*47)%360}deg;--delay:${-(i*.11)}s"></i>`).join("")}</div>`:""}
     ${page==="Galaxy"&&ctx.presetId==="orbit"?'<div class="scene-orbit-raven"><img src="assets/raven_dedicated.jpg" alt="The Raven in orbit"></div>':""}
-    ${sceneCrowd(Number(p.crowd||0))}
+    ${sceneCrowd(Number(p.crowd||0),ctx)}
     <div class="scene-actors">${actors.join("")}</div>
     <div class="scene-interactives">${sceneHotspots(ctx)}</div>
     <div class="scene-light-sweep"></div><div class="scene-vignette"></div>
@@ -2643,11 +2652,13 @@ function enhanceLivingScene(page){
  if(!SCENES||!DATA)return;
  const allowed=["Story","HQ","Galaxy","Ship","Combat","Dogfight"];
  if(!allowed.includes(page))return stopSceneRuntime();
+ if(page==="Galaxy"&&!['transit','orbit'].includes(galaxyState?.()?.phase))return stopSceneRuntime();
  const content=$("#content"),ctx=sceneContext(page);if(!content||!ctx)return;document.body.dataset.sceneTheme=ctx.preset?.theme||ctx.presetId||'unknown';
  const wrap=document.createElement("div");wrap.className="living-scene-card";wrap.innerHTML=livingSceneMarkup(ctx);
  if(page==="Story")content.querySelector(".story-topbar")?.after(wrap);
  else {if(page==="HQ")content.querySelector(".hq-shell")?.classList.add("scene-enhanced");const root=content.firstElementChild; if(root)root.insertBefore(wrap,root.firstChild); else content.prepend(wrap)}
  const liveScene=wrap.querySelector("[data-living-scene]");startSceneRuntime(liveScene);
+ window.DeadlockLivingWorld?.mount?.(liveScene,DATA,ctx);if(window.DeadlockLivingWorld?.consumeDirty?.(DATA))save();
  if(DATA.settings.worldFx!==false&&DATA.settings.animations!==false&&!matchMedia('(prefers-reduced-motion: reduce)').matches)window.DeadlockWorldFX?.attach?.(liveScene,ctx.preset);else window.DeadlockWorldFX?.detach?.();
  if(DATA.settings.actorRigs!==false)window.DeadlockActors?.sync?.();
  const recent=[...(DATA.story?.history||[])].reverse().find(h=>h.type==="dialogue");
@@ -2663,7 +2674,7 @@ function startSceneRuntime(el){
  el.querySelectorAll("[data-scene-contact]").forEach(actor=>{const engage=()=>{const id=actor.dataset.sceneContact,n=storyNpc(id);if(n&&currentPage==="Story"){DATA.story.currentNpc=id;DATA.story.currentSpeaker=n.name;window.DeadlockActors?.react?.(id,"notice");window.DeadlockNative?.impact?.("light").catch?.(()=>{});gameSfx("ui",.35);toast(`${n.name} has your attention.`);setTimeout(()=>$("#storyInput")?.focus(),40)}};actor.addEventListener("click",engage);actor.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();engage()}})});
  const loop=()=>{if(!SCENE_RUNTIME.el||!document.body.contains(SCENE_RUNTIME.el))return;const t=performance.now()/1000;el.style.setProperty("--scene-time",t.toFixed(2));SCENE_RUNTIME.raf=requestAnimationFrame(loop)};SCENE_RUNTIME.raf=requestAnimationFrame(loop);
 }
-function stopSceneRuntime(clear=true){if(SCENE_RUNTIME.raf)cancelAnimationFrame(SCENE_RUNTIME.raf);SCENE_RUNTIME.raf=0;if(clear)SCENE_RUNTIME.el=null;window.DeadlockWorldFX?.detach?.();document.body.classList.remove("scene-cinema-open")}
+function stopSceneRuntime(clear=true){if(SCENE_RUNTIME.raf)cancelAnimationFrame(SCENE_RUNTIME.raf);SCENE_RUNTIME.raf=0;if(clear)SCENE_RUNTIME.el=null;window.DeadlockWorldFX?.detach?.();window.DeadlockLivingWorld?.unmount?.();document.body.classList.remove("scene-cinema-open")}
 function setSceneSpeaker(id,on=true){
  if(!id)return;const el=document.querySelector(`[data-scene-actor="${CSS.escape(id)}"]`)||document.querySelector(`[data-scene-actor="${CSS.escape(id==="nera"?"kade":id)}"]`);if(!el)return;
  el.classList.toggle("speaking",!!on);el.closest("[data-living-scene]")?.classList.toggle("scene-dialogue-active",!!on);window.DeadlockActors?.setSpeaking?.(id,!!on);

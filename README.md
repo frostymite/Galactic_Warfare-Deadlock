@@ -8,6 +8,13 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
+
+## Visual Hotfix + Generated ShipForge — v17.6.0
+
+The Galaxy navigation screen has been stabilized so normal map browsing no longer competes with a second living-scene layer. Blackglass HQ now uses distinct generated environment images for Command, Briefing, Hangar, Quarters and Contracts instead of the shared placeholder-style location art.
+
+ShipForge v4 keeps all 64 existing part IDs and compatibility rules but adds transparent generated artwork for every component. The generated parts are normalized to the same modular assembly canvas, so deterministic traffic, NPC ships, dealer stock and owned ships can use the more physical rendered presentation without changing save data. The SVG versions remain as fallbacks. See `PATCH_V17_6_GENERATED_SHIPFORGE_VISUAL_HOTFIX.md` and `SHIPFORGE_GENERATED_ART_V17_6.md`.
+
 ## ShipForge Phase 2 — v17.4.0
 
 ShipForge is now a gameplay system rather than only a procedural visual generator. Open **Ship** to use the new Shipyard, where the Raven and future owned craft keep exact component instances, paint, ownership, condition, damage and derived performance in the campaign save. Components can be purchased from local exchanges or salvage yards, installed or replaced according to ship-class/mount compatibility, repaired, removed when optional, sold, or recovered from defeated modular ships.

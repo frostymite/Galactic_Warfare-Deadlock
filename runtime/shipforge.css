@@ -1,4 +1,4 @@
-/* ShipForge v3 — lightweight 2.5D traffic renderer with layered depth and moving systems. */
+/* ShipForge v4 — generated-art modular renderer with layered depth and moving systems. */
 .shipforge-ship{display:block;width:100%;height:100%;filter:drop-shadow(-5px 9px 9px #0008) drop-shadow(-4px 0 7px #39ddff44);transform-origin:50% 50%;perspective:720px}.shipforge-svg{display:block;width:100%;height:100%;overflow:visible;transform-origin:50% 54%;animation:sfHullFloat 5.6s ease-in-out infinite alternate}.shipforge-25d .sf-engine-core{animation:sfEnginePulse 1.8s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}.shipforge-25d .sf-slot-weapon .sf-turret-detail{animation:sfTurretTrack 4.8s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:52% 60%}.shipforge-25d .sf-slot-utility .sf-sensor-detail{animation:sfSensorSweep 6s linear infinite;transform-box:fill-box;transform-origin:center}.shipforge-25d .sf-part-surface{transition:filter .2s}.shipforge-fighter{filter:drop-shadow(-3px 7px 7px #0008) drop-shadow(-3px 0 5px #5adfff55)}.shipforge-cargo,.shipforge-freighter{filter:drop-shadow(-7px 11px 10px #0009) drop-shadow(-7px 0 8px #ffb05a2b)}
 @keyframes sfHullFloat{0%{transform:translate3d(0,1px,0) rotate(.15deg)}100%{transform:translate3d(0,-2px,0) rotate(-.15deg)}}
 @keyframes sfEnginePulse{to{opacity:.68;filter:brightness(1.35)}}
@@ -13,3 +13,15 @@ body[data-graphics="performance"] .scene-shipforge:nth-child(n+3){display:none!i
 @media(max-width:700px){.scene-shipforge{width:62px;height:34px}.port-shipforge{width:23%}}
 @media(prefers-reduced-motion:reduce){.shipforge-svg,.sf-engine-core,.sf-turret-detail,.sf-sensor-detail{animation:none!important}}
 .shipforge-component{display:block;width:100%;height:100%;overflow:visible}
+
+/* v17.6 generated component art. The old vector geometry remains the data/compatibility fallback. */
+.sf-part-generated .sf-generated-art{transform-box:view-box;transform-origin:center;will-change:transform,filter}
+.sf-part-generated .sf-generated-art image:last-child{filter:drop-shadow(-1px 2px 2px #0009)}
+.shipforge-25d .sf-part-generated.sf-slot-engine .sf-generated-art{animation:sfGeneratedEngine 2.1s ease-in-out infinite alternate}
+.shipforge-25d .sf-part-generated.sf-slot-weapon .sf-generated-art{animation:sfGeneratedWeapon 5.2s ease-in-out infinite alternate}
+.shipforge-25d .sf-part-generated.sf-slot-utility .sf-generated-art{animation:sfGeneratedUtility 6.4s ease-in-out infinite alternate}
+@keyframes sfGeneratedEngine{to{filter:brightness(1.12) drop-shadow(-2px 0 3px var(--sf-accent))}}
+@keyframes sfGeneratedWeapon{from{transform:translateY(0) rotate(-.25deg)}to{transform:translateY(-.5px) rotate(.4deg)}}
+@keyframes sfGeneratedUtility{0%,100%{filter:brightness(.96)}50%{filter:brightness(1.08)}}
+body[data-graphics="performance"] .sf-part-generated .sf-generated-art{animation:none!important;filter:none!important}
+@media(prefers-reduced-motion:reduce){.sf-part-generated .sf-generated-art{animation:none!important}}

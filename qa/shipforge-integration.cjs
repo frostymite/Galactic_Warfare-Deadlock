@@ -4,7 +4,7 @@ const check=(label,pass,detail='')=>results.push({label,pass:!!pass,detail});
 const read=p=>fs.readFileSync(p,'utf8');
 try{
  const index=read('index.html'),app=read('app.js'),port=read('runtime/lower-port.js'),world=read('runtime/shipforge-world.js'),sw=read('sw.js'),pkg=JSON.parse(read('package.json'));
- check('v17.4 package version',pkg.version==='17.4.0',pkg.version);
+ check('v17.6 package version',pkg.version==='17.6.0',pkg.version);
  check('ShipForge world runtime loads before app',index.indexOf('runtime/shipforge-world.js')>-1&&index.indexOf('runtime/shipforge-world.js')<index.indexOf('app.js'));
  check('ShipForge world stylesheet loads',index.includes('runtime/shipforge-world.css'));
  check('Ship page renders Phase 2 shipyard',app.includes('DeadlockShipForge?.renderShipyard?.(DATA)'));
@@ -21,7 +21,7 @@ try{
  check('world runtime exposes commerce fleet damage salvage and traffic APIs',['buy','sell','install','remove','repair','damage','acquireOwnedShip','npcShip','salvageEncounter','trafficPopulation','renderShipyard'].every(x=>world.includes(x)));
  check('persistent records are plain JSON schemas',world.includes("deadlock.shipforge.world.v1")&&world.includes("deadlock.shipforge.persistent-ship.v1"));
  check('offline cache includes Phase 2 world runtime',sw.includes('./runtime/shipforge-world.js')&&sw.includes('./runtime/shipforge-world.css'));
- check('offline cache version bumped',sw.includes('deadlock-v17-4-shipforge-phase2-complete'));
+ check('offline cache version bumped',sw.includes('deadlock-v17-6-generated-shipforge-visual-hotfix'));
  check('Raven presentation references vector asset',!app.includes('raven_cutout_v15.png')&&app.includes('raven_cutout_v15.svg'));
  check('Phase 2 world has no network dependency',!/(fetch\s*\(|XMLHttpRequest|WebSocket)/.test(world));
 }catch(e){results.push({label:'integration suite execution',pass:false,detail:e.stack});}

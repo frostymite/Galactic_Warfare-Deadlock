@@ -1,0 +1,19 @@
+/* Deadlock v17.6 visual hotfix: Galaxy stability + generated HQ presentation. */
+body[data-page="Galaxy"] .living-galaxy-shell{position:relative;align-items:start;isolation:isolate}
+body[data-page="Galaxy"] .galaxy-map-card{overflow:hidden;contain:layout paint;isolation:isolate}
+body[data-page="Galaxy"] .living-galaxy-map{position:relative;isolation:isolate;contain:layout paint;overflow:hidden;min-height:clamp(390px,58vw,560px);transform:translateZ(0)}
+body[data-page="Galaxy"] .living-galaxy-map:before,body[data-page="Galaxy"] .living-galaxy-map:after{pointer-events:none;z-index:0}
+body[data-page="Galaxy"] .living-galaxy-map>svg{z-index:1;pointer-events:none;overflow:visible}
+body[data-page="Galaxy"] .galaxy-node{z-index:3;backface-visibility:hidden;transform:translate3d(-50%,-50%,0);max-width:112px}
+body[data-page="Galaxy"] .galaxy-node i{transform:translateZ(0)}
+body[data-page="Galaxy"] .galaxy-node:hover i,body[data-page="Galaxy"] .galaxy-node.selected i{transform:translateZ(0) scale(1.35)}
+body[data-page="Galaxy"] .galaxy-map-legend{z-index:5;max-width:calc(100% - 20px)}
+body[data-page="Galaxy"] .galaxy-dossier{align-self:start}
+body[data-page="Galaxy"] .route-summary>div{min-width:0;overflow:hidden}
+body[data-page="Galaxy"] .route-summary b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-page="HQ"] .scene-backdrop{filter:saturate(1.02) contrast(1.06) brightness(.9)}
+body[data-page="HQ"] .hq-site img,body[data-page="HQ"] .hq-scene-img{background:#02070b;filter:saturate(1.04) contrast(1.05)}
+body[data-page="HQ"] .hq-site{min-height:92px}
+body[data-page="HQ"] .hq-site img{align-self:stretch}
+@media(max-width:700px){body[data-page="Galaxy"] .living-galaxy-map{min-height:390px;aspect-ratio:auto}body[data-page="Galaxy"] .galaxy-node span{max-width:66px;font-size:7px}body[data-page="Galaxy"] .galaxy-map-legend{font-size:8px;gap:6px}body[data-page="Galaxy"] .galaxy-dossier .location-hero-img{height:180px}}
+@media(min-width:680px) and (max-width:1100px) and (min-aspect-ratio:4/5) and (max-aspect-ratio:7/5){body.fold-unfolded[data-page="Galaxy"] #content>.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px var(--hinge-gutter)}body.fold-unfolded[data-page="Galaxy"] .galaxy-map-card{grid-column:1;grid-row:auto}body.fold-unfolded[data-page="Galaxy"] .galaxy-dossier{grid-column:2;grid-row:auto}body.fold-unfolded[data-page="Galaxy"] .living-galaxy-map{min-height:400px}}

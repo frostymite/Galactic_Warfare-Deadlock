@@ -1,9 +1,9 @@
 {
   "results": [
     {
-      "label": "v17.4 package version",
+      "label": "v17.6 package version",
       "pass": true,
-      "detail": "17.4.0"
+      "detail": "17.6.0"
     },
     {
       "label": "ShipForge world runtime loads before app",

@@ -1,142 +1,1302 @@
 {
-  "name": "Deadlock v17.4.0 \u2014 ShipForge Phase 2 Complete",
-  "base": "Deadlock v17.3.0 or later",
-  "target": "17.4.0",
-  "preserves_true_vector_raven": true,
-  "raven_asset_in_patch": false,
-  "systems": [
-    "persistent player fleet",
-    "component instances and condition",
-    "component-derived ship stats",
-    "damage and repair",
-    "dealer and salvage economy",
-    "Raven/future ship installation",
-    "persistent NPC ships",
-    "recoverable salvage",
-    "persistent modular world traffic",
-    "offline cache integration"
+  "schema": "deadlock.patch-manifest.v1",
+  "version": "17.6.0",
+  "base": "GitHub main v17.4.0 (fee6b41e72fbfff7bf9bbc23b4ce50932be5255f)",
+  "includes": [
+    "v17.5.0 Phase 3 Living Backgrounds Foundation",
+    "v17.6.0 Galaxy/HQ visual hotfix",
+    "ShipForge v4 generated-art pass"
   ],
-  "qa": {
-    "shipforge_generator": {
-      "passed": 8502,
-      "failed": 0
-    },
-    "phase2_world": {
-      "passed": 39,
-      "failed": 0
-    },
-    "phase2_integration": {
-      "passed": 20,
-      "failed": 0
-    },
-    "procedural_engine": {
-      "passed": 26,
-      "failed": 0,
-      "worlds": 100,
-      "cases": 600,
-      "uniqueCaseSignatures": 577
-    }
-  },
   "files": [
     {
+      "path": "LIVING_BACKGROUNDS_V17_5.md",
+      "size": 895,
+      "sha256": "f01c059e6c2d02171d8d54ce122f23dc2c59c398ef08e96ce1fdabd8620fc2cd"
+    },
+    {
       "path": "PATCH_V17_4_SHIPFORGE_PHASE2_COMPLETE.md",
-      "bytes": 813,
+      "size": 813,
       "sha256": "53bb91d9b55da1c4847df00a6a2eb78d7ee27eb83422f06d4b502d54bae01d78"
     },
     {
+      "path": "PATCH_V17_5_LIVING_BACKGROUNDS.md",
+      "size": 1412,
+      "sha256": "4a297871b0faf7d81a720d4ba1de62459f460921ccaeae79dd0287faead573cd"
+    },
+    {
+      "path": "PATCH_V17_6_GENERATED_SHIPFORGE_VISUAL_HOTFIX.md",
+      "size": 2739,
+      "sha256": "90e40141389f16bd927a98f5ac736cea489f347aaf82eab0d0e3d480d4722b30"
+    },
+    {
       "path": "README.md",
-      "bytes": 6999,
-      "sha256": "7d3c34a4ba15f61763dbb60fbc3abf8c3b4b2f0e9afbfea5217177148202af83"
+      "size": 7823,
+      "sha256": "e196ea41aefca935ae80da0a0b76d0817bb7681465e069d7e5f8558db9f89210"
+    },
+    {
+      "path": "SHIPFORGE_GENERATED_ART_V17_6.md",
+      "size": 1698,
+      "sha256": "14de31f36073fbb329a8e2ba98e22dc22b43826fb928b1853692d11327b5ee9b"
     },
     {
       "path": "SHIPFORGE_PHASE2_V17_4.md",
-      "bytes": 4642,
+      "size": 4642,
       "sha256": "a9c74df8695bfc7fa93ff365ccb572c391dc37ef779a392b89aca5bb14a1d6b0"
     },
     {
       "path": "app.js",
-      "bytes": 270183,
-      "sha256": "b40e205e962e789474ee47a5cce895f11672af9a1efe004e9b11c2ab5166aab2"
+      "size": 271251,
+      "sha256": "18d993b4ff50a46a615ef043508304cfc90d444a12c69a62e6b12c5ae0429f37"
+    },
+    {
+      "path": "assets/locations/blackglass/generated/briefing.webp",
+      "size": 47214,
+      "sha256": "5ca5951f885673795c69ea049d4de0f79be1f455990d5adbc7fb167f1c842be3"
+    },
+    {
+      "path": "assets/locations/blackglass/generated/contracts.webp",
+      "size": 43100,
+      "sha256": "049621ca4ede7391bbdb966b8375ad87c5a183281678531ae60a7ea271d7189d"
+    },
+    {
+      "path": "assets/locations/blackglass/generated/hangar.webp",
+      "size": 48670,
+      "sha256": "6b02c7cca662d67c7c3db2a1ebfac6ad7855fa07a63ce7ec714273d5904353a8"
+    },
+    {
+      "path": "assets/locations/blackglass/generated/hq.webp",
+      "size": 47402,
+      "sha256": "4fc31f8fda01651a917cc1e810f1cc15d182490895e02d5cf3798efd4e90827f"
+    },
+    {
+      "path": "assets/locations/blackglass/generated/quarters.webp",
+      "size": 42080,
+      "sha256": "22c69d9c725cd9379f6c0ecdfbe6afacd2086012df0293050b5263d1f00153f6"
+    },
+    {
+      "path": "assets/ships/components/cargo/cargo_belly_02.svg",
+      "size": 3001,
+      "sha256": "9463c03468f734c03fd479df70af8f1a092c230ab78eaf11201d9337f8ff3676"
+    },
+    {
+      "path": "assets/ships/components/cargo/cargo_clamps_05.svg",
+      "size": 3005,
+      "sha256": "785959300677dcfa4c863236646c170c4e78d9e8afce7a85b99fdba88618451b"
+    },
+    {
+      "path": "assets/ships/components/cargo/cargo_container_03.svg",
+      "size": 3017,
+      "sha256": "2b5bb46489f177b9a90c63dfddc570c7d6cf5f2b462c55395a7e31301f281c32"
+    },
+    {
+      "path": "assets/ships/components/cargo/cargo_drums_06.svg",
+      "size": 3001,
+      "sha256": "d8ab322ea7edceb90cf50f6c37c2514eda5f15e40e80b500a1e6b4ee062ea623"
+    },
+    {
+      "path": "assets/ships/components/cargo/cargo_modular_08.svg",
+      "size": 3009,
+      "sha256": "09c747d027898f4d8cb03c394b48447881ff0c34b8a4ea313b431703cd0dc6b0"
+    },
+    {
+      "path": "assets/ships/components/cargo/cargo_saddle_07.svg",
+      "size": 3005,
+      "sha256": "fa282d4d429d060e509a0fe8fdf570aa9ca30b0b1528be012976166333e0b50a"
+    },
+    {
+      "path": "assets/ships/components/cargo/cargo_sidepods_01.svg",
+      "size": 3013,
+      "sha256": "5a5bd6d89a516ad14da2d437ad8cf7650c2991af20982792b7f515c7ac11bf2a"
+    },
+    {
+      "path": "assets/ships/components/cargo/cargo_spine_04.svg",
+      "size": 3001,
+      "sha256": "1049bc65558224afc4ed169e0d3b42f56424a01c9e0ad2483bb81060bc6fd140"
+    },
+    {
+      "path": "assets/ships/components/cockpit/cockpit_armored_05.svg",
+      "size": 3024,
+      "sha256": "17e973e77a5bb12e553e6f5449d12a9ff5d22049ae83fff23bb5bc5e8f050526"
+    },
+    {
+      "path": "assets/ships/components/cockpit/cockpit_arrow_01.svg",
+      "size": 3016,
+      "sha256": "f44d423e830f92d51384e1be0982760e712309e88ada94720352bddb3979bf90"
+    },
+    {
+      "path": "assets/ships/components/cockpit/cockpit_bridge_04.svg",
+      "size": 3020,
+      "sha256": "f15080a65d443f1c2e7e5596b09e03863733d7404bcd47c71d2c4ccb5526ec95"
+    },
+    {
+      "path": "assets/ships/components/cockpit/cockpit_bubble_02.svg",
+      "size": 3020,
+      "sha256": "c50537e6bef43b9676f587bdf8d8509d5e16b1cd3b643b3554c8644762b34eea"
+    },
+    {
+      "path": "assets/ships/components/cockpit/cockpit_canopy_06.svg",
+      "size": 3020,
+      "sha256": "e081517e69c97f4bf972bbb034b27b355e8b61178d878af2482b31838d83d7e9"
+    },
+    {
+      "path": "assets/ships/components/cockpit/cockpit_command_08.svg",
+      "size": 3024,
+      "sha256": "a984100174680b342725465b2836ced364cb67522f4a6573f8bea4c410569a6b"
+    },
+    {
+      "path": "assets/ships/components/cockpit/cockpit_offset_03.svg",
+      "size": 3020,
+      "sha256": "781330c59812b49c295caccff2b351e6da353b31f99d2c28582167a84f69ae09"
+    },
+    {
+      "path": "assets/ships/components/cockpit/cockpit_split_07.svg",
+      "size": 3016,
+      "sha256": "e3f491667c051c872e7b7dffb80b29f7bc6bb73f14277bed4915ed135ea5b483"
+    },
+    {
+      "path": "assets/ships/components/core/core_barge_06.svg",
+      "size": 2993,
+      "sha256": "a95d1560d839774deec9b56919e85295083f8817a32fb165a450e5f666a3bd9f"
+    },
+    {
+      "path": "assets/ships/components/core/core_container_07.svg",
+      "size": 3009,
+      "sha256": "6ffb0d7a7cf6f4ed27c8f91776afcaaa1d50413213f71c2d083cb67267795167"
+    },
+    {
+      "path": "assets/ships/components/core/core_crescent_08.svg",
+      "size": 3005,
+      "sha256": "1cc2f769816d2f506ea1d907950b37a81d741d91e65d0e79a611189a675bb934"
+    },
+    {
+      "path": "assets/ships/components/core/core_dart_01.svg",
+      "size": 2989,
+      "sha256": "4402328d6c78befbdef401ab01ec9ee7a49b889d097625530f7cf3a2fd6f65ff"
+    },
+    {
+      "path": "assets/ships/components/core/core_hauler_05.svg",
+      "size": 2997,
+      "sha256": "cec790c9fa14869e89f831d1d2b7bdf148e1f7113fb86a3abe644d2b22d13e46"
+    },
+    {
+      "path": "assets/ships/components/core/core_kite_03.svg",
+      "size": 2989,
+      "sha256": "02a0afc0560acd20c683e108e5f5557c3d896757eb1ca61da06498ea73e58b75"
+    },
+    {
+      "path": "assets/ships/components/core/core_skiff_04.svg",
+      "size": 2993,
+      "sha256": "6b91f0ca876c92a20ff450312daefe5b40dbd567efb5e423bce1a2fceb8a4e5b"
+    },
+    {
+      "path": "assets/ships/components/core/core_spear_02.svg",
+      "size": 2993,
+      "sha256": "b68d8bf70d53fa085ccb0184963308dcf3efa8b7c07ad5418c3507d415177ee1"
+    },
+    {
+      "path": "assets/ships/components/core/core_spine_10.svg",
+      "size": 2993,
+      "sha256": "2d5adb621f0383175a824829efcbc4f507b27cfdf3149a0a52f5f7ccfdb5b09c"
+    },
+    {
+      "path": "assets/ships/components/core/core_twinboom_09.svg",
+      "size": 3005,
+      "sha256": "68626e7c3a36fddbfa949db8f42f7729ba4f6503d4090a21b43f75a8875fccaf"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_cluster_05.svg",
+      "size": 3015,
+      "sha256": "6c77a9044157c3e0650a8046f59f9b6c0fbed1d8b2d39cefd46c496ffd67edcf"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_heavy_04.svg",
+      "size": 3007,
+      "sha256": "a35008bba0289f62d3c7a3e1ff4853c59f04b326b82a8ab1195fdb9f729b3579"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_military_06.svg",
+      "size": 3019,
+      "sha256": "47b10771d6018f5b8e1896689eee55c54c7e187f4137055df466cf7d6df7c2dc"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_needle_07.svg",
+      "size": 3011,
+      "sha256": "bfda0162109dc8627ae45584749b7630f351facba15db5741f0914dbdeb689bd"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_quad_ion_02.svg",
+      "size": 3019,
+      "sha256": "eb50237cd8c4b4199cf51b3ea5545870101ef5326d4523a72a719eb20a9c2712"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_recycler_10.svg",
+      "size": 3019,
+      "sha256": "60eef9e8ddc74a0e671d16544c0897112a35b53f2d6c466ec8e66b2349629b37"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_ring_03.svg",
+      "size": 3003,
+      "sha256": "2551d489cf29b69d61388133d2a61cd6719544bc842e09dcdd06183592758164"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_slab_08.svg",
+      "size": 3003,
+      "sha256": "ae9c99a21fcafa156948bab156d3ca0150e5324bd9afe61dfe81bffce8c3aa1f"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_trident_09.svg",
+      "size": 3015,
+      "sha256": "6db73b6264d91bb6d10183ba069930c7662bd5071c72845835a5dfcd8a3ec812"
+    },
+    {
+      "path": "assets/ships/components/engine/engine_twin_ion_01.svg",
+      "size": 3019,
+      "sha256": "d6a8f86957d18480b5ee28f37c4326fc62daa1d15492d24c864399aa6d6ccd58"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_armor_04.svg",
+      "size": 3015,
+      "sha256": "b7637453fc44a696e064be4b7d6953b90076795621fa580c14928141ea710da6"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_comms_02.svg",
+      "size": 3015,
+      "sha256": "952bb49c9f1a9e11650d0614ef7ed4e65f96ab11fd33ffef9ef3e3a4793908dd"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_jammer_07.svg",
+      "size": 3019,
+      "sha256": "c2d30622adef615df14e9d9854d534fd54ef27d845f1377e465c5ab73bd91d0a"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_radar_03.svg",
+      "size": 3015,
+      "sha256": "b931715c3c622a31530ac861408681d860c5f5aa2e93e5379745861994b5c34f"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_repair_08.svg",
+      "size": 3019,
+      "sha256": "420a579be09ff7a6ed0be506d211c8af1bda2caa72f4f07bb69d1080c4881699"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_sensor_01.svg",
+      "size": 3019,
+      "sha256": "125bbaee1e2ecbb05c73d9c1f20ae183509bb57b3d8d9e41a82f7d352fc96481"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_smuggler_06.svg",
+      "size": 3027,
+      "sha256": "4fcb20d1a3f874d4a1a261ffb189013f3a85a35cdcca9406e4838257ee59d8e7"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_tow_05.svg",
+      "size": 3007,
+      "sha256": "bafbe90416d70867f5e0cc20a36ae471ac84309c1ac03ef8f73dc0033e8e69bf"
+    },
+    {
+      "path": "assets/ships/components/utility/utility_tractor_09.svg",
+      "size": 3023,
+      "sha256": "c111cf3f8b9e304af9bb401ef3ec64f97d651b9cccd423fb09b53ce7d0fafd97"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_chin_02.svg",
+      "size": 3003,
+      "sha256": "349a863979e8ea9e6348cd5163399bf2616c6212dc3994a2ff51cd504a0b7bcf"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_defense_04.svg",
+      "size": 3015,
+      "sha256": "f91fba9ea0395e7c1a857bbf0ce9784b4d549827bb645de2c60effd3d3ed46ea"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_dorsal_03.svg",
+      "size": 3011,
+      "sha256": "afd432fe377bcc31211c6bd1946643d86b36d0324c8ae38ef7b53773092e7023"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_heavy_05.svg",
+      "size": 3007,
+      "sha256": "28823e8a6ccbb0ae11307d344ea169c90608982ff3b96454d2a80a5c506528a8"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_ion_07.svg",
+      "size": 2999,
+      "sha256": "7e86a01f77ea5f9844ef496f3843b3e45546ac93eba7e64055ff6cf3555b4a1e"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_laser_pair_01.svg",
+      "size": 3027,
+      "sha256": "1116de56268a1926e870c97c23eb43fd29db358baee9bb6d43a02c023081b277"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_missile_08.svg",
+      "size": 3015,
+      "sha256": "aa34dd1a1afb0388a4f9d5cda540853b215ebcf28238cf57f3c507e1e9f3bf39"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_pulse_06.svg",
+      "size": 3007,
+      "sha256": "94a7a579dd0b4b559e87ff7756f62454c41f52ffea3df250bfbe021b0d501037"
+    },
+    {
+      "path": "assets/ships/components/weapon/weapon_rotary_09.svg",
+      "size": 3011,
+      "sha256": "14a09b9ed931f521c57ff0e4f42e33155f9dec50c0316b416a721bc8084f220c"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_blade_06.svg",
+      "size": 2994,
+      "sha256": "b40597974127efbca869f0774d8d3f6163e18af4bb86a68e053e404dc2502ea2"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_cargo_05.svg",
+      "size": 2994,
+      "sha256": "3f88b57b84001bf875d83b012f39ea998f711253c8400f102d7dc31597faddb6"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_delta_02.svg",
+      "size": 2994,
+      "sha256": "7a2decad88eb9891e6f5264b87c3f59ce70105351ae87f2ac5860bdf5d3c9448"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_fork_04.svg",
+      "size": 2990,
+      "sha256": "ad7881ffb21d79bf36657f920b06d210862d0ead18595f8e367dfe49bf7543b3"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_gull_07.svg",
+      "size": 2990,
+      "sha256": "163e0780ff0e9ed25817ff8d43aeaf3bffde3946ae2cac485e7ff75d7b833135"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_interceptor_08.svg",
+      "size": 3018,
+      "sha256": "6f6bc21fecfbd0360845147e232c68481062a2cccb84ca5e86430d3fafb6740b"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_outrigger_09.svg",
+      "size": 3010,
+      "sha256": "9b4e437c62218275a5cf2237e205fd43f2db1153ea9a258920c13ca3a3510828"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_solar_10.svg",
+      "size": 2994,
+      "sha256": "b90c1af72c4347ac8922caedc87fec98c26603e6828845c2ea03e39a8bd3ced6"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_stub_03.svg",
+      "size": 2990,
+      "sha256": "b64229afc9ceb0a44cc7364cb20cea3b2e50cf76b0e0dab877d8c544b73e88e7"
+    },
+    {
+      "path": "assets/ships/components/wing/wing_swept_01.svg",
+      "size": 2994,
+      "sha256": "1901d1880698d2bd819de916b2e4ba89ed57fc9f7d205f8a15257d15c150fe9d"
+    },
+    {
+      "path": "assets/ships/generated/cargo/cargo_belly_02.webp",
+      "size": 11604,
+      "sha256": "a6dd054ee3a397351d4a8ed39ebed49fc5238848a66e4aa299d835725bb959e0"
+    },
+    {
+      "path": "assets/ships/generated/cargo/cargo_clamps_05.webp",
+      "size": 15948,
+      "sha256": "862edbc868b5cdc7704f5685f4a7e8e6949fdbd5ac1d655abd402b51cd9546de"
+    },
+    {
+      "path": "assets/ships/generated/cargo/cargo_container_03.webp",
+      "size": 9782,
+      "sha256": "1cfea82b8ce2f3d2085ef955af867082e29fdd30b4859cf5b6e10ac4a8a64ec0"
+    },
+    {
+      "path": "assets/ships/generated/cargo/cargo_drums_06.webp",
+      "size": 17342,
+      "sha256": "c34265c26db62e42cce80e367c156bc9b7d3bd5d9138ab3495e06c23e33724c0"
+    },
+    {
+      "path": "assets/ships/generated/cargo/cargo_modular_08.webp",
+      "size": 16038,
+      "sha256": "2de49ab2cf2c2f71c78e71584af7b87b30d5784c6d8519d476e21fc51c1c8242"
+    },
+    {
+      "path": "assets/ships/generated/cargo/cargo_saddle_07.webp",
+      "size": 15328,
+      "sha256": "22aff274b9c3f3daf054c866aa7a01ef3df90a8e1aad8729022198b2e31edac2"
+    },
+    {
+      "path": "assets/ships/generated/cargo/cargo_sidepods_01.webp",
+      "size": 11134,
+      "sha256": "ac65925b2317ae698a0e75fcd5286291ee038e54f2dbe8cb6975d2a551f574b4"
+    },
+    {
+      "path": "assets/ships/generated/cargo/cargo_spine_04.webp",
+      "size": 15438,
+      "sha256": "34b6a52548aafc529958c394f35746d4ee611e439f36d5e323cfad1c733a8340"
+    },
+    {
+      "path": "assets/ships/generated/cockpit/cockpit_armored_05.webp",
+      "size": 12786,
+      "sha256": "6d4899da5aed8c3e90411522d418f5d225cedf44d9f78223c2031797f1932fdb"
+    },
+    {
+      "path": "assets/ships/generated/cockpit/cockpit_arrow_01.webp",
+      "size": 12632,
+      "sha256": "fde28e50aa1bfe1f7bdca098d986b39307e2324216ed1f09a5d414b490d59c91"
+    },
+    {
+      "path": "assets/ships/generated/cockpit/cockpit_bridge_04.webp",
+      "size": 13256,
+      "sha256": "08d3fa872ad43966a9219d87c127aa973cfdfdd89e5cd00623356442dbbc3492"
+    },
+    {
+      "path": "assets/ships/generated/cockpit/cockpit_bubble_02.webp",
+      "size": 12222,
+      "sha256": "1bb045e6ab7080f468da8a728c0f8445ceb46e307e62c502ef111ad5dad13509"
+    },
+    {
+      "path": "assets/ships/generated/cockpit/cockpit_canopy_06.webp",
+      "size": 12522,
+      "sha256": "27e9d43e2b5d05cc66f7eb3487c5e521d90b676d8ca7edc64f8644fef3df5421"
+    },
+    {
+      "path": "assets/ships/generated/cockpit/cockpit_command_08.webp",
+      "size": 12188,
+      "sha256": "6635dc479f07bed4181cc5699f20c7f669af2f07e918c59144c0d2ed9589f87f"
+    },
+    {
+      "path": "assets/ships/generated/cockpit/cockpit_offset_03.webp",
+      "size": 12002,
+      "sha256": "9e7432e3f035cd59493a07e6846d059317302e51a3f2001c99d9ab296d7b01fb"
+    },
+    {
+      "path": "assets/ships/generated/cockpit/cockpit_split_07.webp",
+      "size": 12898,
+      "sha256": "7140004229ce5a36e98d9e96973dd2c6eff67ec178675ceb584b72e11a5313e8"
+    },
+    {
+      "path": "assets/ships/generated/core/core_barge_06.webp",
+      "size": 14926,
+      "sha256": "285f730040a3338b635b86156602f0a6cfb4b3ad404bc9a4e248466c8c6fe16f"
+    },
+    {
+      "path": "assets/ships/generated/core/core_container_07.webp",
+      "size": 17802,
+      "sha256": "244ec239ff794abaebfc506bc54e84a78b9626c203526098d9be4d7551470df2"
+    },
+    {
+      "path": "assets/ships/generated/core/core_crescent_08.webp",
+      "size": 16866,
+      "sha256": "9d5afdc15c34d77f122d3caf7d7421264a88ef8af11a94cdc1e34248916e4782"
+    },
+    {
+      "path": "assets/ships/generated/core/core_dart_01.webp",
+      "size": 16100,
+      "sha256": "6e76a1e412f0c296d4c3969e65848ec2d6646de49ca7c5c5f8af86c3e7176367"
+    },
+    {
+      "path": "assets/ships/generated/core/core_hauler_05.webp",
+      "size": 14850,
+      "sha256": "326a701085e525e5ac11801999de46ad261190d6aabc33866ebecc2dcb76ee03"
+    },
+    {
+      "path": "assets/ships/generated/core/core_kite_03.webp",
+      "size": 14442,
+      "sha256": "a067b64be2269f5133878a185cc166af9a8b90173e78c7c53f7836cb39b03a93"
+    },
+    {
+      "path": "assets/ships/generated/core/core_skiff_04.webp",
+      "size": 14564,
+      "sha256": "38ee21c79a03e840c9ffd77c2912481e70fa752f969a31787b38f8e050249933"
+    },
+    {
+      "path": "assets/ships/generated/core/core_spear_02.webp",
+      "size": 16064,
+      "sha256": "6a0bb3c3d2050866083638d76b97dec6698c5413dbf3840680b0601d247a6c46"
+    },
+    {
+      "path": "assets/ships/generated/core/core_spine_10.webp",
+      "size": 16178,
+      "sha256": "aeb8839f73ee1baec2e1b6af33821cba313a94baa48037de66ef52de4281919d"
+    },
+    {
+      "path": "assets/ships/generated/core/core_twinboom_09.webp",
+      "size": 17148,
+      "sha256": "718c9fbdc7417c7752118d93bb36d9de69cb5bed5416a7994ec551cc1945c9ea"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_cluster_05.webp",
+      "size": 14916,
+      "sha256": "8df5aad2c73f5e7ec3d6d6286b3f7fbe7d0adf442baca090e2d7b51b3fc6741e"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_heavy_04.webp",
+      "size": 12380,
+      "sha256": "2e32f05db22746eac87a021ae5421ed6eab49c3ad2c9f63e288b5fe72fcef3e5"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_military_06.webp",
+      "size": 12796,
+      "sha256": "5cb7e9c484ae7c0568c9d59e060158d17384b00b68e4bcd9425a170cfeb90eb3"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_needle_07.webp",
+      "size": 14776,
+      "sha256": "25fbc18e29dedee74e37215bcdb021dadb6d8edd3e33b6405f89ea91bd662d0f"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_quad_ion_02.webp",
+      "size": 14434,
+      "sha256": "c2ba17b239a331c0e7c9fd819c969b7ac19b8ce07e561e481599aa8c1bb547a0"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_recycler_10.webp",
+      "size": 12820,
+      "sha256": "15b5d6e4d2442fb4cc7f055a13bb43a9073fe90a5251760b47bea625b1758c25"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_ring_03.webp",
+      "size": 12608,
+      "sha256": "4ab1fe50590b60d9b34ea4d13a573a7cfeb289929061d4f743fa6886121c9879"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_slab_08.webp",
+      "size": 13864,
+      "sha256": "627da503a8c177eadfbd2a4871717fbdb26f32b8be34f673aced9bae817296cf"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_trident_09.webp",
+      "size": 15586,
+      "sha256": "9d2b73925516d42af2ed22d0d2a1fcd662ed7539c7e5856e0141fcc8c213d1d4"
+    },
+    {
+      "path": "assets/ships/generated/engine/engine_twin_ion_01.webp",
+      "size": 13918,
+      "sha256": "d2da9c73573ae56a79dc58d7e0543ae5794a0b5e47ad56f19eff3a9764da956f"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_armor_04.webp",
+      "size": 13590,
+      "sha256": "df8efabf32e500e5f7cecba9b4c22ec073cd9db4585a9b4870f48ddcf04190e4"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_comms_02.webp",
+      "size": 9856,
+      "sha256": "40c9ff73bdeddd31ea14037bd26001ae150f3ed1f79f81e9f9331809717532dc"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_jammer_07.webp",
+      "size": 14614,
+      "sha256": "778d125ddb140f6bd52d4bcce6e47bf520a8ff7b4f18718089a65cb8a5fa32db"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_radar_03.webp",
+      "size": 10320,
+      "sha256": "35106d45a97a6be43efe842e1e3063aca160a36cffe2f0e29fd5b180d1db18bf"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_repair_08.webp",
+      "size": 9454,
+      "sha256": "c9c157d751fa2f28e3963b438d46172d21371196f7abf2d13b80868f8c25f430"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_sensor_01.webp",
+      "size": 11710,
+      "sha256": "12238ed31db34274ccd7d08d0d703dcdd753ff8fc5fe697447debcbdc78bf0bb"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_smuggler_06.webp",
+      "size": 7782,
+      "sha256": "3e4e8520abd24e6646a4f16807878446d4d9208b80c6aabc99eb13676aaa9a05"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_tow_05.webp",
+      "size": 8418,
+      "sha256": "5745ff5e70ba0958049d5ec9a73c34538f602a1d78f884175b5c2455d4737fa1"
+    },
+    {
+      "path": "assets/ships/generated/utility/utility_tractor_09.webp",
+      "size": 10722,
+      "sha256": "f9b550710b3335e531f5bc4614b987e6cf3e5e431bf5423c30fe183495aad4f5"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_chin_02.webp",
+      "size": 11442,
+      "sha256": "d2b07170894068650de6fee7b8fcf381f971391f07acceafd98dc5d05850d1d3"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_defense_04.webp",
+      "size": 14418,
+      "sha256": "2f409f51827f41976b120e12a0c960c4dafc05e701daadf534fafb7ca94190dd"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_dorsal_03.webp",
+      "size": 13782,
+      "sha256": "cf131ac902026c5e41268b192ec42e465ea2669766d40162bcd73788744f1b82"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_heavy_05.webp",
+      "size": 12530,
+      "sha256": "c47191dc3493a7bdd766d11b5a2ba0a25b891f043b8b5441fbe09eb458a75e0e"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_ion_07.webp",
+      "size": 17780,
+      "sha256": "1f91aac604d9acb9b8a9d24e6a28146057a80ca052074a5defbb18577f1449f9"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_laser_pair_01.webp",
+      "size": 13330,
+      "sha256": "e349e750b76a914db5110d63823ea2223b671330c4e3b9e1a7b6ea4d528665c5"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_missile_08.webp",
+      "size": 16144,
+      "sha256": "990e42170064a2b9ab751538cd6c4a361bb1b432d92cc6d5371d2a35a793eee2"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_pulse_06.webp",
+      "size": 17298,
+      "sha256": "479eed1e2c0f28ae1b1a766133386f32430ed9fb69d4f4d944f34135a5414259"
+    },
+    {
+      "path": "assets/ships/generated/weapon/weapon_rotary_09.webp",
+      "size": 15200,
+      "sha256": "e6234720d8debec8b8f59072ee60b443eff478d3d1f73e50cda781d8e9290d9b"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_blade_06.webp",
+      "size": 17826,
+      "sha256": "ec7d7539f740cf358d140313a12a37d7041fe376b60b9725999c3dad17593959"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_cargo_05.webp",
+      "size": 15622,
+      "sha256": "9eb74aac25264f1243db6d07eced618440382d5824118a975e5859d2671eb160"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_delta_02.webp",
+      "size": 17092,
+      "sha256": "a25d31c76f6e3fd2fdb6be6eb5701164d1e84313444be2bdbacc170a20c557b5"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_fork_04.webp",
+      "size": 18386,
+      "sha256": "20d57830904e1a2b0ee0eb8a10a0896bfb2bdbf8a4001aff4410550d3de56f11"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_gull_07.webp",
+      "size": 21902,
+      "sha256": "e7322b6d192ce8c07a2907325ade6d59aee1c363ca40c5c7c4427ee62ace12a3"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_interceptor_08.webp",
+      "size": 17948,
+      "sha256": "b119f424b7fdb5b68e29e9616bf952053b428724c49a8d7ba8767ec245b2b940"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_outrigger_09.webp",
+      "size": 24040,
+      "sha256": "f7d511716d51610393a73a56835a8adda1d625b2f45640f0d7fc408c738d4bea"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_solar_10.webp",
+      "size": 15952,
+      "sha256": "860ef832f2f429ab4955853f6bfa44dc31b779ff923bd45519b150d33882075d"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_stub_03.webp",
+      "size": 18018,
+      "sha256": "b40270ec696e6647ea5d1a088308f5d8735cf87b6f91068bb64687031925a151"
+    },
+    {
+      "path": "assets/ships/generated/wing/wing_swept_01.webp",
+      "size": 17240,
+      "sha256": "019166821da61a43d7ce26f2c85554372be9680748b200ab0539f371a7f293cb"
+    },
+    {
+      "path": "component-library.css",
+      "size": 5526,
+      "sha256": "a2e15b1abb1f23855fe7268d46129e0736a3cc6a67dae1a1d731148802e3a9da"
+    },
+    {
+      "path": "component-library.html",
+      "size": 1214,
+      "sha256": "30dcc750074307da31c91b7b697386c6839e7b812bba12a037dc615afc9a43be"
+    },
+    {
+      "path": "component-library.js",
+      "size": 2722,
+      "sha256": "bfc32b3d5eb02725ded95802bfca5d2827d201c718405b54f44f9dc61a6cf3b8"
     },
     {
       "path": "dist/app.js",
-      "bytes": 270183,
-      "sha256": "b40e205e962e789474ee47a5cce895f11672af9a1efe004e9b11c2ab5166aab2"
+      "size": 271251,
+      "sha256": "18d993b4ff50a46a615ef043508304cfc90d444a12c69a62e6b12c5ae0429f37"
+    },
+    {
+      "path": "dist/assets/locations/blackglass/generated/briefing.webp",
+      "size": 47214,
+      "sha256": "5ca5951f885673795c69ea049d4de0f79be1f455990d5adbc7fb167f1c842be3"
+    },
+    {
+      "path": "dist/assets/locations/blackglass/generated/contracts.webp",
+      "size": 43100,
+      "sha256": "049621ca4ede7391bbdb966b8375ad87c5a183281678531ae60a7ea271d7189d"
+    },
+    {
+      "path": "dist/assets/locations/blackglass/generated/hangar.webp",
+      "size": 48670,
+      "sha256": "6b02c7cca662d67c7c3db2a1ebfac6ad7855fa07a63ce7ec714273d5904353a8"
+    },
+    {
+      "path": "dist/assets/locations/blackglass/generated/hq.webp",
+      "size": 47402,
+      "sha256": "4fc31f8fda01651a917cc1e810f1cc15d182490895e02d5cf3798efd4e90827f"
+    },
+    {
+      "path": "dist/assets/locations/blackglass/generated/quarters.webp",
+      "size": 42080,
+      "sha256": "22c69d9c725cd9379f6c0ecdfbe6afacd2086012df0293050b5263d1f00153f6"
+    },
+    {
+      "path": "dist/assets/ships/generated/cargo/cargo_belly_02.webp",
+      "size": 11604,
+      "sha256": "a6dd054ee3a397351d4a8ed39ebed49fc5238848a66e4aa299d835725bb959e0"
+    },
+    {
+      "path": "dist/assets/ships/generated/cargo/cargo_clamps_05.webp",
+      "size": 15948,
+      "sha256": "862edbc868b5cdc7704f5685f4a7e8e6949fdbd5ac1d655abd402b51cd9546de"
+    },
+    {
+      "path": "dist/assets/ships/generated/cargo/cargo_container_03.webp",
+      "size": 9782,
+      "sha256": "1cfea82b8ce2f3d2085ef955af867082e29fdd30b4859cf5b6e10ac4a8a64ec0"
+    },
+    {
+      "path": "dist/assets/ships/generated/cargo/cargo_drums_06.webp",
+      "size": 17342,
+      "sha256": "c34265c26db62e42cce80e367c156bc9b7d3bd5d9138ab3495e06c23e33724c0"
+    },
+    {
+      "path": "dist/assets/ships/generated/cargo/cargo_modular_08.webp",
+      "size": 16038,
+      "sha256": "2de49ab2cf2c2f71c78e71584af7b87b30d5784c6d8519d476e21fc51c1c8242"
+    },
+    {
+      "path": "dist/assets/ships/generated/cargo/cargo_saddle_07.webp",
+      "size": 15328,
+      "sha256": "22aff274b9c3f3daf054c866aa7a01ef3df90a8e1aad8729022198b2e31edac2"
+    },
+    {
+      "path": "dist/assets/ships/generated/cargo/cargo_sidepods_01.webp",
+      "size": 11134,
+      "sha256": "ac65925b2317ae698a0e75fcd5286291ee038e54f2dbe8cb6975d2a551f574b4"
+    },
+    {
+      "path": "dist/assets/ships/generated/cargo/cargo_spine_04.webp",
+      "size": 15438,
+      "sha256": "34b6a52548aafc529958c394f35746d4ee611e439f36d5e323cfad1c733a8340"
+    },
+    {
+      "path": "dist/assets/ships/generated/cockpit/cockpit_armored_05.webp",
+      "size": 12786,
+      "sha256": "6d4899da5aed8c3e90411522d418f5d225cedf44d9f78223c2031797f1932fdb"
+    },
+    {
+      "path": "dist/assets/ships/generated/cockpit/cockpit_arrow_01.webp",
+      "size": 12632,
+      "sha256": "fde28e50aa1bfe1f7bdca098d986b39307e2324216ed1f09a5d414b490d59c91"
+    },
+    {
+      "path": "dist/assets/ships/generated/cockpit/cockpit_bridge_04.webp",
+      "size": 13256,
+      "sha256": "08d3fa872ad43966a9219d87c127aa973cfdfdd89e5cd00623356442dbbc3492"
+    },
+    {
+      "path": "dist/assets/ships/generated/cockpit/cockpit_bubble_02.webp",
+      "size": 12222,
+      "sha256": "1bb045e6ab7080f468da8a728c0f8445ceb46e307e62c502ef111ad5dad13509"
+    },
+    {
+      "path": "dist/assets/ships/generated/cockpit/cockpit_canopy_06.webp",
+      "size": 12522,
+      "sha256": "27e9d43e2b5d05cc66f7eb3487c5e521d90b676d8ca7edc64f8644fef3df5421"
+    },
+    {
+      "path": "dist/assets/ships/generated/cockpit/cockpit_command_08.webp",
+      "size": 12188,
+      "sha256": "6635dc479f07bed4181cc5699f20c7f669af2f07e918c59144c0d2ed9589f87f"
+    },
+    {
+      "path": "dist/assets/ships/generated/cockpit/cockpit_offset_03.webp",
+      "size": 12002,
+      "sha256": "9e7432e3f035cd59493a07e6846d059317302e51a3f2001c99d9ab296d7b01fb"
+    },
+    {
+      "path": "dist/assets/ships/generated/cockpit/cockpit_split_07.webp",
+      "size": 12898,
+      "sha256": "7140004229ce5a36e98d9e96973dd2c6eff67ec178675ceb584b72e11a5313e8"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_barge_06.webp",
+      "size": 14926,
+      "sha256": "285f730040a3338b635b86156602f0a6cfb4b3ad404bc9a4e248466c8c6fe16f"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_container_07.webp",
+      "size": 17802,
+      "sha256": "244ec239ff794abaebfc506bc54e84a78b9626c203526098d9be4d7551470df2"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_crescent_08.webp",
+      "size": 16866,
+      "sha256": "9d5afdc15c34d77f122d3caf7d7421264a88ef8af11a94cdc1e34248916e4782"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_dart_01.webp",
+      "size": 16100,
+      "sha256": "6e76a1e412f0c296d4c3969e65848ec2d6646de49ca7c5c5f8af86c3e7176367"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_hauler_05.webp",
+      "size": 14850,
+      "sha256": "326a701085e525e5ac11801999de46ad261190d6aabc33866ebecc2dcb76ee03"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_kite_03.webp",
+      "size": 14442,
+      "sha256": "a067b64be2269f5133878a185cc166af9a8b90173e78c7c53f7836cb39b03a93"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_skiff_04.webp",
+      "size": 14564,
+      "sha256": "38ee21c79a03e840c9ffd77c2912481e70fa752f969a31787b38f8e050249933"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_spear_02.webp",
+      "size": 16064,
+      "sha256": "6a0bb3c3d2050866083638d76b97dec6698c5413dbf3840680b0601d247a6c46"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_spine_10.webp",
+      "size": 16178,
+      "sha256": "aeb8839f73ee1baec2e1b6af33821cba313a94baa48037de66ef52de4281919d"
+    },
+    {
+      "path": "dist/assets/ships/generated/core/core_twinboom_09.webp",
+      "size": 17148,
+      "sha256": "718c9fbdc7417c7752118d93bb36d9de69cb5bed5416a7994ec551cc1945c9ea"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_cluster_05.webp",
+      "size": 14916,
+      "sha256": "8df5aad2c73f5e7ec3d6d6286b3f7fbe7d0adf442baca090e2d7b51b3fc6741e"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_heavy_04.webp",
+      "size": 12380,
+      "sha256": "2e32f05db22746eac87a021ae5421ed6eab49c3ad2c9f63e288b5fe72fcef3e5"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_military_06.webp",
+      "size": 12796,
+      "sha256": "5cb7e9c484ae7c0568c9d59e060158d17384b00b68e4bcd9425a170cfeb90eb3"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_needle_07.webp",
+      "size": 14776,
+      "sha256": "25fbc18e29dedee74e37215bcdb021dadb6d8edd3e33b6405f89ea91bd662d0f"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_quad_ion_02.webp",
+      "size": 14434,
+      "sha256": "c2ba17b239a331c0e7c9fd819c969b7ac19b8ce07e561e481599aa8c1bb547a0"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_recycler_10.webp",
+      "size": 12820,
+      "sha256": "15b5d6e4d2442fb4cc7f055a13bb43a9073fe90a5251760b47bea625b1758c25"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_ring_03.webp",
+      "size": 12608,
+      "sha256": "4ab1fe50590b60d9b34ea4d13a573a7cfeb289929061d4f743fa6886121c9879"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_slab_08.webp",
+      "size": 13864,
+      "sha256": "627da503a8c177eadfbd2a4871717fbdb26f32b8be34f673aced9bae817296cf"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_trident_09.webp",
+      "size": 15586,
+      "sha256": "9d2b73925516d42af2ed22d0d2a1fcd662ed7539c7e5856e0141fcc8c213d1d4"
+    },
+    {
+      "path": "dist/assets/ships/generated/engine/engine_twin_ion_01.webp",
+      "size": 13918,
+      "sha256": "d2da9c73573ae56a79dc58d7e0543ae5794a0b5e47ad56f19eff3a9764da956f"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_armor_04.webp",
+      "size": 13590,
+      "sha256": "df8efabf32e500e5f7cecba9b4c22ec073cd9db4585a9b4870f48ddcf04190e4"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_comms_02.webp",
+      "size": 9856,
+      "sha256": "40c9ff73bdeddd31ea14037bd26001ae150f3ed1f79f81e9f9331809717532dc"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_jammer_07.webp",
+      "size": 14614,
+      "sha256": "778d125ddb140f6bd52d4bcce6e47bf520a8ff7b4f18718089a65cb8a5fa32db"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_radar_03.webp",
+      "size": 10320,
+      "sha256": "35106d45a97a6be43efe842e1e3063aca160a36cffe2f0e29fd5b180d1db18bf"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_repair_08.webp",
+      "size": 9454,
+      "sha256": "c9c157d751fa2f28e3963b438d46172d21371196f7abf2d13b80868f8c25f430"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_sensor_01.webp",
+      "size": 11710,
+      "sha256": "12238ed31db34274ccd7d08d0d703dcdd753ff8fc5fe697447debcbdc78bf0bb"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_smuggler_06.webp",
+      "size": 7782,
+      "sha256": "3e4e8520abd24e6646a4f16807878446d4d9208b80c6aabc99eb13676aaa9a05"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_tow_05.webp",
+      "size": 8418,
+      "sha256": "5745ff5e70ba0958049d5ec9a73c34538f602a1d78f884175b5c2455d4737fa1"
+    },
+    {
+      "path": "dist/assets/ships/generated/utility/utility_tractor_09.webp",
+      "size": 10722,
+      "sha256": "f9b550710b3335e531f5bc4614b987e6cf3e5e431bf5423c30fe183495aad4f5"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_chin_02.webp",
+      "size": 11442,
+      "sha256": "d2b07170894068650de6fee7b8fcf381f971391f07acceafd98dc5d05850d1d3"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_defense_04.webp",
+      "size": 14418,
+      "sha256": "2f409f51827f41976b120e12a0c960c4dafc05e701daadf534fafb7ca94190dd"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_dorsal_03.webp",
+      "size": 13782,
+      "sha256": "cf131ac902026c5e41268b192ec42e465ea2669766d40162bcd73788744f1b82"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_heavy_05.webp",
+      "size": 12530,
+      "sha256": "c47191dc3493a7bdd766d11b5a2ba0a25b891f043b8b5441fbe09eb458a75e0e"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_ion_07.webp",
+      "size": 17780,
+      "sha256": "1f91aac604d9acb9b8a9d24e6a28146057a80ca052074a5defbb18577f1449f9"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_laser_pair_01.webp",
+      "size": 13330,
+      "sha256": "e349e750b76a914db5110d63823ea2223b671330c4e3b9e1a7b6ea4d528665c5"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_missile_08.webp",
+      "size": 16144,
+      "sha256": "990e42170064a2b9ab751538cd6c4a361bb1b432d92cc6d5371d2a35a793eee2"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_pulse_06.webp",
+      "size": 17298,
+      "sha256": "479eed1e2c0f28ae1b1a766133386f32430ed9fb69d4f4d944f34135a5414259"
+    },
+    {
+      "path": "dist/assets/ships/generated/weapon/weapon_rotary_09.webp",
+      "size": 15200,
+      "sha256": "e6234720d8debec8b8f59072ee60b443eff478d3d1f73e50cda781d8e9290d9b"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_blade_06.webp",
+      "size": 17826,
+      "sha256": "ec7d7539f740cf358d140313a12a37d7041fe376b60b9725999c3dad17593959"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_cargo_05.webp",
+      "size": 15622,
+      "sha256": "9eb74aac25264f1243db6d07eced618440382d5824118a975e5859d2671eb160"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_delta_02.webp",
+      "size": 17092,
+      "sha256": "a25d31c76f6e3fd2fdb6be6eb5701164d1e84313444be2bdbacc170a20c557b5"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_fork_04.webp",
+      "size": 18386,
+      "sha256": "20d57830904e1a2b0ee0eb8a10a0896bfb2bdbf8a4001aff4410550d3de56f11"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_gull_07.webp",
+      "size": 21902,
+      "sha256": "e7322b6d192ce8c07a2907325ade6d59aee1c363ca40c5c7c4427ee62ace12a3"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_interceptor_08.webp",
+      "size": 17948,
+      "sha256": "b119f424b7fdb5b68e29e9616bf952053b428724c49a8d7ba8767ec245b2b940"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_outrigger_09.webp",
+      "size": 24040,
+      "sha256": "f7d511716d51610393a73a56835a8adda1d625b2f45640f0d7fc408c738d4bea"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_solar_10.webp",
+      "size": 15952,
+      "sha256": "860ef832f2f429ab4955853f6bfa44dc31b779ff923bd45519b150d33882075d"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_stub_03.webp",
+      "size": 18018,
+      "sha256": "b40270ec696e6647ea5d1a088308f5d8735cf87b6f91068bb64687031925a151"
+    },
+    {
+      "path": "dist/assets/ships/generated/wing/wing_swept_01.webp",
+      "size": 17240,
+      "sha256": "019166821da61a43d7ce26f2c85554372be9680748b200ab0539f371a7f293cb"
+    },
+    {
+      "path": "dist/component-library.css",
+      "size": 5526,
+      "sha256": "a2e15b1abb1f23855fe7268d46129e0736a3cc6a67dae1a1d731148802e3a9da"
+    },
+    {
+      "path": "dist/component-library.html",
+      "size": 1214,
+      "sha256": "30dcc750074307da31c91b7b697386c6839e7b812bba12a037dc615afc9a43be"
+    },
+    {
+      "path": "dist/component-library.js",
+      "size": 2722,
+      "sha256": "bfc32b3d5eb02725ded95802bfca5d2827d201c718405b54f44f9dc61a6cf3b8"
     },
     {
       "path": "dist/index.html",
-      "bytes": 10014,
-      "sha256": "af73958e76cedd0675b4abc0d3dbbb0b12c195c2fc98c574836d1de392a8b036"
+      "size": 10175,
+      "sha256": "41fa82ffd781827e7026cc83f00a9a8dc3ab2feedd5b691620b243e6651f79f5"
+    },
+    {
+      "path": "dist/runtime/living-world.css",
+      "size": 8539,
+      "sha256": "b85d8563e21ac3acacc8454edfa2803cee9e271aafa52eaf991f334ca222f357"
+    },
+    {
+      "path": "dist/runtime/living-world.js",
+      "size": 12288,
+      "sha256": "6527d439f5428c123f2c2c58e12f8837b07f21d63374a8bc98f1cffb5f81b330"
     },
     {
       "path": "dist/runtime/lower-port.js",
-      "bytes": 12493,
-      "sha256": "d0c10877b7bdd8679a1a98b3f15feafe5a8e44453eedb0c9f29bcb31e2ae4098"
+      "size": 12801,
+      "sha256": "cc3163684c64588dd64bd6b04931674e61730d0000be7b994435a52fa3dd8dda"
+    },
+    {
+      "path": "dist/runtime/shipforge-catalog.js",
+      "size": 45071,
+      "sha256": "09b985afc2c6ce60e20491c0a09bae23e5847ba5724cbb7321d0d4b082daaf93"
+    },
+    {
+      "path": "dist/runtime/shipforge-visuals.js",
+      "size": 16642,
+      "sha256": "a246b3d970862192fe16b8e0b08b6af2ec96bb027f6ce3d84daf89242dfbb389"
     },
     {
       "path": "dist/runtime/shipforge-world.css",
-      "bytes": 5114,
+      "size": 5114,
       "sha256": "a66cec6ba4748cf841940a9de49aa0064ee102a81189e96d0c24cefdd18ef9f6"
     },
     {
       "path": "dist/runtime/shipforge-world.js",
-      "bytes": 28951,
+      "size": 28951,
       "sha256": "427c5c388d9d572f84d71d39a4a65f6857eb8cc18c77c8df24c8f65e47306d13"
     },
     {
+      "path": "dist/runtime/shipforge.css",
+      "size": 4834,
+      "sha256": "4ce7ee964b6b0ad1d6b9d13d7f03b0842bf1e990971e521bf6f90f0e8bd4caad"
+    },
+    {
+      "path": "dist/runtime/shipforge.js",
+      "size": 17613,
+      "sha256": "6320490596c830bf0243d346cacf25b26bc45acdbe4167aa3f101ed5b77232dc"
+    },
+    {
+      "path": "dist/runtime/visual-hotfix.css",
+      "size": 2437,
+      "sha256": "2d5d6901e474c3351184c31db1925be6b6d454c54360945008a6cab16a1cc59e"
+    },
+    {
+      "path": "dist/ship-component-visuals.json",
+      "size": 16897,
+      "sha256": "99fc03ede695d3ac7ef275c566fd276a63a104b973f12da07150e85f628df35b"
+    },
+    {
+      "path": "dist/ship-parts.json",
+      "size": 69257,
+      "sha256": "83c0090ce21cb91af8d7837b157e6eda92af771944a1a91e15f7ae1e03c079e7"
+    },
+    {
       "path": "dist/sw.js",
-      "bytes": 6580,
-      "sha256": "e71ec4c0961eb4e24b0292aa65892f46773fb1a05e14607a45658d3c1d221617"
+      "size": 6989,
+      "sha256": "82ac6975c293083b5946747ce1a9c28a8be17d0bde427e0b456a1ac65de6eec5"
     },
     {
       "path": "index.html",
-      "bytes": 10014,
-      "sha256": "af73958e76cedd0675b4abc0d3dbbb0b12c195c2fc98c574836d1de392a8b036"
+      "size": 10175,
+      "sha256": "41fa82ffd781827e7026cc83f00a9a8dc3ab2feedd5b691620b243e6651f79f5"
     },
     {
       "path": "package.json",
-      "bytes": 1047,
-      "sha256": "f1cfb12725af374ef9fc4a4b631dc5b9c95835e584c914872bd9d4dbdbcfa611"
+      "size": 1122,
+      "sha256": "86c961998f184c76d5104ffea4a38f715d589bf97a48bacb4ab9cac096bb81e2"
+    },
+    {
+      "path": "qa/living-world-results.json",
+      "size": 172,
+      "sha256": "a0c0615da93e506878a37b22f6e65b69c6dfa4adca46248ab77daa7991c8d46e"
+    },
+    {
+      "path": "qa/living-world.cjs",
+      "size": 4664,
+      "sha256": "c3892abbf5cd02ad7b156783ec087eb2430f64984b63f388fb1de999f8e62456"
+    },
+    {
+      "path": "qa/render-preview.cjs",
+      "size": 1782,
+      "sha256": "770f313be533254e43ea5aa965f6aa77aa0bbc09a85ba28b4d4562beef094bca"
     },
     {
       "path": "qa/shipforge-integration-results.json",
-      "bytes": 2342,
-      "sha256": "123876cd895d5eddde37b8d87eab5a473257c8ce9fd78104df7b418f7fed0284"
+      "size": 2342,
+      "sha256": "51b228b25d220b658042a37cd4dd5b380778138cd5617df573069ba3e511f4b5"
     },
     {
       "path": "qa/shipforge-integration.cjs",
-      "bytes": 3468,
-      "sha256": "dd9692aced74c4db44b3cc279ecf317bdb1c598169ffc3cd9cce083f9a99dd05"
+      "size": 3476,
+      "sha256": "8be762eab2503d6822711cbeb66ddf8e4c069d227e8f9ef8abfe8f3b1be2c01d"
+    },
+    {
+      "path": "qa/shipforge-results.json",
+      "size": 2812547,
+      "sha256": "0add7e6caa65cb7d6cfe8f4d7c4295064eb83cfb4eb5a1f5f9f6eda6ae4f6be2"
     },
     {
       "path": "qa/shipforge-world-results.json",
-      "bytes": 15787,
-      "sha256": "721b1b11e92616c263f80deb24eb1d72cad3e959b6778215b52b4badb3189ea1"
+      "size": 15787,
+      "sha256": "95e72ab51ae14d74f644d73371bdd3a73c47eacf7a081e00c03c2f1ad3ab9a65"
     },
     {
       "path": "qa/shipforge-world.cjs",
-      "bytes": 11350,
+      "size": 11350,
       "sha256": "d5313c7a7410bb1c94d72bbed165ee063d31e68086658e8924ccc1a604cc883b"
     },
     {
+      "path": "qa/shipforge.cjs",
+      "size": 4812,
+      "sha256": "c408abde46a11a81d621e6b0f308198a610211f43c18e6a7715b39a87b75db99"
+    },
+    {
+      "path": "qa/visual-hotfix-results.json",
+      "size": 2250,
+      "sha256": "c1114456a3cad63d555151a106eb58b4373ae9da491de54a8c1b81ccd37739fe"
+    },
+    {
+      "path": "qa/visual-hotfix.cjs",
+      "size": 2923,
+      "sha256": "33791afd3c1ae94e89fb8dc73a3d2c86af285e23030bac5bd8c50f419373d708"
+    },
+    {
+      "path": "runtime/living-world.css",
+      "size": 8539,
+      "sha256": "b85d8563e21ac3acacc8454edfa2803cee9e271aafa52eaf991f334ca222f357"
+    },
+    {
+      "path": "runtime/living-world.js",
+      "size": 12288,
+      "sha256": "6527d439f5428c123f2c2c58e12f8837b07f21d63374a8bc98f1cffb5f81b330"
+    },
+    {
       "path": "runtime/lower-port.js",
-      "bytes": 12493,
-      "sha256": "d0c10877b7bdd8679a1a98b3f15feafe5a8e44453eedb0c9f29bcb31e2ae4098"
+      "size": 12801,
+      "sha256": "cc3163684c64588dd64bd6b04931674e61730d0000be7b994435a52fa3dd8dda"
+    },
+    {
+      "path": "runtime/shipforge-catalog.js",
+      "size": 45071,
+      "sha256": "09b985afc2c6ce60e20491c0a09bae23e5847ba5724cbb7321d0d4b082daaf93"
+    },
+    {
+      "path": "runtime/shipforge-visuals.js",
+      "size": 16642,
+      "sha256": "a246b3d970862192fe16b8e0b08b6af2ec96bb027f6ce3d84daf89242dfbb389"
     },
     {
       "path": "runtime/shipforge-world.css",
-      "bytes": 5114,
+      "size": 5114,
       "sha256": "a66cec6ba4748cf841940a9de49aa0064ee102a81189e96d0c24cefdd18ef9f6"
     },
     {
       "path": "runtime/shipforge-world.js",
-      "bytes": 28951,
+      "size": 28951,
       "sha256": "427c5c388d9d572f84d71d39a4a65f6857eb8cc18c77c8df24c8f65e47306d13"
     },
     {
+      "path": "runtime/shipforge.css",
+      "size": 4834,
+      "sha256": "4ce7ee964b6b0ad1d6b9d13d7f03b0842bf1e990971e521bf6f90f0e8bd4caad"
+    },
+    {
+      "path": "runtime/shipforge.js",
+      "size": 17613,
+      "sha256": "6320490596c830bf0243d346cacf25b26bc45acdbe4167aa3f101ed5b77232dc"
+    },
+    {
+      "path": "runtime/visual-hotfix.css",
+      "size": 2437,
+      "sha256": "2d5d6901e474c3351184c31db1925be6b6d454c54360945008a6cab16a1cc59e"
+    },
+    {
+      "path": "ship-component-visuals.json",
+      "size": 16897,
+      "sha256": "99fc03ede695d3ac7ef275c566fd276a63a104b973f12da07150e85f628df35b"
+    },
+    {
+      "path": "ship-parts.json",
+      "size": 69257,
+      "sha256": "83c0090ce21cb91af8d7837b157e6eda92af771944a1a91e15f7ae1e03c079e7"
+    },
+    {
       "path": "sw.js",
-      "bytes": 6580,
-      "sha256": "e71ec4c0961eb4e24b0292aa65892f46773fb1a05e14607a45658d3c1d221617"
+      "size": 6989,
+      "sha256": "82ac6975c293083b5946747ce1a9c28a8be17d0bde427e0b456a1ac65de6eec5"
+    },
+    {
+      "path": "tools/build-shipforge-data.mjs",
+      "size": 1617,
+      "sha256": "1d264fef88237764c2dfb27c5c163f9a05a94d58409a20c89c49b2829507eeaf"
     }
   ]
 }

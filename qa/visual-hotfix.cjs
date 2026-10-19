@@ -1,0 +1,28 @@
+const fs=require('fs'),path=require('path'),crypto=require('crypto');
+const root=path.resolve(__dirname,'..'),results=[];
+const check=(label,pass,detail='')=>{results.push({label,pass:!!pass,detail});if(!pass)console.error(label,detail)};
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const pkg=JSON.parse(read('package.json')),parts=JSON.parse(read('ship-parts.json'));
+check('v17.6 package version',pkg.version==='17.6.0',pkg.version);
+check('all 64 parts have generated art metadata',parts.parts.length===64&&parts.parts.every(p=>p.art&&p.artType==='generated-raster'),parts.parts.filter(p=>!p.art).map(p=>p.id));
+let missing=[],tiny=[];
+for(const p of parts.parts){const f=path.join(root,p.art);if(!fs.existsSync(f))missing.push(p.art);else if(fs.statSync(f).size<1500)tiny.push(p.art)}
+check('all generated part assets exist',missing.length===0,missing);
+check('generated part assets are nontrivial',tiny.length===0,tiny);
+const hq=['hq','briefing','hangar','quarters','contracts'].map(n=>`assets/locations/blackglass/generated/${n}.webp`);
+check('five generated HQ images exist',hq.every(p=>fs.existsSync(path.join(root,p))),hq.filter(p=>!fs.existsSync(path.join(root,p))));
+const hashes=hq.map(p=>crypto.createHash('sha1').update(fs.readFileSync(path.join(root,p))).digest('hex'));
+check('HQ spaces use distinct images',new Set(hashes).size===5,hashes);
+const app=read('app.js'),idx=read('index.html'),sw=read('sw.js'),sf=read('runtime/shipforge.js'),css=read('runtime/visual-hotfix.css');
+check('HQ site routing uses generated art',app.includes('HQ_GENERATED_ART')&&hq.every(p=>app.includes(p)),hq);
+check('HQ living scene overrides background per selected room',app.includes('preset={...preset,background:hqSiteAsset(site)}'));
+check('HQ hologram is room-specific',app.includes('const hqHolo=theme==="hq"&&["command","briefing","contracts"].includes(room)'));
+check('Galaxy normal map no longer injects living-scene layer',app.includes('page==="Galaxy"')&&app.includes("!['transit','orbit'].includes(galaxyState?.()?.phase)"));
+check('Galaxy hotfix stylesheet is loaded',idx.includes('runtime/visual-hotfix.css')&&css.includes('.living-galaxy-map'));
+check('ShipForge v4 renders generated art',sf.includes("version:'4.0.0'")&&sf.includes('generatedArtMarkup')&&sf.includes('sf-part-generated'));
+check('offline cache includes generated HQ art',hq.every(p=>sw.includes('./'+p)));
+check('offline cache dynamically includes part art',sw.includes('[p.visual,p.art]'));
+check('offline cache key bumped',sw.includes('deadlock-v17-6-generated-shipforge-visual-hotfix'));
+const out={checks:results.length,passed:results.filter(x=>x.pass).length,failed:results.filter(x=>!x.pass).length,results};
+fs.writeFileSync(path.join(__dirname,'visual-hotfix-results.json'),JSON.stringify(out,null,2));
+console.log(JSON.stringify({checks:out.checks,passed:out.passed,failed:out.failed}));if(out.failed)process.exitCode=1;

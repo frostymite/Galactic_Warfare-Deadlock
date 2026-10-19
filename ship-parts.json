@@ -1,6 +1,6 @@
 {
   "schema": "deadlock.shipforge.parts.v2",
-  "version": "2.1.0",
+  "version": "4.0.0",
   "classes": {
     "fighter": {
       "label": "Fighter",
@@ -263,7 +263,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_dart_01.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_spear_02",
@@ -303,7 +306,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_spear_02.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_kite_03",
@@ -342,7 +348,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_kite_03.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_skiff_04",
@@ -381,7 +390,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_skiff_04.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_hauler_05",
@@ -421,7 +433,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_hauler_05.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_barge_06",
@@ -459,7 +474,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_barge_06.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_container_07",
@@ -498,7 +516,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_container_07.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_crescent_08",
@@ -539,7 +560,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_crescent_08.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_twinboom_09",
@@ -578,7 +602,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_twinboom_09.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "core_spine_10",
@@ -617,7 +644,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/core/core_spine_10.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cockpit_arrow_01",
@@ -655,7 +685,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cockpit/cockpit_arrow_01.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cockpit_bubble_02",
@@ -693,7 +726,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cockpit/cockpit_bubble_02.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cockpit_offset_03",
@@ -732,7 +768,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cockpit/cockpit_offset_03.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cockpit_bridge_04",
@@ -769,7 +808,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cockpit/cockpit_bridge_04.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cockpit_armored_05",
@@ -808,7 +850,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cockpit/cockpit_armored_05.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cockpit_canopy_06",
@@ -847,7 +892,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cockpit/cockpit_canopy_06.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cockpit_split_07",
@@ -885,7 +933,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cockpit/cockpit_split_07.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cockpit_command_08",
@@ -926,7 +977,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cockpit/cockpit_command_08.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_swept_01",
@@ -964,7 +1018,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_swept_01.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_delta_02",
@@ -1003,7 +1060,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_delta_02.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_stub_03",
@@ -1040,7 +1100,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_stub_03.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_fork_04",
@@ -1078,7 +1141,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_fork_04.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_cargo_05",
@@ -1115,7 +1181,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_cargo_05.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_blade_06",
@@ -1153,7 +1222,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_blade_06.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_gull_07",
@@ -1190,7 +1262,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_gull_07.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_interceptor_08",
@@ -1229,7 +1304,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_interceptor_08.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_outrigger_09",
@@ -1266,7 +1344,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_outrigger_09.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "wing_solar_10",
@@ -1305,7 +1386,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/wing/wing_solar_10.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_twin_ion_01",
@@ -1346,7 +1430,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_twin_ion_01.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_quad_ion_02",
@@ -1386,7 +1473,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_quad_ion_02.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_ring_03",
@@ -1424,7 +1514,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_ring_03.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_heavy_04",
@@ -1464,7 +1557,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_heavy_04.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_cluster_05",
@@ -1502,7 +1598,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_cluster_05.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_military_06",
@@ -1542,7 +1641,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_military_06.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_needle_07",
@@ -1581,7 +1683,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_needle_07.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_slab_08",
@@ -1620,7 +1725,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_slab_08.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_trident_09",
@@ -1659,7 +1767,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_trident_09.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "engine_recycler_10",
@@ -1698,7 +1809,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/engine/engine_recycler_10.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_laser_pair_01",
@@ -1737,7 +1851,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_laser_pair_01.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_chin_02",
@@ -1775,7 +1892,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_chin_02.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_dorsal_03",
@@ -1813,7 +1933,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_dorsal_03.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_defense_04",
@@ -1850,7 +1973,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_defense_04.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_heavy_05",
@@ -1887,7 +2013,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_heavy_05.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_pulse_06",
@@ -1926,7 +2055,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_pulse_06.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_ion_07",
@@ -1968,7 +2100,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_ion_07.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_missile_08",
@@ -2008,7 +2143,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_missile_08.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "weapon_rotary_09",
@@ -2047,7 +2185,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/weapon/weapon_rotary_09.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cargo_sidepods_01",
@@ -2085,7 +2226,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cargo/cargo_sidepods_01.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cargo_belly_02",
@@ -2123,7 +2267,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cargo/cargo_belly_02.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cargo_container_03",
@@ -2160,7 +2307,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cargo/cargo_container_03.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cargo_spine_04",
@@ -2197,7 +2347,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cargo/cargo_spine_04.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cargo_clamps_05",
@@ -2236,7 +2389,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cargo/cargo_clamps_05.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cargo_drums_06",
@@ -2273,7 +2429,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cargo/cargo_drums_06.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cargo_saddle_07",
@@ -2313,7 +2472,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cargo/cargo_saddle_07.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "cargo_modular_08",
@@ -2354,7 +2516,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/cargo/cargo_modular_08.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_sensor_01",
@@ -2392,7 +2557,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_sensor_01.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_comms_02",
@@ -2430,7 +2598,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_comms_02.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_radar_03",
@@ -2469,7 +2640,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_radar_03.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_armor_04",
@@ -2507,7 +2681,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_armor_04.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_tow_05",
@@ -2546,7 +2723,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_tow_05.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_smuggler_06",
@@ -2584,7 +2764,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_smuggler_06.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_jammer_07",
@@ -2624,7 +2807,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_jammer_07.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_repair_08",
@@ -2665,7 +2851,10 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_repair_08.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     },
     {
       "id": "utility_tractor_09",
@@ -2706,19 +2895,11 @@
           "detail",
           "emissive"
         ]
-      }
+      },
+      "art": "assets/ships/generated/utility/utility_tractor_09.webp",
+      "artType": "generated-raster",
+      "artVersion": "17.6.0"
     }
   ],
-  "presentation": {
-    "mode": "2.5d-three-quarter",
-    "view": "front-starboard-elevated",
-    "depthLayers": [
-      "shadow",
-      "extrusion",
-      "surface",
-      "greebles",
-      "emissive"
-    ],
-    "nativeReady": true
-  }
+  "presentation": "generated-art-2.5d"
 }

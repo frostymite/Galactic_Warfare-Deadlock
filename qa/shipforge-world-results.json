@@ -64,8 +64,8 @@
         "shields": 84,
         "fuel": 91,
         "damageLog": [],
-        "createdAt": "2026-10-19T11:03:01.425Z",
-        "lastSeenAt": "2026-10-19T11:03:01.425Z",
+        "createdAt": "2026-10-19T15:00:36.187Z",
+        "lastSeenAt": "2026-10-19T15:00:36.188Z",
         "persistentKey": null,
         "stats": {
           "raw": {
@@ -291,8 +291,8 @@
           "shields": 100,
           "fuel": 100,
           "damageLog": [],
-          "createdAt": "2026-10-19T11:03:01.444Z",
-          "lastSeenAt": "2026-10-19T11:03:01.444Z",
+          "createdAt": "2026-10-19T15:00:36.212Z",
+          "lastSeenAt": "2026-10-19T15:00:36.212Z",
           "persistentKey": null,
           "stats": {
             "raw": {
@@ -471,8 +471,8 @@
           "sourceShipId": "npc-1fa71980",
           "sourceName": "Hunter Interceptor",
           "claimed": true,
-          "createdAt": "2026-10-19T11:03:01.455Z",
-          "claimedAt": "2026-10-19T11:03:01.455Z"
+          "createdAt": "2026-10-19T15:00:36.227Z",
+          "claimedAt": "2026-10-19T15:00:36.228Z"
         },
         {
           "id": "salvage-18-35ed07",
@@ -482,7 +482,7 @@
           "sourceShipId": "npc-a01e1c76",
           "sourceName": "Raider Wingman",
           "claimed": false,
-          "createdAt": "2026-10-19T11:03:01.455Z"
+          "createdAt": "2026-10-19T15:00:36.228Z"
         }
       ]
     },
@@ -497,7 +497,7 @@
         "ownerId": "rovan",
         "installedOn": null,
         "source": "recovered:npc-1fa71980",
-        "acquiredAt": "2026-10-19T11:03:01.453Z",
+        "acquiredAt": "2026-10-19T15:00:36.225Z",
         "paid": 0,
         "notes": "Recovered from Hunter Interceptor.",
         "damage": []

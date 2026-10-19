@@ -1,0 +1,12 @@
+{
+  "checks": 153,
+  "passed": 153,
+  "failed": 0,
+  "failures": [],
+  "summary": {
+    "version": "1.0.0",
+    "scenes": 127,
+    "npcs": 895,
+    "trafficScenes": 3
+  }
+}
