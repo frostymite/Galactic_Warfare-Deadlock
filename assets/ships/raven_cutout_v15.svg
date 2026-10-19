@@ -1,1 +1,121 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 563" role="img" aria-label="The Raven heavy gunship"><image href="raven_cutout_v15.png" x="0" y="0" width="1000" height="563" preserveAspectRatio="xMidYMid meet"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 563" role="img" aria-labelledby="title desc">
+<title id="title">The Raven heavy gunship</title>
+<desc id="desc">Three-quarter vector illustration of the Raven, a dark gunmetal heavy gunship with copper armor bands and cyan engines.</desc>
+<defs>
+  <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4b5660"/><stop offset=".45" stop-color="#242c34"/><stop offset="1" stop-color="#10161c"/></linearGradient>
+  <linearGradient id="steel2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#6b737a"/><stop offset=".35" stop-color="#343d45"/><stop offset="1" stop-color="#171d22"/></linearGradient>
+  <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#202931"/><stop offset="1" stop-color="#080d12"/></linearGradient>
+  <linearGradient id="copper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d78b54"/><stop offset=".5" stop-color="#9a512d"/><stop offset="1" stop-color="#542916"/></linearGradient>
+  <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#bffcff"/><stop offset=".35" stop-color="#20e8ff"/><stop offset="1" stop-color="#008bb4"/></linearGradient>
+  <radialGradient id="engine" cx=".52" cy=".5" r=".6"><stop offset="0" stop-color="#eaffff"/><stop offset=".22" stop-color="#57f3ff"/><stop offset=".58" stop-color="#00b8e8"/><stop offset=".78" stop-color="#064e68"/><stop offset="1" stop-color="#071018"/></radialGradient>
+  <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000" flood-opacity=".55"/></filter>
+</defs>
+
+<g filter="url(#shadow)" stroke-linejoin="round" stroke-linecap="round">
+  <!-- rear engine pods -->
+  <g>
+    <path d="M84 258 L147 206 L269 214 L319 274 L276 366 L155 375 L89 334 Z" fill="url(#steel)" stroke="#0a0f14" stroke-width="5"/>
+    <path d="M201 201 L218 156 L249 164 L263 215 Z" fill="url(#dark)" stroke="#0a0f14" stroke-width="5"/>
+    <ellipse cx="117" cy="300" rx="59" ry="83" fill="#0a1116" stroke="#313c44" stroke-width="7"/>
+    <ellipse cx="117" cy="300" rx="43" ry="65" fill="url(#engine)" stroke="#061019" stroke-width="7"/>
+    <ellipse cx="117" cy="300" rx="28" ry="52" fill="none" stroke="#87f7ff" stroke-width="5" stroke-dasharray="9 7" filter="url(#glow)"/>
+    <path d="M145 227 L237 226 L276 278 L252 343 L159 352 L145 329 Z" fill="url(#steel2)" stroke="#111820" stroke-width="4"/>
+    <path d="M163 242 L232 244 L249 271 L180 270 Z" fill="url(#copper)" stroke="#371c11" stroke-width="3"/>
+    <path d="M173 319 L246 312 L240 336 L174 341 Z" fill="#10171d" stroke="#59646c" stroke-width="3"/>
+    <rect x="203" y="286" width="33" height="12" rx="3" fill="url(#cyan)" filter="url(#glow)"/>
+  </g>
+
+  <g>
+    <path d="M227 189 L302 132 L438 155 L469 231 L409 304 L291 299 L233 259 Z" fill="url(#steel)" stroke="#0a0f14" stroke-width="5"/>
+    <path d="M339 147 L354 91 L390 101 L409 157 Z" fill="url(#dark)" stroke="#0a0f14" stroke-width="5"/>
+    <ellipse cx="265" cy="225" rx="58" ry="83" fill="#0a1116" stroke="#313c44" stroke-width="7"/>
+    <ellipse cx="265" cy="225" rx="42" ry="64" fill="url(#engine)" stroke="#061019" stroke-width="7"/>
+    <ellipse cx="265" cy="225" rx="27" ry="50" fill="none" stroke="#87f7ff" stroke-width="5" stroke-dasharray="9 7" filter="url(#glow)"/>
+    <path d="M297 154 L406 171 L444 226 L408 279 L307 273 L294 237 Z" fill="url(#steel2)" stroke="#111820" stroke-width="4"/>
+    <path d="M318 168 L401 181 L422 209 L338 199 Z" fill="url(#copper)" stroke="#371c11" stroke-width="3"/>
+    <rect x="344" y="224" width="37" height="12" rx="3" fill="url(#cyan)" filter="url(#glow)"/>
+  </g>
+
+  <!-- main spine / cargo blocks -->
+  <path d="M274 253 L391 193 L617 209 L770 298 L716 417 L491 433 L326 382 Z" fill="url(#steel)" stroke="#0a0f14" stroke-width="6"/>
+  <path d="M346 225 L477 194 L623 213 L673 252 L513 274 L373 258 Z" fill="#202830" stroke="#77818a" stroke-width="3"/>
+  <path d="M389 211 L406 380 M489 202 L500 413 M593 210 L583 419" stroke="#bf6f3e" stroke-width="16" opacity=".9"/>
+  <path d="M389 211 L406 380 M489 202 L500 413 M593 210 L583 419" stroke="#f0a36a" stroke-width="3" opacity=".65"/>
+  <g fill="#161d23" stroke="#657079" stroke-width="3">
+    <path d="M357 247 L431 230 L438 293 L368 309 Z"/>
+    <path d="M443 226 L517 218 L517 286 L443 294 Z"/>
+    <path d="M527 220 L599 226 L585 292 L520 286 Z"/>
+    <path d="M373 318 L442 304 L447 364 L383 377 Z"/>
+    <path d="M451 302 L519 296 L519 368 L454 370 Z"/>
+  </g>
+  <g fill="#0b1116" stroke="#3a474f" stroke-width="3">
+    <path d="M332 350 L389 367 L373 386 L319 368 Z"/>
+    <path d="M534 378 L608 370 L600 397 L535 402 Z"/>
+  </g>
+
+  <!-- left/low wing and sponson -->
+  <path d="M267 326 L371 320 L490 389 L444 463 L270 449 L195 402 Z" fill="url(#steel2)" stroke="#0a0f14" stroke-width="6"/>
+  <path d="M291 338 L368 337 L436 382 L403 419 L293 408 L235 383 Z" fill="#3b454e" stroke="#111820" stroke-width="4"/>
+  <path d="M257 365 L318 373 L305 389 L248 382 Z" fill="#0c1318" stroke="#6a757c" stroke-width="3"/>
+  <rect x="330" y="411" width="47" height="13" rx="3" fill="url(#cyan)" filter="url(#glow)"/>
+
+  <!-- forward armored fuselage -->
+  <path d="M577 269 L707 253 L889 341 L952 403 L879 477 L690 474 L576 414 L539 345 Z" fill="url(#steel2)" stroke="#090e13" stroke-width="6"/>
+  <path d="M635 282 L716 273 L821 321 L769 342 L658 330 Z" fill="#434e57" stroke="#10171d" stroke-width="4"/>
+  <path d="M678 331 L781 340 L865 383 L829 427 L705 408 L641 365 Z" fill="url(#dark)" stroke="#0b1117" stroke-width="5"/>
+  <path d="M794 344 L873 379 L916 411 L886 438 L834 422 Z" fill="#39434b" stroke="#10161b" stroke-width="4"/>
+  <path d="M645 374 L704 402 L690 447 L618 413 Z" fill="url(#copper)" stroke="#351b10" stroke-width="4"/>
+  <path d="M846 393 L909 421 L890 450 L832 431 Z" fill="url(#copper)" stroke="#351b10" stroke-width="4"/>
+
+  <!-- cockpit glazing -->
+  <path d="M785 351 L846 370 L884 394 L858 405 L807 389 Z" fill="#04191f" stroke="#17343c" stroke-width="4"/>
+  <path d="M799 359 L838 371 L850 384 L814 379 Z" fill="url(#cyan)" stroke="#8ffaff" stroke-width="2" filter="url(#glow)"/>
+  <path d="M850 378 L878 392 L862 403 L840 390 Z" fill="url(#cyan)" stroke="#8ffaff" stroke-width="2" filter="url(#glow)"/>
+
+  <!-- side mechanical banks -->
+  <g fill="#12191f" stroke="#525d64" stroke-width="3">
+    <path d="M554 348 L620 331 L629 355 L563 372 Z"/>
+    <path d="M568 379 L628 365 L638 390 L579 405 Z"/>
+    <path d="M704 426 L769 437 L756 456 L696 445 Z"/>
+  </g>
+  <g stroke="#a55d36" stroke-width="5">
+    <path d="M566 351 L616 339"/><path d="M578 382 L625 372"/><path d="M704 433 L755 442"/>
+  </g>
+
+  <!-- dorsal turret base -->
+  <ellipse cx="640" cy="285" rx="61" ry="27" fill="#11181e" stroke="#67727a" stroke-width="5"/>
+  <ellipse cx="640" cy="278" rx="42" ry="18" fill="url(#steel2)" stroke="#1a2228" stroke-width="4"/>
+  <path d="M611 260 L657 251 L680 268 L660 290 L618 288 L600 273 Z" fill="url(#dark)" stroke="#0a0f14" stroke-width="5"/>
+  <path d="M654 256 L817 251 L837 262 L815 274 L659 273 Z" fill="url(#steel)" stroke="#0a0f14" stroke-width="5"/>
+  <path d="M678 255 L807 254" stroke="#b5683d" stroke-width="6"/>
+  <circle cx="623" cy="272" r="8" fill="#26353e" stroke="#d37d47" stroke-width="3"/>
+
+  <!-- forward guns -->
+  <g fill="url(#steel)" stroke="#0a0f14" stroke-width="4">
+    <path d="M862 444 L968 458 L978 470 L963 479 L858 462 Z"/>
+    <path d="M844 459 L953 483 L961 495 L944 502 L839 477 Z"/>
+  </g>
+  <g stroke="#9a5432" stroke-width="4"><path d="M881 450 L956 461"/><path d="M866 465 L946 485"/></g>
+
+  <!-- hull lights / vents -->
+  <g fill="url(#cyan)" filter="url(#glow)">
+    <rect x="702" y="300" width="31" height="10" rx="3"/>
+    <rect x="662" y="430" width="37" height="12" rx="3"/>
+    <rect x="421" y="415" width="38" height="11" rx="3"/>
+    <rect x="235" y="344" width="31" height="10" rx="3"/>
+  </g>
+  <g fill="#0a1015" stroke="#6a747b" stroke-width="2">
+    <path d="M705 296 L747 302 L738 317 L700 311 Z"/>
+    <path d="M750 313 L790 323 L779 337 L741 327 Z"/>
+    <path d="M596 304 L623 298 L626 318 L600 324 Z"/>
+    <path d="M436 241 L466 236 L468 254 L439 260 Z"/>
+  </g>
+
+  <!-- panel lines -->
+  <g fill="none" stroke="#778087" stroke-opacity=".45" stroke-width="2">
+    <path d="M584 321 L699 303"/><path d="M606 405 L689 442"/><path d="M707 253 L690 474"/>
+    <path d="M781 340 L769 437"/><path d="M821 321 L807 389"/><path d="M879 383 L829 427"/>
+  </g>
+</g>
+</svg>

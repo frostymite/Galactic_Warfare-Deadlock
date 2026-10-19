@@ -42,7 +42,7 @@ function characterVisual(id,state="neutral",alt=""){
  const e=assetEntry("characters",id)||{};return imgTag(e[state]||e.neutral||e.fallback,alt||id,e.fallback||null,"character-visual");
 }
 function ravenVisual(state="flight",alt="The Raven"){
- if(state!=="schematic")return imgTag("assets/ships/raven_cutout_v15.png",alt,null,"raven-visual");
+ if(state!=="schematic")return imgTag("assets/ships/raven_cutout_v15.svg",alt,null,"raven-visual");
  const e=assetEntry("ships","raven")||{};return imgTag(e[state]||e.flight||e.fallback,alt,e.fallback||null,"raven-visual");
 }
 function validCampaignSave(value){return !!value&&typeof value==="object"&&!Array.isArray(value)&&!!value.character&&Number.isFinite(value.character.health)&&Number.isFinite(value.character.credits)&&!!value.ship&&Number.isFinite(value.ship.hull)&&!!value.combat&&Array.isArray(value.combat.participants)&&["weapons","contracts","targets","contacts","inventory","gear","identities","factions","journal","locations"].every(k=>Array.isArray(value[k]));}
@@ -2622,7 +2622,7 @@ function livingSceneMarkup(ctx){
     ${theme==="hq"?'<div class="scene-holo-table"><i></i><b></b><em></em></div><div class="scene-window-reflection"></div>':""}
     ${theme==="cockpit"?'<div class="scene-cockpit-glass"></div><div class="scene-instruments"><i></i><i></i><i></i><i></i><i></i></div>':""}
     ${theme==="combat"?`<div class="scene-cover cover-a"></div><div class="scene-cover cover-b"></div><div class="scene-enemies">${groundEnemyMarkup}</div>`:""}
-    ${page==="Dogfight"?`<div class="scene-raven-flight"><img src="assets/ships/raven_cutout_v15.png" alt="The Raven"></div><div class="scene-enemy-fighters">${dogEnemyMarkup}</div>`:""}
+    ${page==="Dogfight"?`<div class="scene-raven-flight"><img src="assets/ships/raven_cutout_v15.svg" alt="The Raven"></div><div class="scene-enemy-fighters">${dogEnemyMarkup}</div>`:""}
     ${inTransit?`<div class="scene-hyperspace">${Array.from({length:28},(_,i)=>`<i style="--i:${i};--a:${(i*47)%360}deg;--delay:${-(i*.11)}s"></i>`).join("")}</div>`:""}
     ${page==="Galaxy"&&ctx.presetId==="orbit"?'<div class="scene-orbit-raven"><img src="assets/raven_dedicated.jpg" alt="The Raven in orbit"></div>':""}
     ${sceneCrowd(Number(p.crowd||0))}
