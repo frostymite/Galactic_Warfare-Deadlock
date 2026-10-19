@@ -1,4 +1,4 @@
-const CACHE="deadlock-v17-2-1-raven-true-vector";
+const CACHE="deadlock-v17-3-shipforge-25d";
 const APP_SHELL=[
  "./ship-parts.json", "./ship-component-visuals.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge-visuals.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./component-library.html", "./component-library.css", "./component-library.js",
  "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.png",
@@ -120,7 +120,15 @@ const APP_SHELL=[
 ];
 
 self.addEventListener("install",event=>{
- event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));
+ event.waitUntil((async()=>{
+  const cache=await caches.open(CACHE);
+  await cache.addAll(APP_SHELL);
+  try{
+   const response=await cache.match("./ship-parts.json");
+   if(response){const catalog=await response.clone().json();const vectors=(catalog.parts||[]).map(p=>"./"+p.visual).filter(Boolean);if(vectors.length)await cache.addAll(vectors);}
+  }catch(err){console.warn("ShipForge component precache skipped",err);}
+  await self.skipWaiting();
+ })());
 });
 
 self.addEventListener("activate",event=>{

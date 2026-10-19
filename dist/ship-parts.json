@@ -1,6 +1,6 @@
 {
   "schema": "deadlock.shipforge.parts.v2",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "classes": {
     "fighter": {
       "label": "Fighter",
@@ -251,7 +251,19 @@
       ],
       "visual": "assets/ships/components/core/core_dart_01.svg",
       "mass": 2,
-      "armor": 2
+      "armor": 2,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_spear_02",
@@ -279,7 +291,19 @@
       ],
       "visual": "assets/ships/components/core/core_spear_02.svg",
       "mass": 3,
-      "armor": 3
+      "armor": 3,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_kite_03",
@@ -306,7 +330,19 @@
       ],
       "visual": "assets/ships/components/core/core_kite_03.svg",
       "mass": 4,
-      "armor": 4
+      "armor": 4,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_skiff_04",
@@ -333,7 +369,19 @@
       ],
       "visual": "assets/ships/components/core/core_skiff_04.svg",
       "mass": 7,
-      "armor": 6
+      "armor": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_hauler_05",
@@ -361,7 +409,19 @@
       ],
       "visual": "assets/ships/components/core/core_hauler_05.svg",
       "mass": 11,
-      "armor": 8
+      "armor": 8,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_barge_06",
@@ -387,7 +447,19 @@
       ],
       "visual": "assets/ships/components/core/core_barge_06.svg",
       "mass": 18,
-      "armor": 11
+      "armor": 11,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_container_07",
@@ -414,7 +486,19 @@
       ],
       "visual": "assets/ships/components/core/core_container_07.svg",
       "mass": 21,
-      "armor": 9
+      "armor": 9,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_crescent_08",
@@ -443,7 +527,19 @@
       ],
       "visual": "assets/ships/components/core/core_crescent_08.svg",
       "mass": 5,
-      "armor": 4
+      "armor": 4,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_twinboom_09",
@@ -470,7 +566,19 @@
       ],
       "visual": "assets/ships/components/core/core_twinboom_09.svg",
       "mass": 9,
-      "armor": 8
+      "armor": 8,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "core_spine_10",
@@ -497,7 +605,19 @@
       ],
       "visual": "assets/ships/components/core/core_spine_10.svg",
       "mass": 17,
-      "armor": 14
+      "armor": 14,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "armored_hull",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cockpit_arrow_01",
@@ -523,7 +643,19 @@
         "visibility"
       ],
       "visual": "assets/ships/components/cockpit/cockpit_arrow_01.svg",
-      "visibility": 7
+      "visibility": 7,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "glass_armored",
+        "depth": 5,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cockpit_bubble_02",
@@ -549,7 +681,19 @@
         "panoramic"
       ],
       "visual": "assets/ships/components/cockpit/cockpit_bubble_02.svg",
-      "visibility": 9
+      "visibility": 9,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "glass_armored",
+        "depth": 5,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cockpit_offset_03",
@@ -576,7 +720,19 @@
         "freight"
       ],
       "visual": "assets/ships/components/cockpit/cockpit_offset_03.svg",
-      "visibility": 6
+      "visibility": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "glass_armored",
+        "depth": 5,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cockpit_bridge_04",
@@ -601,7 +757,19 @@
         "crew"
       ],
       "visual": "assets/ships/components/cockpit/cockpit_bridge_04.svg",
-      "visibility": 8
+      "visibility": 8,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "glass_armored",
+        "depth": 5,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cockpit_armored_05",
@@ -628,7 +796,19 @@
       ],
       "visual": "assets/ships/components/cockpit/cockpit_armored_05.svg",
       "visibility": 5,
-      "armor": 2
+      "armor": 2,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "glass_armored",
+        "depth": 5,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cockpit_canopy_06",
@@ -655,7 +835,19 @@
         "fast"
       ],
       "visual": "assets/ships/components/cockpit/cockpit_canopy_06.svg",
-      "visibility": 8
+      "visibility": 8,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "glass_armored",
+        "depth": 5,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cockpit_split_07",
@@ -681,7 +873,19 @@
         "redundant"
       ],
       "visual": "assets/ships/components/cockpit/cockpit_split_07.svg",
-      "visibility": 7
+      "visibility": 7,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "glass_armored",
+        "depth": 5,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cockpit_command_08",
@@ -710,7 +914,19 @@
       ],
       "visual": "assets/ships/components/cockpit/cockpit_command_08.svg",
       "visibility": 7,
-      "sensors": 2
+      "sensors": 2,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "glass_armored",
+        "depth": 5,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_swept_01",
@@ -736,7 +952,19 @@
         "fast"
       ],
       "visual": "assets/ships/components/wing/wing_swept_01.svg",
-      "lift": 8
+      "lift": 8,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_delta_02",
@@ -763,7 +991,19 @@
         "stable"
       ],
       "visual": "assets/ships/components/wing/wing_delta_02.svg",
-      "lift": 7
+      "lift": 7,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_stub_03",
@@ -788,7 +1028,19 @@
         "compact"
       ],
       "visual": "assets/ships/components/wing/wing_stub_03.svg",
-      "lift": 4
+      "lift": 4,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_fork_04",
@@ -814,7 +1066,19 @@
         "weapon-mount"
       ],
       "visual": "assets/ships/components/wing/wing_fork_04.svg",
-      "lift": 6
+      "lift": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_cargo_05",
@@ -839,7 +1103,19 @@
       ],
       "visual": "assets/ships/components/wing/wing_cargo_05.svg",
       "lift": 3,
-      "capacity": 2
+      "capacity": 2,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_blade_06",
@@ -865,7 +1141,19 @@
         "interceptor"
       ],
       "visual": "assets/ships/components/wing/wing_blade_06.svg",
-      "lift": 9
+      "lift": 9,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_gull_07",
@@ -890,7 +1178,19 @@
         "landing"
       ],
       "visual": "assets/ships/components/wing/wing_gull_07.svg",
-      "lift": 6
+      "lift": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_interceptor_08",
@@ -917,7 +1217,19 @@
         "agile"
       ],
       "visual": "assets/ships/components/wing/wing_interceptor_08.svg",
-      "lift": 10
+      "lift": 10,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_outrigger_09",
@@ -942,7 +1254,19 @@
         "utility"
       ],
       "visual": "assets/ships/components/wing/wing_outrigger_09.svg",
-      "lift": 5
+      "lift": 5,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "wing_solar_10",
@@ -969,7 +1293,19 @@
       ],
       "visual": "assets/ships/components/wing/wing_solar_10.svg",
       "lift": 5,
-      "power": 2
+      "power": 2,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "aero_structure",
+        "depth": 3,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_twin_ion_01",
@@ -998,7 +1334,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_twin_ion_01.svg",
       "speed": 8,
-      "power": 6
+      "power": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_quad_ion_02",
@@ -1026,7 +1374,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_quad_ion_02.svg",
       "speed": 10,
-      "power": 8
+      "power": 8,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_ring_03",
@@ -1052,7 +1412,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_ring_03.svg",
       "speed": 7,
-      "power": 5
+      "power": 5,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_heavy_04",
@@ -1080,7 +1452,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_heavy_04.svg",
       "speed": 5,
-      "power": 9
+      "power": 9,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_cluster_05",
@@ -1106,7 +1490,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_cluster_05.svg",
       "speed": 4,
-      "power": 11
+      "power": 11,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_military_06",
@@ -1134,7 +1530,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_military_06.svg",
       "speed": 9,
-      "power": 9
+      "power": 9,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_needle_07",
@@ -1161,7 +1569,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_needle_07.svg",
       "speed": 11,
-      "power": 7
+      "power": 7,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_slab_08",
@@ -1188,7 +1608,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_slab_08.svg",
       "speed": 6,
-      "power": 10
+      "power": 10,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_trident_09",
@@ -1215,7 +1647,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_trident_09.svg",
       "speed": 9,
-      "power": 8
+      "power": 8,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "engine_recycler_10",
@@ -1242,7 +1686,19 @@
       ],
       "visual": "assets/ships/components/engine/engine_recycler_10.svg",
       "speed": 5,
-      "power": 13
+      "power": 13,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "thruster_mechanical",
+        "depth": 5,
+        "animation": "engine_pulse",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_laser_pair_01",
@@ -1269,7 +1725,19 @@
         "laser"
       ],
       "visual": "assets/ships/components/weapon/weapon_laser_pair_01.svg",
-      "damage": 5
+      "damage": 5,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_chin_02",
@@ -1295,7 +1763,19 @@
         "laser"
       ],
       "visual": "assets/ships/components/weapon/weapon_chin_02.svg",
-      "damage": 6
+      "damage": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_dorsal_03",
@@ -1321,7 +1801,19 @@
         "turret"
       ],
       "visual": "assets/ships/components/weapon/weapon_dorsal_03.svg",
-      "damage": 7
+      "damage": 7,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_defense_04",
@@ -1346,7 +1838,19 @@
         "point-defense"
       ],
       "visual": "assets/ships/components/weapon/weapon_defense_04.svg",
-      "damage": 3
+      "damage": 3,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_heavy_05",
@@ -1371,7 +1875,19 @@
         "turret"
       ],
       "visual": "assets/ships/components/weapon/weapon_heavy_05.svg",
-      "damage": 9
+      "damage": 9,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_pulse_06",
@@ -1398,7 +1914,19 @@
         "pulse"
       ],
       "visual": "assets/ships/components/weapon/weapon_pulse_06.svg",
-      "damage": 7
+      "damage": 7,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_ion_07",
@@ -1428,7 +1956,19 @@
       ],
       "visual": "assets/ships/components/weapon/weapon_ion_07.svg",
       "damage": 5,
-      "utility": 2
+      "utility": 2,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_missile_08",
@@ -1456,7 +1996,19 @@
         "missile"
       ],
       "visual": "assets/ships/components/weapon/weapon_missile_08.svg",
-      "damage": 10
+      "damage": 10,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "weapon_rotary_09",
@@ -1483,7 +2035,19 @@
         "suppressive"
       ],
       "visual": "assets/ships/components/weapon/weapon_rotary_09.svg",
-      "damage": 11
+      "damage": 11,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "turret_mechanical",
+        "depth": 6,
+        "animation": "turret_track",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cargo_sidepods_01",
@@ -1509,7 +2073,19 @@
         "cargo"
       ],
       "visual": "assets/ships/components/cargo/cargo_sidepods_01.svg",
-      "capacity": 8
+      "capacity": 8,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "industrial_container",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cargo_belly_02",
@@ -1535,7 +2111,19 @@
         "cargo"
       ],
       "visual": "assets/ships/components/cargo/cargo_belly_02.svg",
-      "capacity": 12
+      "capacity": 12,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "industrial_container",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cargo_container_03",
@@ -1560,7 +2148,19 @@
         "containerized"
       ],
       "visual": "assets/ships/components/cargo/cargo_container_03.svg",
-      "capacity": 20
+      "capacity": 20,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "industrial_container",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cargo_spine_04",
@@ -1585,7 +2185,19 @@
         "high-capacity"
       ],
       "visual": "assets/ships/components/cargo/cargo_spine_04.svg",
-      "capacity": 24
+      "capacity": 24,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "industrial_container",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cargo_clamps_05",
@@ -1612,7 +2224,19 @@
         "external"
       ],
       "visual": "assets/ships/components/cargo/cargo_clamps_05.svg",
-      "capacity": 16
+      "capacity": 16,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "industrial_container",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cargo_drums_06",
@@ -1637,7 +2261,19 @@
         "liquid"
       ],
       "visual": "assets/ships/components/cargo/cargo_drums_06.svg",
-      "capacity": 22
+      "capacity": 22,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "industrial_container",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cargo_saddle_07",
@@ -1665,7 +2301,19 @@
         "modular"
       ],
       "visual": "assets/ships/components/cargo/cargo_saddle_07.svg",
-      "capacity": 14
+      "capacity": 14,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "industrial_container",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "cargo_modular_08",
@@ -1694,7 +2342,19 @@
       ],
       "visual": "assets/ships/components/cargo/cargo_modular_08.svg",
       "capacity": 18,
-      "armor": 2
+      "armor": 2,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "industrial_container",
+        "depth": 4,
+        "animation": "idle_float",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_sensor_01",
@@ -1720,7 +2380,19 @@
         "sensor"
       ],
       "visual": "assets/ships/components/utility/utility_sensor_01.svg",
-      "sensors": 4
+      "sensors": 4,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_comms_02",
@@ -1746,7 +2418,19 @@
         "comms"
       ],
       "visual": "assets/ships/components/utility/utility_comms_02.svg",
-      "sensors": 3
+      "sensors": 3,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_radar_03",
@@ -1773,7 +2457,19 @@
         "radar"
       ],
       "visual": "assets/ships/components/utility/utility_radar_03.svg",
-      "sensors": 6
+      "sensors": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_armor_04",
@@ -1799,7 +2495,19 @@
         "armor"
       ],
       "visual": "assets/ships/components/utility/utility_armor_04.svg",
-      "armor": 4
+      "armor": 4,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_tow_05",
@@ -1826,7 +2534,19 @@
         "tow"
       ],
       "visual": "assets/ships/components/utility/utility_tow_05.svg",
-      "utility": 5
+      "utility": 5,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_smuggler_06",
@@ -1852,7 +2572,19 @@
         "concealed"
       ],
       "visual": "assets/ships/components/utility/utility_smuggler_06.svg",
-      "utility": 7
+      "utility": 7,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_jammer_07",
@@ -1880,7 +2612,19 @@
       ],
       "visual": "assets/ships/components/utility/utility_jammer_07.svg",
       "sensors": 2,
-      "utility": 6
+      "utility": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_repair_08",
@@ -1909,7 +2653,19 @@
         "repair"
       ],
       "visual": "assets/ships/components/utility/utility_repair_08.svg",
-      "utility": 6
+      "utility": 6,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     },
     {
       "id": "utility_tractor_09",
@@ -1938,7 +2694,31 @@
       ],
       "visual": "assets/ships/components/utility/utility_tractor_09.svg",
       "utility": 8,
-      "power": 2
+      "power": 2,
+      "renderProfile": {
+        "view": "three_quarter",
+        "material": "sensor_mechanical",
+        "depth": 6,
+        "animation": "sensor_sweep",
+        "layers": [
+          "extrusion",
+          "surface",
+          "detail",
+          "emissive"
+        ]
+      }
     }
-  ]
+  ],
+  "presentation": {
+    "mode": "2.5d-three-quarter",
+    "view": "front-starboard-elevated",
+    "depthLayers": [
+      "shadow",
+      "extrusion",
+      "surface",
+      "greebles",
+      "emissive"
+    ],
+    "nativeReady": true
+  }
 }
