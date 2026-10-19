@@ -1,0 +1,13 @@
+{
+  "results": [
+    {
+      "label": "recording completed",
+      "pass": true
+    },
+    {
+      "label": "recording has no browser errors",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

@@ -1,11 +1,13 @@
 {
   "meta": {
-    "version": "10.0.0",
-    "fallbackPolicy": "Missing state assets fall back to neutral or procedural visual. UI is never baked into scene art."
+    "version": "13.0.0",
+    "fallbackPolicy": "Missing state assets fall back to neutral or procedural visual. UI is never baked into scene art.",
+    "sceneSystem": "scene-data.json",
+    "cinematicRuntime": "actor-rigs.json + scene-data.json + runtime/cinematic-director.js"
   },
   "characters": {
     "rovan": {
-      "neutral": "assets/rovan.jpg",
+      "neutral": "assets/rovan_clean.jpg",
       "portrait": "assets/characters/rovan/neutral.svg",
       "states": [
         "neutral",
@@ -16,11 +18,11 @@
       "fallback": "assets/characters/rovan/neutral.svg"
     },
     "dren": {
-      "neutral": "assets/contact_dren.jpg",
+      "neutral": "assets/contact_dren_clean.jpg",
       "talking": "assets/characters/dren/talking.svg",
       "suspicious": "assets/characters/dren/suspicious.svg",
       "angry": "assets/characters/dren/angry.svg",
-      "holo": "assets/contact_dren.jpg",
+      "holo": "assets/contact_dren_clean.jpg",
       "fallback": "assets/characters/dren/neutral.svg"
     },
     "nera": {
@@ -96,7 +98,7 @@
     }
   },
   "blackglass": {
-    "exterior": "assets/locations/blackglass/exterior.svg",
+    "exterior": "assets/scenes/blackglass_asteroid_v17.svg",
     "hq": "assets/locations/blackglass/hq.svg",
     "briefing": "assets/locations/blackglass/briefing.svg",
     "quarters": "assets/locations/blackglass/quarters.svg",
@@ -106,5 +108,19 @@
   "effects": {
     "starfield": "assets/effects/starfield.svg",
     "hyperspace": "assets/effects/hyperspace.svg"
+  },
+  "ravenInteriors": {
+    "cockpit": "assets/scenes/raven_cockpit_v2.svg",
+    "cargo": "assets/scenes/raven_cargo.svg",
+    "engineering": "assets/scenes/raven_engineering.svg",
+    "weapons": "assets/scenes/raven_weapons.svg",
+    "prisoner": "assets/scenes/raven_prisoner.svg",
+    "quarters": "assets/scenes/raven_quarters.svg"
+  },
+  "blackglassRooms": {
+    "briefing": "assets/scenes/blackglass_briefing_v2.svg",
+    "hangar": "assets/scenes/blackglass_hangar_v2.svg",
+    "quarters": "assets/scenes/blackglass_quarters_v2.svg",
+    "contracts": "assets/scenes/blackglass_contracts_v2.svg"
   }
 }

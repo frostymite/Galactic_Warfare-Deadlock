@@ -1,0 +1,1 @@
+Run from the release root with Node and Playwright installed. Browser suites use installed Chromium or CHROMIUM_EXECUTABLE_PATH. Create captures-v17 before running the browser suite. Each suite uses a temporary local server and disposable browser context. Results overwrite only qa/v17 test artifacts.

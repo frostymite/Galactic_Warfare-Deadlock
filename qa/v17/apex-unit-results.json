@@ -1,0 +1,132 @@
+{
+  "results": [
+    {
+      "label": "migration preserves existing personal balance",
+      "pass": true
+    },
+    {
+      "label": "migration preserves local progress",
+      "pass": true
+    },
+    {
+      "label": "reserve initialized to historical remainder",
+      "pass": true
+    },
+    {
+      "label": "founding heist origin encoded",
+      "pass": true
+    },
+    {
+      "label": "memory includes confirmed heist meaning",
+      "pass": true
+    },
+    {
+      "label": "leadership encoded",
+      "pass": true
+    },
+    {
+      "label": "Jessa permanent council member",
+      "pass": true
+    },
+    {
+      "label": "Sera remains free contact",
+      "pass": true
+    },
+    {
+      "label": "Dren and Krail not appointed members",
+      "pass": true
+    },
+    {
+      "label": "repeat migration is idempotent",
+      "pass": true
+    },
+    {
+      "label": "invalid/unfunded transfer -1",
+      "pass": true
+    },
+    {
+      "label": "invalid/unfunded transfer 0",
+      "pass": true
+    },
+    {
+      "label": "invalid/unfunded transfer 0.5",
+      "pass": true
+    },
+    {
+      "label": "invalid/unfunded transfer NaN",
+      "pass": true
+    },
+    {
+      "label": "invalid/unfunded transfer Infinity",
+      "pass": true
+    },
+    {
+      "label": "invalid/unfunded transfer 9007199254740991",
+      "pass": true
+    },
+    {
+      "label": "valid deposit accepted",
+      "pass": true
+    },
+    {
+      "label": "deposit conserves combined credits",
+      "pass": true
+    },
+    {
+      "label": "valid withdrawal accepted",
+      "pass": true
+    },
+    {
+      "label": "withdrawal conserves combined credits",
+      "pass": true
+    },
+    {
+      "label": "invalid direction rejected",
+      "pass": true
+    },
+    {
+      "label": "ledger tracks exact balances",
+      "pass": true
+    },
+    {
+      "label": "personal is default",
+      "pass": true
+    },
+    {
+      "label": "accepted contract keeps chosen identity",
+      "pass": true
+    },
+    {
+      "label": "public case pays reserve",
+      "pass": true
+    },
+    {
+      "label": "duplicate completion cannot repay",
+      "pass": true
+    },
+    {
+      "label": "withdrawal remembered without payment",
+      "pass": true
+    },
+    {
+      "label": "personal case does not affect syndicate",
+      "pass": true
+    },
+    {
+      "label": "council brief avoids last three replies",
+      "pass": true
+    },
+    {
+      "label": "brief continues identically after reload",
+      "pass": true
+    },
+    {
+      "label": "original Rusk contact fees unpaid",
+      "pass": true
+    },
+    {
+      "label": "fresh personal snapshot restored",
+      "pass": true
+    }
+  ]
+}

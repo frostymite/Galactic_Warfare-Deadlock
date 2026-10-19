@@ -1,0 +1,306 @@
+{
+  "results": [
+    {
+      "label": "Raven artwork decoded",
+      "pass": true
+    },
+    {
+      "label": "flight tabs stay horizontal",
+      "pass": true
+    },
+    {
+      "label": "exactly one new nav entry",
+      "pass": true
+    },
+    {
+      "label": "engine effect starts",
+      "pass": true
+    },
+    {
+      "label": "engine effect completes",
+      "pass": true
+    },
+    {
+      "label": "engine preview leaves gameplay state intact",
+      "pass": true
+    },
+    {
+      "label": "amber initially locked",
+      "pass": true
+    },
+    {
+      "label": "viewer hides duplicate expand control",
+      "pass": true
+    },
+    {
+      "label": "viewer covers viewport",
+      "pass": true
+    },
+    {
+      "label": "viewer restores ship",
+      "pass": true
+    },
+    {
+      "label": "leaving cancels unfinished scan",
+      "pass": true
+    },
+    {
+      "label": "scan courier recorded",
+      "pass": true
+    },
+    {
+      "label": "scan patrol recorded",
+      "pass": true
+    },
+    {
+      "label": "scan beacon recorded",
+      "pass": true
+    },
+    {
+      "label": "scans preserve credits and fuel",
+      "pass": true
+    },
+    {
+      "label": "known signal opens readable record",
+      "pass": true
+    },
+    {
+      "label": "known signal not duplicated",
+      "pass": true
+    },
+    {
+      "label": "discovery badges unlocked",
+      "pass": true
+    },
+    {
+      "label": "amber unlocked",
+      "pass": true
+    },
+    {
+      "label": "amber selected",
+      "pass": true
+    },
+    {
+      "label": "cosmetics survive reload",
+      "pass": true
+    },
+    {
+      "label": "archive survives reload",
+      "pass": true
+    },
+    {
+      "label": "systems show real condition",
+      "pass": true
+    },
+    {
+      "label": "exterior no overflow 320x568",
+      "pass": true
+    },
+    {
+      "label": "exterior content visible 320x568",
+      "pass": true
+    },
+    {
+      "label": "systems no overflow 320x568",
+      "pass": true
+    },
+    {
+      "label": "systems content visible 320x568",
+      "pass": true
+    },
+    {
+      "label": "signals no overflow 320x568",
+      "pass": true
+    },
+    {
+      "label": "signals content visible 320x568",
+      "pass": true
+    },
+    {
+      "label": "archive no overflow 320x568",
+      "pass": true
+    },
+    {
+      "label": "archive content visible 320x568",
+      "pass": true
+    },
+    {
+      "label": "expanded stage aspect 320x568",
+      "pass": true
+    },
+    {
+      "label": "exterior no overflow 393x873",
+      "pass": true
+    },
+    {
+      "label": "exterior content visible 393x873",
+      "pass": true
+    },
+    {
+      "label": "systems no overflow 393x873",
+      "pass": true
+    },
+    {
+      "label": "systems content visible 393x873",
+      "pass": true
+    },
+    {
+      "label": "signals no overflow 393x873",
+      "pass": true
+    },
+    {
+      "label": "signals content visible 393x873",
+      "pass": true
+    },
+    {
+      "label": "archive no overflow 393x873",
+      "pass": true
+    },
+    {
+      "label": "archive content visible 393x873",
+      "pass": true
+    },
+    {
+      "label": "expanded stage aspect 393x873",
+      "pass": true
+    },
+    {
+      "label": "exterior no overflow 744x828",
+      "pass": true
+    },
+    {
+      "label": "exterior content visible 744x828",
+      "pass": true
+    },
+    {
+      "label": "systems no overflow 744x828",
+      "pass": true
+    },
+    {
+      "label": "systems content visible 744x828",
+      "pass": true
+    },
+    {
+      "label": "signals no overflow 744x828",
+      "pass": true
+    },
+    {
+      "label": "signals content visible 744x828",
+      "pass": true
+    },
+    {
+      "label": "archive no overflow 744x828",
+      "pass": true
+    },
+    {
+      "label": "archive content visible 744x828",
+      "pass": true
+    },
+    {
+      "label": "expanded stage aspect 744x828",
+      "pass": true
+    },
+    {
+      "label": "exterior no overflow 744x460",
+      "pass": true
+    },
+    {
+      "label": "exterior content visible 744x460",
+      "pass": true
+    },
+    {
+      "label": "systems no overflow 744x460",
+      "pass": true
+    },
+    {
+      "label": "systems content visible 744x460",
+      "pass": true
+    },
+    {
+      "label": "signals no overflow 744x460",
+      "pass": true
+    },
+    {
+      "label": "signals content visible 744x460",
+      "pass": true
+    },
+    {
+      "label": "archive no overflow 744x460",
+      "pass": true
+    },
+    {
+      "label": "archive content visible 744x460",
+      "pass": true
+    },
+    {
+      "label": "expanded stage aspect 744x460",
+      "pass": true
+    },
+    {
+      "label": "exterior no overflow 1280x900",
+      "pass": true
+    },
+    {
+      "label": "exterior content visible 1280x900",
+      "pass": true
+    },
+    {
+      "label": "systems no overflow 1280x900",
+      "pass": true
+    },
+    {
+      "label": "systems content visible 1280x900",
+      "pass": true
+    },
+    {
+      "label": "signals no overflow 1280x900",
+      "pass": true
+    },
+    {
+      "label": "signals content visible 1280x900",
+      "pass": true
+    },
+    {
+      "label": "archive no overflow 1280x900",
+      "pass": true
+    },
+    {
+      "label": "archive content visible 1280x900",
+      "pass": true
+    },
+    {
+      "label": "expanded stage aspect 1280x900",
+      "pass": true
+    },
+    {
+      "label": "reduced motion stops drift",
+      "pass": true
+    },
+    {
+      "label": "reduced motion engine still usable",
+      "pass": true
+    },
+    {
+      "label": "pause motion preference saved",
+      "pass": true
+    },
+    {
+      "label": "pause motion stops drift",
+      "pass": true
+    },
+    {
+      "label": "local scans blocked during transit",
+      "pass": true
+    },
+    {
+      "label": "mission completion unlocks violet",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

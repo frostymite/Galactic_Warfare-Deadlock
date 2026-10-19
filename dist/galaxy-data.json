@@ -1,0 +1,659 @@
+{
+  "meta": {
+    "version": "10.0.0",
+    "name": "Deadlock Living Galaxy",
+    "canonPolicy": "Blackglass Station HQ is established. Other generated worlds are navigation/gameplay locations until established through play."
+  },
+  "home": {
+    "locationId": "blackglass_station",
+    "siteId": "blackglass_hq"
+  },
+  "systems": [
+    {
+      "id": "kaelor",
+      "name": "Kaelor System",
+      "region": "Deadlock Reach",
+      "x": 17,
+      "y": 66,
+      "known": true,
+      "tone": "home"
+    },
+    {
+      "id": "veyra",
+      "name": "Veyra System",
+      "region": "Coreward Trade Arc",
+      "x": 35,
+      "y": 32,
+      "known": true,
+      "tone": "city"
+    },
+    {
+      "id": "draxon",
+      "name": "Draxon System",
+      "region": "Dust Frontier",
+      "x": 18,
+      "y": 28,
+      "known": true,
+      "tone": "desert"
+    },
+    {
+      "id": "nerath",
+      "name": "Nerath System",
+      "region": "Verdant Expanse",
+      "x": 53,
+      "y": 22,
+      "known": true,
+      "tone": "jungle"
+    },
+    {
+      "id": "cindar",
+      "name": "Cindar System",
+      "region": "Outer Frost",
+      "x": 73,
+      "y": 18,
+      "known": true,
+      "tone": "ice"
+    },
+    {
+      "id": "talos",
+      "name": "Talos System",
+      "region": "Azure Corridor",
+      "x": 84,
+      "y": 38,
+      "known": true,
+      "tone": "ocean"
+    },
+    {
+      "id": "orivon",
+      "name": "Orivon System",
+      "region": "Ashen Marches",
+      "x": 70,
+      "y": 72,
+      "known": true,
+      "tone": "volcanic"
+    },
+    {
+      "id": "xerra",
+      "name": "Xerra System",
+      "region": "Umbral Exchange",
+      "x": 48,
+      "y": 78,
+      "known": true,
+      "tone": "neon"
+    },
+    {
+      "id": "sable",
+      "name": "Sable Belt",
+      "region": "Broken Meridian",
+      "x": 31,
+      "y": 82,
+      "known": true,
+      "tone": "asteroid"
+    },
+    {
+      "id": "thalos",
+      "name": "Thalos System",
+      "region": "Cloudward Shelf",
+      "x": 89,
+      "y": 61,
+      "known": true,
+      "tone": "gas"
+    },
+    {
+      "id": "rethis",
+      "name": "Rethis System",
+      "region": "Silent Fringe",
+      "x": 61,
+      "y": 48,
+      "known": false,
+      "tone": "ruins"
+    },
+    {
+      "id": "umber",
+      "name": "Umber System",
+      "region": "Black Verge",
+      "x": 94,
+      "y": 86,
+      "known": false,
+      "tone": "unknown"
+    }
+  ],
+  "locations": [
+    {
+      "id": "blackglass_station",
+      "systemId": "kaelor",
+      "name": "Blackglass Station",
+      "type": "Asteroid Installation",
+      "subtitle": "3.2 APEX PROTOCOL HQ",
+      "danger": 18,
+      "known": true,
+      "home": true,
+      "landing": "Dock",
+      "asset": "blackglass_exterior",
+      "description": "A decommissioned repair installation buried inside an asteroid, owned by The 3.2 Apex Protocol. Only its armored docking throat breaks the rock. Secure research, an armory, repair positions and flight-ready fighters lie within.",
+      "services": [
+        "HQ",
+        "Fuel",
+        "Repairs",
+        "BountyNet",
+        "Black Market",
+        "Medical"
+      ],
+      "sites": [
+        "blackglass_hq",
+        "blackglass_hangar",
+        "blackglass_contracts",
+        "blackglass_cantina"
+      ]
+    },
+    {
+      "id": "veyra_prime",
+      "systemId": "veyra",
+      "name": "Veyra Prime",
+      "type": "Ecumenopolis",
+      "subtitle": "VERTICAL CITY WORLD",
+      "danger": 36,
+      "known": true,
+      "asset": "veyra_prime",
+      "description": "A planet-spanning city of orbital traffic rings, upper-city towers, lower ports, and an industrial undercity where information changes hands faster than credits.",
+      "services": [
+        "Fuel",
+        "Repairs",
+        "BountyNet",
+        "Luxury Market",
+        "Black Market"
+      ],
+      "sites": [
+        "Orbital Ring",
+        "Upper City",
+        "Lower Port",
+        "Corporate District",
+        "Undercity"
+      ]
+    },
+    {
+      "id": "drekthar",
+      "systemId": "draxon",
+      "name": "Drekthar",
+      "type": "Desert Frontier",
+      "subtitle": "SALVAGE & SMUGGLING",
+      "danger": 48,
+      "known": true,
+      "asset": "drekthar",
+      "description": "A dry frontier world built around salvage fields, canyon ports, and buried ruins. Useful for disappearing, buying questionable parts, or finding people who do not advertise.",
+      "services": [
+        "Fuel",
+        "Salvage",
+        "Smugglers",
+        "Repairs"
+      ],
+      "sites": [
+        "Sandport City",
+        "Scrapyards",
+        "Junk Fields",
+        "Nomad Camps",
+        "Ancient Ruins"
+      ]
+    },
+    {
+      "id": "nerath",
+      "systemId": "nerath",
+      "name": "Nerath",
+      "type": "Jungle World",
+      "subtitle": "FRONTIER RESEARCH",
+      "danger": 55,
+      "known": true,
+      "asset": "nerath",
+      "description": "Dense jungle continents broken by river deltas and isolated research facilities. Sensor coverage is poor and local routes change with the weather.",
+      "services": [
+        "Fuel",
+        "Research Exchange",
+        "Field Supplies"
+      ],
+      "sites": [
+        "Vulkan City",
+        "Jungle Outposts",
+        "Research Facility",
+        "River Delta",
+        "Hidden Temples"
+      ]
+    },
+    {
+      "id": "cindar",
+      "systemId": "cindar",
+      "name": "Cindar",
+      "type": "Ice World",
+      "subtitle": "MINING & DEEP STORAGE",
+      "danger": 44,
+      "known": true,
+      "asset": "cindar",
+      "description": "Frozen industrial settlements, glacier mines, and subterranean laboratories buried below perpetual ice storms.",
+      "services": [
+        "Fuel",
+        "Mining Exchange",
+        "Repairs",
+        "Cold Storage"
+      ],
+      "sites": [
+        "Frosthold",
+        "Mining Complex",
+        "Glacier Fields",
+        "Worker Settlements",
+        "Subterranean Labs"
+      ]
+    },
+    {
+      "id": "talos",
+      "systemId": "talos",
+      "name": "Talos",
+      "type": "Ocean World",
+      "subtitle": "TRADE & TIDAL CITIES",
+      "danger": 30,
+      "known": true,
+      "asset": "talos",
+      "description": "A deep blue world where trade cities rise from the ocean on pylons and mobile platforms. Shipping traffic makes it ideal for following cargo or losing a tail.",
+      "services": [
+        "Fuel",
+        "Trade Exchange",
+        "Repairs",
+        "Ship Brokerage"
+      ],
+      "sites": [
+        "Tideport",
+        "Trade District",
+        "Ocean Spires",
+        "Deepwater Platform",
+        "Coral Reefs"
+      ]
+    },
+    {
+      "id": "orivon",
+      "systemId": "orivon",
+      "name": "Orivon",
+      "type": "Volcanic Industrial",
+      "subtitle": "REFINERY TERRITORY",
+      "danger": 67,
+      "known": true,
+      "asset": "orivon",
+      "description": "An active volcanic world of refinery cities and weapons manufacturing. Heat, ash, and corporate security make every operation expensive.",
+      "services": [
+        "Fuel",
+        "Industrial Parts",
+        "Weapons Market",
+        "Repairs"
+      ],
+      "sites": [
+        "Ashen Spire",
+        "Lava Fields",
+        "Industrial Zone",
+        "Refinery Complex",
+        "Observation Point"
+      ]
+    },
+    {
+      "id": "xerra",
+      "systemId": "xerra",
+      "name": "Xerra",
+      "type": "Night-Side Trade World",
+      "subtitle": "CRIMINAL EXCHANGE",
+      "danger": 62,
+      "known": true,
+      "asset": "xerra",
+      "description": "A permanent-night trade world lit by neon districts, encrypted markets, fighting pits, and private docks controlled by shifting criminal interests.",
+      "services": [
+        "Fuel",
+        "Black Market",
+        "BountyNet",
+        "Forged IDs",
+        "Information"
+      ],
+      "sites": [
+        "Umbral City",
+        "Criminal Markets",
+        "Fighter Pits",
+        "Shadow Docks",
+        "The Red Lantern"
+      ]
+    },
+    {
+      "id": "sable_belt",
+      "systemId": "sable",
+      "name": "The Sable Belt",
+      "type": "Asteroid Network",
+      "subtitle": "MINES, VAULTS & FREEPORTS",
+      "danger": 58,
+      "known": true,
+      "asset": "sable_belt",
+      "description": "A fractured asteroid belt threaded with mining stations, salvage yards, hidden vaults, and independent ports where jurisdiction is mostly theoretical.",
+      "services": [
+        "Fuel",
+        "Mining",
+        "Salvage",
+        "Independent Port"
+      ],
+      "sites": [
+        "The Belt",
+        "Mining Stations",
+        "Salvage Yards",
+        "Independent Port",
+        "Hidden Vaults"
+      ]
+    },
+    {
+      "id": "thalos",
+      "systemId": "thalos",
+      "name": "Thalos",
+      "type": "Gas Giant Platforms",
+      "subtitle": "ATMOSPHERIC INDUSTRY",
+      "danger": 51,
+      "known": true,
+      "asset": "thalos",
+      "description": "Floating cities and research platforms suspended in the upper atmosphere of a green-gold gas giant. Storm fronts can erase flight plans in minutes.",
+      "services": [
+        "Fuel",
+        "Gas Harvesters",
+        "Research",
+        "Repairs"
+      ],
+      "sites": [
+        "Cloud City",
+        "Research Station",
+        "Atmospheric Platforms",
+        "Gas Harvesters",
+        "Storm Zone"
+      ]
+    },
+    {
+      "id": "rethis",
+      "systemId": "rethis",
+      "name": "Rethis",
+      "type": "Ruined Moon",
+      "subtitle": "UNVERIFIED SIGNALS",
+      "danger": 73,
+      "known": false,
+      "asset": "rethis",
+      "description": "A moon listed in old navigation records with abandoned arrays and deep caverns. Current traffic is minimal, but recent sensor pings suggest otherwise.",
+      "services": [
+        "Unknown"
+      ],
+      "sites": [
+        "Outpost 7",
+        "Sensor Array",
+        "Abandoned Facility",
+        "Deep Caves",
+        "Unknown Structures"
+      ]
+    },
+    {
+      "id": "umber",
+      "systemId": "umber",
+      "name": "Umber",
+      "type": "Restricted World",
+      "subtitle": "BLACK VERGE",
+      "danger": 88,
+      "known": false,
+      "asset": "umber",
+      "description": "A red-black world at the edge of mapped space. Records conflict, distress signals recur, and most routes into the system are poorly maintained.",
+      "services": [
+        "Unknown"
+      ],
+      "sites": [
+        "Uncharted",
+        "Distress Signals",
+        "High Risk",
+        "Unknown Factions",
+        "Unknown Structures"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "blackglass_station__veyra_prime",
+      "a": "blackglass_station",
+      "b": "veyra_prime",
+      "distance": 38,
+      "fuel": 6,
+      "risk": 24,
+      "time": 3
+    },
+    {
+      "id": "blackglass_station__drekthar",
+      "a": "blackglass_station",
+      "b": "drekthar",
+      "distance": 38,
+      "fuel": 6,
+      "risk": 26,
+      "time": 3
+    },
+    {
+      "id": "blackglass_station__xerra",
+      "a": "blackglass_station",
+      "b": "xerra",
+      "distance": 33,
+      "fuel": 6,
+      "risk": 28,
+      "time": 3
+    },
+    {
+      "id": "veyra_prime__nerath",
+      "a": "veyra_prime",
+      "b": "nerath",
+      "distance": 21,
+      "fuel": 4,
+      "risk": 26,
+      "time": 2
+    },
+    {
+      "id": "veyra_prime__cindar",
+      "a": "veyra_prime",
+      "b": "cindar",
+      "distance": 40,
+      "fuel": 7,
+      "risk": 30,
+      "time": 3
+    },
+    {
+      "id": "drekthar__sable_belt",
+      "a": "drekthar",
+      "b": "sable_belt",
+      "distance": 56,
+      "fuel": 9,
+      "risk": 41,
+      "time": 4
+    },
+    {
+      "id": "nerath__rethis",
+      "a": "nerath",
+      "b": "rethis",
+      "distance": 27,
+      "fuel": 4,
+      "risk": 35,
+      "time": 2
+    },
+    {
+      "id": "nerath__talos",
+      "a": "nerath",
+      "b": "talos",
+      "distance": 35,
+      "fuel": 6,
+      "risk": 29,
+      "time": 3
+    },
+    {
+      "id": "cindar__talos",
+      "a": "cindar",
+      "b": "talos",
+      "distance": 23,
+      "fuel": 4,
+      "risk": 23,
+      "time": 2
+    },
+    {
+      "id": "talos__thalos",
+      "a": "talos",
+      "b": "thalos",
+      "distance": 24,
+      "fuel": 4,
+      "risk": 25,
+      "time": 2
+    },
+    {
+      "id": "talos__orivon",
+      "a": "talos",
+      "b": "orivon",
+      "distance": 37,
+      "fuel": 6,
+      "risk": 32,
+      "time": 3
+    },
+    {
+      "id": "orivon__umber",
+      "a": "orivon",
+      "b": "umber",
+      "distance": 28,
+      "fuel": 5,
+      "risk": 41,
+      "time": 2
+    },
+    {
+      "id": "xerra__orivon",
+      "a": "xerra",
+      "b": "orivon",
+      "distance": 23,
+      "fuel": 4,
+      "risk": 34,
+      "time": 2
+    },
+    {
+      "id": "xerra__sable_belt",
+      "a": "xerra",
+      "b": "sable_belt",
+      "distance": 17,
+      "fuel": 4,
+      "risk": 30,
+      "time": 1
+    },
+    {
+      "id": "sable_belt__rethis",
+      "a": "sable_belt",
+      "b": "rethis",
+      "distance": 45,
+      "fuel": 8,
+      "risk": 42,
+      "time": 3
+    },
+    {
+      "id": "thalos__umber",
+      "a": "thalos",
+      "b": "umber",
+      "distance": 25,
+      "fuel": 4,
+      "risk": 37,
+      "time": 2
+    },
+    {
+      "id": "rethis__umber",
+      "a": "rethis",
+      "b": "umber",
+      "distance": 50,
+      "fuel": 8,
+      "risk": 50,
+      "time": 4
+    }
+  ],
+  "hq": {
+    "name": "The 3.2 Apex Protocol HQ",
+    "stationId": "blackglass_station",
+    "description": "A decommissioned repair installation buried inside an asteroid, owned by The 3.2 Apex Protocol. Only its armored docking throat breaks the rock. Secure research, an armory, repair positions and flight-ready fighters lie within.",
+    "sites": [
+      {
+        "id": "blackglass_hq",
+        "name": "Command Lounge",
+        "asset": "blackglass_hq",
+        "description": "Central operations room with tactical table, encrypted comms, galaxy display, and direct access to Deadlock campaign intelligence.",
+        "actions": [
+          "Open Syndicate command",
+          "Review active hunt",
+          "Call a contact",
+          "Review galaxy intel"
+        ]
+      },
+      {
+        "id": "blackglass_briefing",
+        "name": "Briefing Room",
+        "asset": "blackglass_briefing",
+        "description": "A secure planning room for contract review, target dossiers, and mission preparation.",
+        "actions": [
+          "Review contracts",
+          "Plan an operation",
+          "Study target dossiers"
+        ]
+      },
+      {
+        "id": "blackglass_quarters",
+        "name": "Rovan's Quarters",
+        "asset": "blackglass_quarters",
+        "description": "Private quarters and secure storage. A quieter place to review campaign memory, gear, and personal notes.",
+        "actions": [
+          "Review journal",
+          "Change identity",
+          "Check gear"
+        ]
+      },
+      {
+        "id": "blackglass_hangar",
+        "name": "Hangar Access",
+        "asset": "blackglass_hangar",
+        "description": "Main hangar inside Blackglass\u2019s asteroid shell. Two repair positions, The Raven\u2019s access berth, and flight-ready Kestrel F-4 interceptors 128 and 129. Permanent pilots unappointed.",
+        "actions": [
+          "Board The Raven",
+          "Run diagnostics",
+          "Repair systems"
+        ]
+      },
+      {
+        "id": "blackglass_contracts",
+        "name": "Contract Board",
+        "asset": "blackglass_contracts",
+        "description": "A screened bounty and contract exchange routed through Deadlock\u2019s filters.",
+        "actions": [
+          "Review active contracts",
+          "Search for work",
+          "Open target dossiers"
+        ]
+      }
+    ]
+  },
+  "encounters": [
+    {
+      "id": "rival_hunter",
+      "name": "Rival Hunter Contact",
+      "weight": 3,
+      "danger": 8
+    },
+    {
+      "id": "distress_signal",
+      "name": "Distress Signal",
+      "weight": 2,
+      "danger": 6
+    },
+    {
+      "id": "nav_fault",
+      "name": "Navigation Fault",
+      "weight": 2,
+      "danger": 4
+    },
+    {
+      "id": "pirate_probe",
+      "name": "Pirate Sensor Probe",
+      "weight": 2,
+      "danger": 10
+    },
+    {
+      "id": "quiet_passage",
+      "name": "Quiet Passage",
+      "weight": 5,
+      "danger": 0
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# GitHub v17 upload notes
+
+This commit contains **Deadlock v17 — The 3.2 Apex Protocol** from the supplied v17 package. To keep the repository update practical through the connected GitHub API, the twelve large generated PNG environment/ship plates were converted to 800px-wide progressive JPEGs and embedded inside SVG wrappers; game references were updated to those SVG files. The supplied ZIP remains the full-resolution source package. Existing legacy portrait, HUD, and app-icon binaries already present in the repository are retained at their current repository versions. No gameplay logic or campaign-state rules were intentionally changed by these repository-delivery optimizations.

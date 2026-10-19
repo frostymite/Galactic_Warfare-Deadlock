@@ -1,0 +1,26 @@
+const {chromium}=require('playwright');
+const fs=require('fs'),path=require('path'),http=require('http'),assert=require('assert');
+const root=process.cwd();const results=[],errors=[];
+const server=http.createServer((req,res)=>{const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);const f=path.join(root,name==='/'?'index.html':name);if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){res.writeHead(404);return res.end('Not found')}res.setHeader('Content-Type',({'.js':'application/javascript','.css':'text/css','.json':'application/json','.html':'text/html','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.webmanifest':'application/manifest+json'})[path.extname(f)]||'application/octet-stream');res.end(fs.readFileSync(f))});
+const check=(label,ok,detail)=>{results.push({label,pass:!!ok,detail});fs.writeFileSync('qa/results-live.json',JSON.stringify({results,errors}));if(!ok)console.log('FAIL',label,JSON.stringify(detail));};
+(async()=>{await new Promise(r=>server.listen(8083,r));const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE_PATH||undefined,args:['--no-sandbox']});
+async function fresh(size={width:393,height:873},opts={}){const ctx=await browser.newContext({viewport:size,isMobile:true,hasTouch:true,serviceWorkers:'block',...opts});const p=await ctx.newPage();p.on('pageerror',e=>errors.push(e.message));await p.goto('http://127.0.0.1:8083');await p.waitForSelector('#firstFlightStart');await p.waitForTimeout(2800);return {p,ctx};}
+async function overflow(p,label){const dims=await p.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));check(label,dims.scroll<=dims.width+1,dims);}
+async function skip(p){const s=p.locator('.cine-skip');if(await s.isVisible()){try{await s.click({timeout:650})}catch{await s.waitFor({state:'hidden',timeout:4000})}};}
+async function step(p,action){await skip(p);await p.locator(`[data-ff="${action}"]`).click();await p.waitForTimeout(180);await skip(p);}
+try{
+ let {p,ctx}=await fresh();await p.locator('#firstFlightStart').click();await p.screenshot({path:'qa/first-flight-phone.png',fullPage:true});check('first mission briefing visible',await p.getByText('Signal in the Rain',{exact:true}).isVisible());
+ for(const size of [{width:393,height:873},{width:744,height:828},{width:828,height:744},{width:744,height:460},{width:320,height:568}]){
+  await p.setViewportSize(size);await p.waitForTimeout(220);await p.locator('[data-scene-cinema]').click();await p.waitForTimeout(150);const box=await p.locator('.viewer-scene').boundingBox();check(`viewer 16:9 ${size.width}x${size.height}`,Math.abs(box.width/box.height-16/9)<.02,box);check('viewer close visible',await p.locator('[data-viewer-close]').isVisible());await p.screenshot({path:`qa/viewer-${size.width}x${size.height}.png`});await p.keyboard.press('Escape');check('viewer cleanup',await p.locator('.scene-viewer').count()===0);await overflow(p,`mission overflow ${size.width}x${size.height}`);
+ }
+ await p.setViewportSize({width:393,height:873});
+ for(const a of ['accept','depart','quiet','land','contact','talk','return','claim']){await step(p,a);await overflow(p,`mission step ${a}`);if(a==='land'){await p.reload();await p.waitForSelector('#firstFlightStart');await p.waitForTimeout(2600);await p.locator('#firstFlightStart').click();check('mid-mission reload resumes investigation',await p.locator('[data-ff="contact"]').isVisible());}}
+ let data=await p.evaluate(()=>JSON.parse(localStorage.getItem('deadlock_dashboard_v3')));check('peaceful payout exact',data.character.credits===2400&&data.character.xp===50,data.character);check('completed contract',data.contracts.find(x=>x.id==='v14_signal_in_the_rain').status==='Completed');check('peaceful damage-free',data.character.health===100&&data.ship.shields===100);await p.reload();await p.waitForSelector('#firstFlightStart');await p.waitForTimeout(2600);await p.locator('#firstFlightStart').click();check('reward cannot be reclaimed',await p.locator('[data-ff="claim"]').count()===0);await p.screenshot({path:'qa/mission-complete.png',fullPage:true});
+ const pageNames=await p.locator('#nav button').allTextContents();
+ for(const size of [{width:393,height:873},{width:744,height:828},{width:744,height:460},{width:1280,height:800}]){
+  await p.setViewportSize(size);
+  for(const name of pageNames){await p.locator('#nav button').getByText(name,{exact:true}).click();await p.waitForTimeout(90);await overflow(p,`${name} ${size.width}x${size.height}`);check(`${name} rendered`,(await p.locator('#content').innerText()).trim().length>0);if(['HQ','Story','Combat'].includes(name)&&size.width===393)await p.screenshot({path:`qa/${name.toLowerCase()}-phone.png`,fullPage:true});}
+ }
+ check('no uncaught browser errors',errors.length===0,errors);
+}catch(e){check('test run completed',false,e.stack);}finally{fs.writeFileSync('qa/results.json',JSON.stringify({results,errors},null,2));console.log(JSON.stringify({passed:results.filter(x=>x.pass).length,failed:results.filter(x=>!x.pass).length,errors}));await Promise.race([browser.close(),new Promise(r=>setTimeout(r,2000))]);server.close();process.exit(0);}
+})();

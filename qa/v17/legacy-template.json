@@ -1,0 +1,1317 @@
+{
+  "meta": {
+    "version": "13.0.0",
+    "campaign": "Deadlock \u2014 Cinematic RPG Systems",
+    "note": "Established story facts are filled in. Mechanical values that were never firmly established remain editable.",
+    "rulesNote": "Combat and dogfight numeric formulas are dashboard mechanics, not story canon. Edit them in GM Controls."
+  },
+  "character": {
+    "name": "Rovan Kes",
+    "callsign": "Deadlock",
+    "species": "Clawdite",
+    "role": "Gunslinger / Bounty Hunter",
+    "affiliation": "Independent",
+    "alignment": "Pragmatic",
+    "status": "Active",
+    "level": 1,
+    "xp": 0,
+    "xpNext": 300,
+    "credits": 0,
+    "health": 100,
+    "healthMax": 100,
+    "shields": 0,
+    "shieldsMax": 0,
+    "stamina": 100,
+    "staminaMax": 100,
+    "appearance": "Clawdite with a single diagonal facial scar. Rough, beaten obsidian mercenary clothing and leather with electric-cyan highlights.",
+    "armor": "Hard armor only over the vitals, shoulders, and knees. Everything else is layered leather, cloth, straps, gloves, boots, holsters, and utility gear.",
+    "code": [
+      "Works for the highest bidder, but keeps a personal mercy circuit.",
+      "A deal is a deal until the other side breaks it.",
+      "Information is valuable; loose ends are liabilities.",
+      "Never confuse temporary cooperation with permanent loyalty."
+    ],
+    "attributes": {
+      "Strength": 14,
+      "Agility": 18,
+      "Endurance": 14,
+      "Intelligence": 13,
+      "Perception": 17,
+      "Charisma": 11
+    },
+    "skills": {
+      "Marksmanship": 92,
+      "Stealth": 88,
+      "Technical": 76,
+      "Piloting": 74,
+      "Negotiation": 62,
+      "Survival": 85,
+      "Deception": 71,
+      "Investigation": 58,
+      "Melee Combat": 66
+    }
+  },
+  "identities": [
+    {
+      "id": "base",
+      "name": "Rovan Kes",
+      "type": "True / primary identity",
+      "active": true,
+      "notes": "Clawdite appearance. Diagonal facial scar retained when operating openly."
+    }
+  ],
+  "weapons": [
+    {
+      "id": "blackwake",
+      "name": "Blackwake",
+      "type": "Custom Heavy Hand Cannon",
+      "equipped": true,
+      "condition": 86,
+      "charge": 100,
+      "chargeMax": 100,
+      "mode": "Heavy",
+      "modes": [
+        "Heavy",
+        "Shield-Punch"
+      ],
+      "description": "Rovan's signature heavy sidearm. Compact enough to carry as a hand cannon, built for extreme stopping power.",
+      "features": [
+        "Heavy custom frame",
+        "Reinforced grip and barrel assembly",
+        "Fast-draw holster",
+        "Shield-punch setting"
+      ],
+      "stats": {
+        "Damage": 96,
+        "Range": 66,
+        "Accuracy": 78,
+        "Rate": 38
+      },
+      "combat": {
+        "attackMod": 0,
+        "damage": "2d10+2",
+        "note": "Placeholder dashboard formula; editable."
+      }
+    },
+    {
+      "id": "luna",
+      "name": "Luna",
+      "type": "Custom Blaster Pistol",
+      "equipped": true,
+      "condition": 91,
+      "charge": 100,
+      "chargeMax": 100,
+      "mode": "Energy",
+      "modes": [
+        "Energy",
+        "Lethal",
+        "Explosive"
+      ],
+      "description": "One half of Rovan's matched custom pistols, tuned for precision and its selectable output system.",
+      "features": [
+        "Shield-punch coils",
+        "Selector coil",
+        "Energy / lethal / explosive modes",
+        "Extended magazine",
+        "Custom grip"
+      ],
+      "stats": {
+        "Damage": 72,
+        "Range": 62,
+        "Accuracy": 88,
+        "Rate": 77
+      },
+      "combat": {
+        "attackMod": 0,
+        "damage": "1d10+2",
+        "note": "Placeholder dashboard formula; editable."
+      }
+    },
+    {
+      "id": "sol",
+      "name": "Sol",
+      "type": "Custom Blaster Pistol",
+      "equipped": true,
+      "condition": 89,
+      "charge": 100,
+      "chargeMax": 100,
+      "mode": "Energy",
+      "modes": [
+        "Energy",
+        "Lethal",
+        "Explosive"
+      ],
+      "description": "The second matched pistol, tuned for fast follow-up shots and the same selector system as Luna.",
+      "features": [
+        "Shield-punch coils",
+        "Selector coil",
+        "Energy / lethal / explosive modes",
+        "Extended magazine",
+        "Custom grip"
+      ],
+      "stats": {
+        "Damage": 76,
+        "Range": 59,
+        "Accuracy": 82,
+        "Rate": 84
+      },
+      "combat": {
+        "attackMod": 0,
+        "damage": "1d10+2",
+        "note": "Placeholder dashboard formula; editable."
+      }
+    }
+  ],
+  "gear": [
+    {
+      "id": "chest",
+      "name": "Obsidian Vital Plate",
+      "slot": "Vitals",
+      "equipped": true,
+      "condition": 82,
+      "notes": "Minimal hard armor over the chest and other critical zones."
+    },
+    {
+      "id": "shoulders",
+      "name": "Battered Shoulder Plates",
+      "slot": "Shoulders",
+      "equipped": true,
+      "condition": 74,
+      "notes": "Obsidian plates with worn cyan accents."
+    },
+    {
+      "id": "knees",
+      "name": "Reinforced Knee Pads",
+      "slot": "Knees",
+      "equipped": true,
+      "condition": 79,
+      "notes": "Hard knee protection over flexible trousers."
+    },
+    {
+      "id": "rig",
+      "name": "Weathered Leather Harness",
+      "slot": "Body",
+      "equipped": true,
+      "condition": 71,
+      "notes": "Load-bearing straps, holsters, loops, and pouches."
+    },
+    {
+      "id": "cloak",
+      "name": "Mercenary Cloak / Scarf",
+      "slot": "Outerwear",
+      "equipped": true,
+      "condition": 67,
+      "notes": "Dust protection and concealment."
+    },
+    {
+      "id": "belt",
+      "name": "Utility Belt",
+      "slot": "Waist",
+      "equipped": true,
+      "condition": 88,
+      "notes": "Tools, restraints, med supplies, power cells, and field odds-and-ends."
+    }
+  ],
+  "inventory": [
+    {
+      "id": "medkit",
+      "name": "Field Medkit",
+      "category": "Medical",
+      "qty": 2,
+      "max": 9,
+      "notes": "Compact trauma kit."
+    },
+    {
+      "id": "cells",
+      "name": "Spare Power Cells",
+      "category": "Ammunition",
+      "qty": 8,
+      "max": 30,
+      "notes": "Compatible with sidearms."
+    },
+    {
+      "id": "restraints",
+      "name": "Prisoner Restraints",
+      "category": "Bounty Gear",
+      "qty": 2,
+      "max": 8,
+      "notes": "Compact binders."
+    },
+    {
+      "id": "spike",
+      "name": "Slicing Spike",
+      "category": "Tech",
+      "qty": 3,
+      "max": 12,
+      "notes": "Disposable intrusion aid."
+    },
+    {
+      "id": "tracker",
+      "name": "Tracker Tags",
+      "category": "Bounty Gear",
+      "qty": 4,
+      "max": 12,
+      "notes": "For targets, cargo, or planted surveillance."
+    }
+  ],
+  "ship": {
+    "name": "The Raven",
+    "class": "Unique Light Freighter / Fighter Hybrid",
+    "status": "Operational",
+    "hull": 100,
+    "hullMax": 100,
+    "shields": 100,
+    "shieldsMax": 100,
+    "fuel": 100,
+    "fuelMax": 100,
+    "crew": "1 primary; room for a small team",
+    "role": "Bounty recovery, fast transport, and dogfight-capable pursuit craft.",
+    "description": "A one-off custom hull that mixes light-freighter utility with fighter-like agility. It carries prisoners and cargo without flying like a brick.",
+    "specs": {
+      "Cargo": "Medium",
+      "Hyperdrive": "Upgraded",
+      "Armor": "Light reinforced",
+      "Top Speed": "High",
+      "Maneuverability": "Very high for a freighter",
+      "Signature": "Modified / reduced",
+      "Primary Weapons": "Forward cannons",
+      "Secondary Weapons": "Configurable hardpoints"
+    },
+    "systems": [
+      {
+        "id": "engines",
+        "name": "High-Output Sublight Engines",
+        "online": true,
+        "condition": 94
+      },
+      {
+        "id": "thrusters",
+        "name": "Fighter-Tuned Maneuvering Thrusters",
+        "online": true,
+        "condition": 90
+      },
+      {
+        "id": "hyperdrive",
+        "name": "Upgraded Hyperdrive",
+        "online": true,
+        "condition": 88
+      },
+      {
+        "id": "comms",
+        "name": "Encrypted Communications Suite",
+        "online": true,
+        "condition": 96
+      },
+      {
+        "id": "cells",
+        "name": "Prisoner Restraint Compartment",
+        "online": true,
+        "condition": 100
+      },
+      {
+        "id": "bench",
+        "name": "Weapons Workbench",
+        "online": true,
+        "condition": 91
+      },
+      {
+        "id": "smuggling",
+        "name": "Hidden Storage Compartments",
+        "online": true,
+        "condition": 100
+      },
+      {
+        "id": "overcharge",
+        "name": "Short-Burst Shield Overcharge",
+        "online": true,
+        "condition": 82
+      }
+    ],
+    "upgrades": [],
+    "dogfight": {
+      "attackMod": 0,
+      "damage": "2d8+2",
+      "evasionBonus": 0,
+      "boostFuelCost": 8,
+      "shieldOverchargeCost": 12
+    },
+    "visualAsset": "assets/raven_dedicated.jpg",
+    "visualNote": "Dedicated cinematic Raven image; diagnostic schematic remains interactive separately."
+  },
+  "contracts": [
+    {
+      "id": "marr",
+      "title": "Recover Marr",
+      "client": "Recovery contract",
+      "reward": 70000,
+      "status": "Active",
+      "objective": "Recover Marr alive.",
+      "notes": "Planned split with Dren Voss.",
+      "progress": 35,
+      "targetId": "marr"
+    },
+    {
+      "id": "kade",
+      "title": "Nera Kade Bounty",
+      "client": "Nera Kade",
+      "reward": 40000,
+      "status": "Active",
+      "objective": "Complete Kade's bounty terms.",
+      "notes": "Rovan's payout is 40,000 credits.",
+      "progress": 20,
+      "targetId": null
+    }
+  ],
+  "contacts": [
+    {
+      "id": "dren",
+      "name": "Dren Voss",
+      "role": "Rival / occasional ally",
+      "trust": 50,
+      "notes": "Useful, dangerous, and never to be treated as permanently loyal."
+    },
+    {
+      "id": "nera",
+      "name": "Nera Kade",
+      "role": "Contract issuer",
+      "trust": 40,
+      "notes": "Business relationship."
+    },
+    {
+      "id": "renn",
+      "name": "Renn",
+      "role": "Associate / operational contact",
+      "trust": 45,
+      "notes": "Used in staged turn-in planning."
+    },
+    {
+      "id": "jessa",
+      "name": "Jessa",
+      "role": "Gunner / ally",
+      "trust": 55,
+      "notes": "Field contact with combat value."
+    }
+  ],
+  "factions": [
+    {
+      "id": "underworld",
+      "name": "Criminal Underworld",
+      "score": 20,
+      "status": "Known"
+    },
+    {
+      "id": "hunters",
+      "name": "Bounty Hunter Networks",
+      "score": 25,
+      "status": "Respected"
+    },
+    {
+      "id": "independent",
+      "name": "Independent Operators",
+      "score": 35,
+      "status": "Friendly"
+    },
+    {
+      "id": "black_sun",
+      "name": "Black Sun",
+      "score": -20,
+      "status": "Cautious"
+    }
+  ],
+  "journal": [
+    {
+      "id": "j1",
+      "ts": "Campaign note",
+      "title": "Datacore Rule",
+      "text": "Keep the datacore intact until extraction is complete; destroy it after the information is secured."
+    },
+    {
+      "id": "j2",
+      "ts": "Campaign note",
+      "title": "Mercy Circuit",
+      "text": "Rovan follows a personal mercy circuit rather than killing every target by default."
+    },
+    {
+      "id": "j3",
+      "ts": "Loadout",
+      "title": "Signature Weapons",
+      "text": "Blackwake is the hand cannon. Luna and Sol are the paired custom blaster pistols."
+    },
+    {
+      "id": "j4",
+      "ts": "Identity",
+      "title": "Deadlock",
+      "text": "Rovan Kes operates under the callsign Deadlock."
+    }
+  ],
+  "settings": {
+    "theme": "Obsidian / Electric Cyan",
+    "animations": true,
+    "compact": false,
+    "foldOptimization": true,
+    "hingeGutter": 22,
+    "sound": true,
+    "music": true,
+    "musicVolume": 55,
+    "characterVoices": true,
+    "voiceVolume": 78,
+    "livingGalaxy": true,
+    "gpuBackdrop": true,
+    "diegeticHud": true,
+    "graphicsQuality": "high",
+    "shipScene": "cockpit",
+    "cinematicSequences": true,
+    "actorRigs": true,
+    "worldFx": true,
+    "worldAudio": true,
+    "effectsVolume": 42
+  },
+  "targets": [
+    {
+      "id": "marr",
+      "name": "Marr",
+      "species": "Unknown",
+      "status": "Wanted Alive",
+      "danger": 3,
+      "reward": 70000,
+      "location": "Unknown / contract dependent",
+      "notes": "Recovery target. Alive requirement is part of the contract.",
+      "intel": [
+        "Recovery contract active",
+        "Rovan plans to split the payout with Dren Voss"
+      ],
+      "tags": [
+        "Recovery",
+        "Alive Required"
+      ]
+    }
+  ],
+  "locations": [
+    {
+      "id": "unknown",
+      "name": "Uncharted / Unknown",
+      "region": "Unknown",
+      "x": 50,
+      "y": 50,
+      "known": false,
+      "notes": "Location is not yet established in campaign canon."
+    }
+  ],
+  "missions": [
+    {
+      "id": "marr_mission",
+      "title": "Marr Recovery",
+      "locationId": "unknown",
+      "contractId": "marr",
+      "status": "Active",
+      "notes": "Track the recovery contract and secure Marr alive. Current location is not yet established."
+    },
+    {
+      "id": "kade_mission",
+      "title": "Kade Contract",
+      "locationId": "unknown",
+      "contractId": "kade",
+      "status": "Active",
+      "notes": "Contract details remain operationally sensitive. Current location is not yet established."
+    }
+  ],
+  "combat": {
+    "active": false,
+    "round": 0,
+    "turnIndex": 0,
+    "log": [],
+    "participants": [
+      {
+        "id": "rovan",
+        "name": "Rovan Kes",
+        "side": "Ally",
+        "initiative": 0,
+        "initiativeBonus": 0,
+        "hp": 100,
+        "hpMax": 100,
+        "conditions": []
+      }
+    ],
+    "forced": false,
+    "source": null,
+    "reason": null,
+    "objective": null,
+    "returnPage": "Story",
+    "escapeDC": 12,
+    "context": null,
+    "resolved": false
+  },
+  "dogfight": {
+    "active": false,
+    "round": 0,
+    "enemyIndex": 0,
+    "log": [],
+    "enemies": [],
+    "forced": false,
+    "source": null,
+    "reason": null,
+    "returnPage": "Galaxy",
+    "escapeDC": 13,
+    "context": null
+  },
+  "gm": {
+    "rules": {
+      "weaponAttackDie": "1d20",
+      "initiativeDie": "1d20",
+      "note": "Combat formulas here are editable dashboard mechanics, not canon."
+    }
+  },
+  "story": {
+    "provider": "offline",
+    "aiEndpoint": "/api/story",
+    "sessionTitle": "Deadlock Campaign",
+    "sceneNumber": 1,
+    "location": "The Raven",
+    "sceneType": "Downtime / open thread",
+    "objective": "Turn scattered information into one reliable direction on Marr.",
+    "danger": 32,
+    "currentSpeaker": "Narrator",
+    "currentNpc": "dren",
+    "currentSceneId": "scene_001",
+    "lastPlayerAction": "",
+    "campaignMemory": [
+      "Rovan Kes, callsign Deadlock, is a Clawdite gunslinger and bounty hunter.",
+      "His field gear is rough obsidian leather and clothing with electric-cyan highlights; hard armor covers only vitals, shoulders, and knees.",
+      "Blackwake is Rovan's signature heavy hand cannon.",
+      "Luna and Sol are his paired custom blaster pistols with selector coils.",
+      "The Raven is Rovan's unique light-freighter / fighter hybrid.",
+      "Rovan generally works for the highest bidder but follows a personal mercy circuit.",
+      "A datacore was to remain intact until extraction, then be destroyed.",
+      "Dren Voss is a rival / occasional ally.",
+      "Nera Kade is a contract issuer.",
+      "Renn is an operational associate.",
+      "Jessa is a gunner / ally.",
+      "Marr has a 70,000-credit recovery contract and is wanted alive.",
+      "Rovan's Kade bounty payout is 40,000 credits.",
+      "Rovan required a seller to sign an NDA covering their contact and transactions.",
+      "Rovan's campaign should remain dangerous, action-oriented, choice-driven, and reactive.",
+      "Whenever possible, present 3\u20135 meaningful options while still allowing freeform actions.",
+      "Rovan does not currently own a rifle; the tracker was removed from his old rifle before that rifle was returned to Dren Voss."
+    ],
+    "gmNotes": [
+      "Do not silently change established character facts.",
+      "Do not assume an uncertain previous scene is canon; surface uncertainty in narration or leave the thread open.",
+      "NPCs remember prior treatment and deals.",
+      "Choices should have different tactical, social, financial, or moral consequences.",
+      "Allow creative freeform actions even when they are not one of the listed options."
+    ],
+    "npcs": [
+      {
+        "id": "dren",
+        "name": "Dren Voss",
+        "role": "Rival / occasional ally",
+        "voice": "Dry, sharp, competitive, practical. Respect is earned through competence.",
+        "goal": "Profit, survive, and never become dependent on Rovan.",
+        "relationship": "Conditional ally",
+        "trust": 50,
+        "mood": {
+          "trust": 50,
+          "respect": 63,
+          "fear": 14,
+          "irritation": 32,
+          "stress": 25
+        },
+        "memories": [
+          {
+            "tag": "RIFLE_RETURNED",
+            "summary": "Rovan returned Dren's rifle as a matter of personal code.",
+            "weight": 4
+          },
+          {
+            "tag": "MARR_SPLIT",
+            "summary": "Rovan and Dren discussed splitting Marr's 70,000-credit recovery payout.",
+            "weight": 5
+          }
+        ],
+        "speech": {
+          "greetingBias": "dry",
+          "verbosity": "short",
+          "sarcasm": 0.55,
+          "threatTolerance": 0.8,
+          "directness": 0.76,
+          "humor": 0.48,
+          "riskBias": "competitive"
+        },
+        "portrait": "assets/contact_dren.jpg",
+        "portraitType": "Established Holonet portrait from user-approved reference"
+      },
+      {
+        "id": "nera",
+        "name": "Nera Kade",
+        "role": "Contract issuer",
+        "voice": "Controlled, businesslike, concise, dangerous when crossed.",
+        "goal": "Get results without unnecessary complications.",
+        "relationship": "Professional",
+        "trust": 40,
+        "mood": {
+          "trust": 40,
+          "respect": 58,
+          "fear": 8,
+          "irritation": 20,
+          "stress": 18
+        },
+        "memories": [
+          {
+            "tag": "ACTIVE_CONTRACT",
+            "summary": "Rovan has an active 40,000-credit bounty tied to Kade.",
+            "weight": 5
+          }
+        ],
+        "speech": {
+          "greetingBias": "formal",
+          "verbosity": "short",
+          "sarcasm": 0.08,
+          "threatTolerance": 0.55,
+          "directness": 0.88,
+          "humor": 0.05,
+          "riskBias": "calculated"
+        },
+        "portrait": "assets/npc_nera.svg",
+        "portraitType": "Abstract holographic dossier \u2014 appearance not canon"
+      },
+      {
+        "id": "renn",
+        "name": "Renn",
+        "role": "Associate / operational contact",
+        "voice": "Cautious, observant, pragmatic.",
+        "goal": "Stay useful and stay alive.",
+        "relationship": "Developing",
+        "trust": 45,
+        "mood": {
+          "trust": 45,
+          "respect": 46,
+          "fear": 18,
+          "irritation": 18,
+          "stress": 30
+        },
+        "memories": [
+          {
+            "tag": "STAGED_TURNIN",
+            "summary": "Renn was involved in a staged turn-in plan connected to Marr.",
+            "weight": 4
+          }
+        ],
+        "speech": {
+          "greetingBias": "cautious",
+          "verbosity": "medium",
+          "sarcasm": 0.18,
+          "threatTolerance": 0.3,
+          "directness": 0.58,
+          "humor": 0.28,
+          "riskBias": "avoidant"
+        },
+        "portrait": "assets/npc_renn.svg",
+        "portraitType": "Abstract holographic dossier \u2014 appearance not canon"
+      },
+      {
+        "id": "jessa",
+        "name": "Jessa",
+        "role": "Gunner / ally",
+        "voice": "Direct, field-minded, comfortable under pressure.",
+        "goal": "Win the fight and get the crew home.",
+        "relationship": "Field-tested ally",
+        "trust": 55,
+        "mood": {
+          "trust": 55,
+          "respect": 60,
+          "fear": 9,
+          "irritation": 16,
+          "stress": 22
+        },
+        "memories": [
+          {
+            "tag": "FIELD_ALLY",
+            "summary": "Jessa has operated as a field-tested gunner and ally.",
+            "weight": 3
+          }
+        ],
+        "speech": {
+          "greetingBias": "direct",
+          "verbosity": "short",
+          "sarcasm": 0.32,
+          "threatTolerance": 0.7,
+          "directness": 0.9,
+          "humor": 0.35,
+          "riskBias": "action"
+        },
+        "portrait": "assets/npc_jessa.svg",
+        "portraitType": "Abstract holographic dossier \u2014 appearance not canon"
+      }
+    ],
+    "history": [
+      {
+        "id": "story_001",
+        "scene": 1,
+        "type": "narration",
+        "speaker": "Narrator",
+        "text": "DEADLOCK Offline Narrative Director initialized. Campaign memory, contracts, NPC state, and ship telemetry are loaded locally on this device.",
+        "ts": "Campaign load"
+      },
+      {
+        "id": "story_002",
+        "scene": 1,
+        "type": "system",
+        "speaker": "Story Engine",
+        "text": "No network connection is required. Choose a listed action, type anything Rovan says or does, or make a skill check. Generated events become part of the campaign only after they occur in play.",
+        "ts": "Campaign load"
+      }
+    ],
+    "choices": [
+      {
+        "id": "choice_hunt_1",
+        "label": "Compare Marr's known trail against recent underworld traffic.",
+        "intent": "investigate",
+        "contractId": "marr",
+        "skill": "Investigation",
+        "dc": 12,
+        "purpose": "GAIN INTEL"
+      },
+      {
+        "id": "choice_hunt_2",
+        "label": "Ask Dren to verify which lead he considers real.",
+        "intent": "dialogue",
+        "actionType": "intel_contact",
+        "npcId": "dren",
+        "contractId": "marr",
+        "skill": "Negotiation",
+        "dc": 11,
+        "purpose": "WORK CONTACT"
+      },
+      {
+        "id": "choice_hunt_3",
+        "label": "Shadow the strongest lead before it cools off.",
+        "intent": "action",
+        "contractId": "marr",
+        "skill": "Survival",
+        "dc": 12,
+        "purpose": "PRESS LEAD"
+      },
+      {
+        "id": "choice_hunt_4",
+        "label": "Leak a false sighting and watch who reacts to it.",
+        "intent": "deception",
+        "contractId": "marr",
+        "skill": "Deception",
+        "dc": 13,
+        "purpose": "BAIT NETWORK"
+      }
+    ],
+    "localSceneIndex": 0,
+    "pendingRoll": null,
+    "offlineFirst": true,
+    "director": {
+      "version": 1,
+      "turn": 0,
+      "tension": 34,
+      "encounterCooldown": 0,
+      "lastEventId": null,
+      "seedNote": "Procedural generation uses local randomization and persistent campaign state.",
+      "activeThreads": [
+        {
+          "id": "marr_thread",
+          "label": "Marr recovery contract",
+          "weight": 5,
+          "active": true
+        },
+        {
+          "id": "kade_thread",
+          "label": "Nera Kade contract",
+          "weight": 4,
+          "active": true
+        },
+        {
+          "id": "raven_thread",
+          "label": "The Raven maintenance and pursuit readiness",
+          "weight": 2,
+          "active": true
+        },
+        {
+          "id": "underworld_thread",
+          "label": "Underworld contacts and competing hunters",
+          "weight": 3,
+          "active": true
+        }
+      ],
+      "lastTopic": "open",
+      "lastNpc": null,
+      "generatedCanonCount": 0
+    },
+    "offlineTables": {
+      "sceneOpeners": [
+        "The Raven's systems settle into a low mechanical hum as the tactical display refreshes.",
+        "A faint vibration runs through the deck plating while Deadlock's open contracts crawl across the main console.",
+        "The cockpit lighting shifts to tactical cyan as another layer of encrypted traffic resolves.",
+        "For a rare moment, nothing is shooting at Rovan. That only means the next problem has not announced itself yet.",
+        "The Raven coasts on low power while bounty traffic, private channels, and ship telemetry compete for attention."
+      ],
+      "atmosphere": [
+        "The air smells faintly of hot electronics and recycled coolant.",
+        "Cyan instrument light catches the scratches in Rovan's obsidian gear.",
+        "Somewhere aft, a cooling fan clicks twice before returning to its normal rhythm.",
+        "The cockpit is quiet enough that every incoming data chirp sounds more important than it probably is.",
+        "The ship feels ready to move, but not patient."
+      ],
+      "complications": [
+        {
+          "id": "rival_hunter",
+          "label": "A rival hunter is asking about the same target.",
+          "weight": 5,
+          "requires": "active_contract",
+          "danger": 10,
+          "tags": [
+            "RIVAL",
+            "BOUNTY"
+          ],
+          "choices": [
+            [
+              "Identify the hunter before they identify Deadlock.",
+              "Investigation",
+              13,
+              "investigate"
+            ],
+            [
+              "Feed the network a false lead and watch who bites.",
+              "Deception",
+              14,
+              "deception"
+            ],
+            [
+              "Move before the competition gets close.",
+              "Survival",
+              12,
+              "action"
+            ],
+            [
+              "Call Dren and compare intel.",
+              "Negotiation",
+              12,
+              "dialogue"
+            ]
+          ]
+        },
+        {
+          "id": "anonymous_ping",
+          "label": "An anonymous encrypted transmission requests a private channel.",
+          "weight": 4,
+          "requires": "none",
+          "danger": 7,
+          "tags": [
+            "SIGNAL",
+            "MYSTERY"
+          ],
+          "choices": [
+            [
+              "Trace the signal before answering.",
+              "Technical",
+              13,
+              "investigate"
+            ],
+            [
+              "Answer through a masked relay.",
+              "Deception",
+              12,
+              "dialogue"
+            ],
+            [
+              "Record it and wait for a second transmission.",
+              "Perception",
+              11,
+              "wait"
+            ],
+            [
+              "Route it through The Raven's encrypted comm suite.",
+              "Technical",
+              10,
+              "ship"
+            ]
+          ]
+        },
+        {
+          "id": "ship_fault",
+          "label": "The Raven reports a degraded maneuvering subsystem.",
+          "weight": 3,
+          "requires": "none",
+          "danger": 5,
+          "tags": [
+            "SHIP",
+            "TECH"
+          ],
+          "choices": [
+            [
+              "Run a diagnostic immediately.",
+              "Technical",
+              11,
+              "ship"
+            ],
+            [
+              "Ignore it until after the next job.",
+              "Piloting",
+              13,
+              "risk"
+            ],
+            [
+              "Re-route power and test it under load.",
+              "Technical",
+              14,
+              "ship"
+            ],
+            [
+              "Ask Jessa for a second set of eyes.",
+              "Negotiation",
+              10,
+              "dialogue"
+            ]
+          ]
+        },
+        {
+          "id": "false_bounty",
+          "label": "A lucrative bounty appears with suspiciously clean paperwork.",
+          "weight": 3,
+          "requires": "none",
+          "danger": 8,
+          "tags": [
+            "BOUNTY",
+            "TRAP"
+          ],
+          "choices": [
+            [
+              "Verify the posting through independent channels.",
+              "Investigation",
+              13,
+              "investigate"
+            ],
+            [
+              "Accept it before anyone else can.",
+              "Deception",
+              12,
+              "bounty"
+            ],
+            [
+              "Find out who benefits if Deadlock takes it.",
+              "Perception",
+              12,
+              "investigate"
+            ],
+            [
+              "Pass it to Dren and see how he reacts.",
+              "Negotiation",
+              11,
+              "dialogue"
+            ]
+          ]
+        },
+        {
+          "id": "patrol_scan",
+          "label": "A security patrol begins sweeping ships in the sector.",
+          "weight": 3,
+          "requires": "none",
+          "danger": 12,
+          "tags": [
+            "PATROL",
+            "STEALTH"
+          ],
+          "choices": [
+            [
+              "Power down nonessential systems and drift cold.",
+              "Stealth",
+              13,
+              "stealth"
+            ],
+            [
+              "Spoof a clean transponder profile.",
+              "Technical",
+              14,
+              "deception"
+            ],
+            [
+              "Burn away before the scan reaches The Raven.",
+              "Piloting",
+              13,
+              "action"
+            ],
+            [
+              "Stay put and act legitimate.",
+              "Deception",
+              12,
+              "dialogue"
+            ]
+          ]
+        },
+        {
+          "id": "informant_offer",
+          "label": "An underworld informant offers target intelligence for immediate payment.",
+          "weight": 4,
+          "requires": "active_contract",
+          "danger": 4,
+          "tags": [
+            "INFORMANT",
+            "CREDITS"
+          ],
+          "choices": [
+            [
+              "Pay for the information.",
+              "Negotiation",
+              10,
+              "credits"
+            ],
+            [
+              "Negotiate the price down.",
+              "Negotiation",
+              13,
+              "dialogue"
+            ],
+            [
+              "Threaten to walk and see if they fold.",
+              "Deception",
+              12,
+              "pressure"
+            ],
+            [
+              "Verify the informant before paying anything.",
+              "Investigation",
+              12,
+              "investigate"
+            ]
+          ]
+        }
+      ],
+      "dialogue": {
+        "dren": {
+          "openers": [
+            "Dren answers after exactly long enough to make the delay feel intentional.",
+            "The encrypted channel opens with a burst of static and Dren's unimpressed expression.",
+            "Dren comes on the line already looking like he expects trouble."
+          ],
+          "neutral": [
+            "\u201cYou calling because you found something useful, or because you're about to make my day complicated?\u201d",
+            "\u201cAll right, Deadlock. Give me the part that matters.\u201d",
+            "\u201cIf this is about Marr, start with the useful information.\u201d"
+          ],
+          "highRespect": [
+            "\u201cI don't love the plan. That doesn't mean I think you can't make it work.\u201d",
+            "\u201cYou've earned enough benefit of the doubt for me to hear the whole thing.\u201d",
+            "\u201cAgainst my better judgment, I'm listening.\u201d"
+          ],
+          "irritated": [
+            "\u201cCareful. You're spending goodwill faster than credits.\u201d",
+            "\u201cYou have a point buried in there somewhere. Find it.\u201d",
+            "\u201cI agreed to work with you, not enjoy it.\u201d"
+          ],
+          "memory": [
+            [
+              "RIFLE_RETURNED",
+              "\u201cYou gave the rifle back. I remember. Don't make me regret deciding that meant something.\u201d"
+            ],
+            [
+              "MARR_SPLIT",
+              "\u201cWe said we'd split Marr's payout. That agreement still matters until one of us breaks it.\u201d"
+            ]
+          ]
+        },
+        "nera": {
+          "openers": [
+            "Kade answers almost immediately, voice level and precise.",
+            "The channel opens. Kade wastes no time on pleasantries."
+          ],
+          "neutral": [
+            "\u201cDeadlock. Give me the result, the obstacle, or the price.\u201d",
+            "\u201cI assume you're calling because something changed.\u201d",
+            "\u201cTalk.\u201d"
+          ],
+          "highRespect": [
+            "\u201cYou've been reliable enough that I'm willing to hear the complication.\u201d",
+            "\u201cIf you're calling this early, I'll assume it's worth my attention.\u201d"
+          ],
+          "irritated": [
+            "\u201cDo not turn a straightforward contract into theater.\u201d",
+            "\u201cI pay for outcomes, not explanations.\u201d"
+          ],
+          "memory": [
+            [
+              "ACTIVE_CONTRACT",
+              "\u201cMy forty-thousand-credit problem is still open, Deadlock.\u201d"
+            ]
+          ]
+        },
+        "renn": {
+          "openers": [
+            "Renn answers quietly, like he expects someone else to be listening.",
+            "The channel opens to a low voice and background noise."
+          ],
+          "neutral": [
+            "\u201cI'm listening. Just tell me this isn't one of those plans that gets louder after thirty seconds.\u201d",
+            "\u201cAll right. What changed?\u201d"
+          ],
+          "highRespect": [
+            "\u201cIf you think it's workable, I'll hear you out.\u201d"
+          ],
+          "irritated": [
+            "\u201cI knew this was going to come back around.\u201d"
+          ],
+          "memory": [
+            [
+              "STAGED_TURNIN",
+              "\u201cLast time we staged a turn-in, I aged a year. Keep that in mind.\u201d"
+            ]
+          ]
+        },
+        "jessa": {
+          "openers": [
+            "Jessa answers over the sound of machinery.",
+            "Jessa's voice comes through with the clipped tone of someone already working."
+          ],
+          "neutral": [
+            "\u201cIf this ends with shooting, give me the useful version first: who, where, and what are they flying?\u201d",
+            "\u201cTell me whether I need tools or ammunition.\u201d"
+          ],
+          "highRespect": [
+            "\u201cYou've got a plan. Fine. Tell me where I fit.\u201d"
+          ],
+          "irritated": [
+            "\u201cIf you're about to say 'trust me,' I'm hanging up.\u201d"
+          ],
+          "memory": [
+            [
+              "FIELD_ALLY",
+              "\u201cWe've been through worse. That doesn't mean I want to do it twice.\u201d"
+            ]
+          ]
+        }
+      },
+      "reactions": {
+        "success": [
+          "The move works cleanly enough to give Deadlock the initiative.",
+          "The risk pays off, and the situation tilts in Rovan's favor.",
+          "The plan lands before anyone has time to adjust."
+        ],
+        "failure": [
+          "The attempt does not stop the story, but it gives someone else leverage.",
+          "The move fails cleanly enough to be dangerous: the opposition learns something from it.",
+          "The attempt comes up short, forcing Deadlock to solve a more complicated version of the same problem."
+        ],
+        "critical": [
+          "Everything lines up at once. Deadlock gets more than he was aiming for.",
+          "The move lands perfectly, creating an opening that should not have existed.",
+          "For once, the galaxy cooperates."
+        ],
+        "complication": [
+          "The situation changes before Rovan can fully capitalize.",
+          "A second problem arrives before the first one is settled.",
+          "The advantage comes with a cost."
+        ]
+      }
+    },
+    "visuals": {
+      "cinematicEvents": true,
+      "speakerPortraits": true,
+      "locationBackdrop": true,
+      "dialogueWaveform": true
+    },
+    "activeContractId": "marr",
+    "interruptions": [],
+    "consequences": {
+      "version": 1,
+      "recent": [],
+      "flags": [],
+      "reputation": {
+        "reliability": 50,
+        "mercy": 50,
+        "intimidation": 35,
+        "underworld": 40
+      },
+      "lastSystemId": null,
+      "lastContractId": "marr"
+    },
+    "gmState": {
+      "version": 2,
+      "recentNpcLines": [],
+      "recentStageBeats": [],
+      "recentTopics": [],
+      "npcTurns": {},
+      "lastAnalysis": null
+    },
+    "missionLoopVersion": 1
+  },
+  "holonet": {
+    "mode": "OFFLINE LOCAL SIMULATION",
+    "encryption": "DEADLOCK-7",
+    "signal": 100,
+    "transmissions": [
+      {
+        "id": "holo_sys_001",
+        "senderId": "system",
+        "sender": "DEADLOCK OS",
+        "channel": "LOCAL CACHE",
+        "subject": "Holonet operations initialized",
+        "body": "Local encrypted comms simulation is ready. Generated signals remain unverified until committed to Story Mode.",
+        "unread": false,
+        "verified": true,
+        "ts": "LOCAL"
+      }
+    ],
+    "route": {
+      "status": "STANDBY",
+      "originName": "The Raven \u2014 Current Position",
+      "destinationId": "unknown",
+      "destinationName": "Uncharted / Unknown",
+      "quality": 0,
+      "risk": 0,
+      "points": [
+        [
+          14,
+          76
+        ],
+        [
+          31,
+          61
+        ],
+        [
+          46,
+          42
+        ],
+        [
+          50,
+          50
+        ]
+      ]
+    },
+    "lastPuck": null
+  },
+  "galaxyState": {
+    "version": 1,
+    "homeId": "blackglass_station",
+    "currentLocationId": "blackglass_station",
+    "selectedLocationId": "blackglass_station",
+    "phase": "docked",
+    "route": null,
+    "transit": null,
+    "currentSiteId": "blackglass_hq",
+    "discovered": [
+      "blackglass_station",
+      "veyra_prime",
+      "drekthar",
+      "nerath",
+      "cindar",
+      "talos",
+      "orivon",
+      "xerra",
+      "sable_belt",
+      "thalos"
+    ],
+    "visited": [
+      "blackglass_station"
+    ],
+    "scanIntel": {},
+    "travelLog": [
+      {
+        "ts": "LOCAL",
+        "text": "Blackglass Station registered as Deadlock HQ."
+      }
+    ]
+  }
+}

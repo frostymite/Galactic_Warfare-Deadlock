@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "version": "13.0.0",
+    "notes": "Approximate face regions drive non-destructive blink/lip/head motion over established art. No identity-changing face generation."
+  },
+  "characters": {
+    "rovan": {
+      "eyeBand": [
+        49,
+        25,
+        22,
+        8
+      ],
+      "mouthBand": [
+        55,
+        39,
+        16,
+        9
+      ],
+      "headAnchor": [
+        58,
+        30
+      ],
+      "blinkMin": 3.4,
+      "blinkMax": 7.2,
+      "lip": false,
+      "gaze": 0.45
+    },
+    "dren": {
+      "eyeBand": [
+        42,
+        36,
+        20,
+        8
+      ],
+      "mouthBand": [
+        46,
+        55,
+        16,
+        9
+      ],
+      "headAnchor": [
+        52,
+        38
+      ],
+      "blinkMin": 3.0,
+      "blinkMax": 6.4,
+      "lip": true,
+      "gaze": 0.65
+    },
+    "nera": {
+      "eyeBand": [
+        25,
+        26,
+        50,
+        8
+      ],
+      "mouthBand": [
+        31,
+        44,
+        38,
+        11
+      ],
+      "headAnchor": [
+        50,
+        35
+      ],
+      "blinkMin": 3.2,
+      "blinkMax": 6.8,
+      "lip": true,
+      "gaze": 0.75
+    },
+    "renn": {
+      "eyeBand": [
+        25,
+        25,
+        50,
+        9
+      ],
+      "mouthBand": [
+        31,
+        44,
+        38,
+        11
+      ],
+      "headAnchor": [
+        50,
+        34
+      ],
+      "blinkMin": 2.8,
+      "blinkMax": 6.0,
+      "lip": true,
+      "gaze": 0.85
+    },
+    "jessa": {
+      "eyeBand": [
+        24,
+        26,
+        52,
+        8
+      ],
+      "mouthBand": [
+        31,
+        44,
+        38,
+        11
+      ],
+      "headAnchor": [
+        50,
+        35
+      ],
+      "blinkMin": 3.0,
+      "blinkMax": 6.5,
+      "lip": true,
+      "gaze": 0.9
+    },
+    "unknown": {
+      "eyeBand": [
+        28,
+        30,
+        44,
+        8
+      ],
+      "mouthBand": [
+        34,
+        48,
+        32,
+        10
+      ],
+      "headAnchor": [
+        50,
+        36
+      ],
+      "blinkMin": 4,
+      "blinkMax": 8,
+      "lip": true,
+      "gaze": 0.3
+    }
+  }
+}

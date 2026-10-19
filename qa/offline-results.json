@@ -1,0 +1,163 @@
+{
+  "results": [
+    {
+      "label": "service worker controls page",
+      "pass": true
+    },
+    {
+      "label": "offline cache includes new runtime and all 5 scene plates",
+      "pass": true,
+      "detail": 133
+    },
+    {
+      "label": "offline guided mission renders",
+      "pass": true
+    },
+    {
+      "label": "offline progress persists",
+      "pass": true
+    },
+    {
+      "label": "offline scene decoded",
+      "pass": true
+    },
+    {
+      "label": "export contains mission progress",
+      "pass": true
+    },
+    {
+      "label": "save import preserves mission",
+      "pass": true
+    },
+    {
+      "label": "single HUD HQ",
+      "pass": true
+    },
+    {
+      "label": "single living scene HQ",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas HQ",
+      "pass": true
+    },
+    {
+      "label": "single HUD Ship",
+      "pass": true
+    },
+    {
+      "label": "single living scene Ship",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas Ship",
+      "pass": true
+    },
+    {
+      "label": "single HUD Story",
+      "pass": true
+    },
+    {
+      "label": "single living scene Story",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas Story",
+      "pass": true
+    },
+    {
+      "label": "single HUD Galaxy",
+      "pass": true
+    },
+    {
+      "label": "single living scene Galaxy",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas Galaxy",
+      "pass": true
+    },
+    {
+      "label": "single HUD Combat",
+      "pass": true
+    },
+    {
+      "label": "single living scene Combat",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas Combat",
+      "pass": true
+    },
+    {
+      "label": "single HUD Dogfight",
+      "pass": true
+    },
+    {
+      "label": "single living scene Dogfight",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas Dogfight",
+      "pass": true
+    },
+    {
+      "label": "single HUD Overview",
+      "pass": true
+    },
+    {
+      "label": "single living scene Overview",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas Overview",
+      "pass": true
+    },
+    {
+      "label": "single HUD HQ",
+      "pass": true
+    },
+    {
+      "label": "single living scene HQ",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas HQ",
+      "pass": true
+    },
+    {
+      "label": "single HUD Story",
+      "pass": true
+    },
+    {
+      "label": "single living scene Story",
+      "pass": true
+    },
+    {
+      "label": "single FX canvas Story",
+      "pass": true
+    },
+    {
+      "label": "open viewer survives live fold",
+      "pass": true
+    },
+    {
+      "label": "viewer restores scene",
+      "pass": true
+    },
+    {
+      "label": "body unlocked after close",
+      "pass": true
+    },
+    {
+      "label": "long objective contained",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

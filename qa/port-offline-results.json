@@ -1,0 +1,74 @@
+{
+  "results": [
+    {
+      "label": "all new district assets precached",
+      "pass": true
+    },
+    {
+      "label": "district renders offline",
+      "pass": true
+    },
+    {
+      "label": "offline reload preserves clues offers and RNG",
+      "pass": true
+    },
+    {
+      "label": "export contains active procedural situation",
+      "pass": true
+    },
+    {
+      "label": "import restores exact district state",
+      "pass": true
+    },
+    {
+      "label": "objective can complete offline",
+      "pass": true
+    },
+    {
+      "label": "market artwork works offline",
+      "pass": true
+    },
+    {
+      "label": "cantina artwork works offline",
+      "pass": true
+    },
+    {
+      "label": "hideout artwork works offline",
+      "pass": true
+    },
+    {
+      "label": "tunnels artwork works offline",
+      "pass": true
+    },
+    {
+      "label": "local-work shortcut reaches panel",
+      "pass": true
+    },
+    {
+      "label": "withdrawal leaves no active job and no payout",
+      "pass": true
+    },
+    {
+      "label": "withdrawal is remembered by client",
+      "pass": true
+    },
+    {
+      "label": "active-job layout fits 320",
+      "pass": true
+    },
+    {
+      "label": "active-job layout fits 393",
+      "pass": true
+    },
+    {
+      "label": "active-job layout fits 744",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

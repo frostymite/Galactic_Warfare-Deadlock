@@ -1,12 +1,138 @@
 {
-  "version": 1,
+  "version": 2,
   "packs": [
-    {"id":"core","name":"Core Runtime","bundled":true,"priority":"required","contents":["UI","icons","save system","procedural GM","combat","galaxy"]},
-    {"id":"characters","name":"Living Characters","bundled":true,"priority":"high","planned":["full-body poses","facial expressions","talking/blink states","injury states","holo variants"]},
-    {"id":"blackglass","name":"Blackglass HQ","bundled":true,"priority":"high","planned":["command lounge","briefing room","hangar","quarters","contract board","crew activity"]},
-    {"id":"raven","name":"The Raven","bundled":true,"priority":"high","planned":["cockpit","cargo bay","prisoner area","weapons bench","engineering","flight/orbit/landing/damage states"]},
-    {"id":"worlds","name":"Living Galaxy Worlds","bundled":true,"priority":"high","planned":["orbit plates","approach scenes","surface hubs","weather","crowds","local NPCs"]},
-    {"id":"combatfx","name":"Combat FX","bundled":true,"priority":"high","planned":["weapon fire","impacts","cover","smoke","sparks","ship lasers","shield hits","explosions"]},
-    {"id":"audio","name":"Cinematic Audio","bundled":true,"priority":"medium","planned":["orchestral score","room tones","engines","weapons","doors","crowds","weather","character voices"]}
+    {
+      "id": "core",
+      "name": "Core Runtime",
+      "bundled": true,
+      "priority": "required",
+      "contents": [
+        "UI",
+        "icons",
+        "save system",
+        "procedural GM",
+        "combat",
+        "galaxy"
+      ]
+    },
+    {
+      "id": "characters",
+      "name": "Living Characters",
+      "bundled": true,
+      "priority": "high",
+      "planned": [
+        "full-body poses",
+        "facial expressions",
+        "talking/blink states",
+        "injury states",
+        "holo variants"
+      ],
+      "active": [
+        "blink/micro-gaze rig",
+        "speech/jaw motion",
+        "posture reactions",
+        "entrance/reaction states"
+      ]
+    },
+    {
+      "id": "blackglass",
+      "name": "Blackglass HQ",
+      "bundled": true,
+      "priority": "high",
+      "planned": [
+        "command lounge",
+        "briefing room",
+        "hangar",
+        "quarters",
+        "contract board",
+        "crew activity"
+      ],
+      "active": [
+        "room-specific scene presets",
+        "moving traffic/crowds",
+        "command/briefing/hangar/quarters/contracts staging"
+      ]
+    },
+    {
+      "id": "raven",
+      "name": "The Raven",
+      "bundled": true,
+      "priority": "high",
+      "planned": [
+        "cockpit",
+        "cargo bay",
+        "prisoner area",
+        "weapons bench",
+        "engineering",
+        "flight/orbit/landing/damage states"
+      ],
+      "active": [
+        "6 interior scenes",
+        "departure/hyperspace/arrival/landing cinematics",
+        "damage/flight HUD telemetry"
+      ]
+    },
+    {
+      "id": "worlds",
+      "name": "Living Galaxy Worlds",
+      "bundled": true,
+      "priority": "high",
+      "planned": [
+        "orbit plates",
+        "approach scenes",
+        "surface hubs",
+        "weather",
+        "crowds",
+        "local NPCs"
+      ],
+      "active": [
+        "weather FX by biome",
+        "crowd/traffic layers",
+        "planet approach/local scene hooks"
+      ]
+    },
+    {
+      "id": "combatfx",
+      "name": "Combat FX",
+      "bundled": true,
+      "priority": "high",
+      "planned": [
+        "weapon fire",
+        "impacts",
+        "cover",
+        "smoke",
+        "sparks",
+        "ship lasers",
+        "shield hits",
+        "explosions"
+      ],
+      "active": [
+        "muzzle/hit flashes",
+        "spark bursts",
+        "combat camera reactions",
+        "dogfight targeting HUD"
+      ]
+    },
+    {
+      "id": "audio",
+      "name": "Cinematic Audio",
+      "bundled": true,
+      "priority": "medium",
+      "planned": [
+        "authored cinematic music stems",
+        "higher-fidelity room tones",
+        "ship/mechanical sample layers",
+        "weapon/impact sample library",
+        "weather/crowd sample layers",
+        "approved character voice packs"
+      ],
+      "active": [
+        "procedural orchestral score",
+        "device TTS character voices",
+        "procedural room/ship/world ambience",
+        "blaster/impact/door/engine/hyperspace/UI effects",
+        "independent music/effects/voice volume controls"
+      ]
+    }
   ]
 }

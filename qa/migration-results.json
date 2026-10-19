@@ -1,0 +1,50 @@
+{
+  "results": [
+    {
+      "label": "v14 campaign imported intact",
+      "pass": true
+    },
+    {
+      "label": "new archive initialized without old save field",
+      "pass": true
+    },
+    {
+      "label": "new Raven artwork renders offline",
+      "pass": true
+    },
+    {
+      "label": "signal discovery works offline",
+      "pass": true
+    },
+    {
+      "label": "discovery does not alter legacy gameplay state",
+      "pass": true
+    },
+    {
+      "label": "export includes flight archive",
+      "pass": true
+    },
+    {
+      "label": "import restores archive and campaign together",
+      "pass": true
+    },
+    {
+      "label": "restored record opens",
+      "pass": true
+    },
+    {
+      "label": "offline record artwork decoded",
+      "pass": true
+    },
+    {
+      "label": "optional presentation state normalizes safely",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

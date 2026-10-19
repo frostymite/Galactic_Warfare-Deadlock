@@ -1,0 +1,178 @@
+{
+  "results": [
+    {
+      "label": "normal travel deducts quoted fuel",
+      "pass": true
+    },
+    {
+      "label": "landing blocked in transit",
+      "pass": true
+    },
+    {
+      "label": "normal route arrives at Veyra",
+      "pass": true
+    },
+    {
+      "label": "supply shop blocked before landing",
+      "pass": true
+    },
+    {
+      "label": "fuel quote visible",
+      "pass": true
+    },
+    {
+      "label": "refuel correct cost",
+      "pass": true
+    },
+    {
+      "label": "refuel reaches capacity",
+      "pass": true
+    },
+    {
+      "label": "full tank prevents another charge",
+      "pass": true
+    },
+    {
+      "label": "hull repair applied",
+      "pass": true
+    },
+    {
+      "label": "hull repair charges 240",
+      "pass": true
+    },
+    {
+      "label": "shield recharge applied",
+      "pass": true
+    },
+    {
+      "label": "shield recharge charges 60",
+      "pass": true
+    },
+    {
+      "label": "cannot overspend",
+      "pass": true
+    },
+    {
+      "label": "Upper City preview has artwork",
+      "pass": true
+    },
+    {
+      "label": "Upper City enters Story",
+      "pass": true
+    },
+    {
+      "label": "Upper City correct scene plate",
+      "pass": true
+    },
+    {
+      "label": "Upper City tracked objective retained",
+      "pass": true
+    },
+    {
+      "label": "Upper City no overflow",
+      "pass": true
+    },
+    {
+      "label": "Undercity preview has artwork",
+      "pass": true
+    },
+    {
+      "label": "Undercity enters Story",
+      "pass": true
+    },
+    {
+      "label": "Undercity correct scene plate",
+      "pass": true
+    },
+    {
+      "label": "Undercity tracked objective retained",
+      "pass": true
+    },
+    {
+      "label": "Undercity no overflow",
+      "pass": true
+    },
+    {
+      "label": "Lower Port preview has artwork",
+      "pass": true
+    },
+    {
+      "label": "Lower Port enters Story",
+      "pass": true
+    },
+    {
+      "label": "Lower Port correct scene plate",
+      "pass": true
+    },
+    {
+      "label": "Lower Port tracked objective retained",
+      "pass": true
+    },
+    {
+      "label": "Lower Port no overflow",
+      "pass": true
+    },
+    {
+      "label": "Corporate District preview has artwork",
+      "pass": true
+    },
+    {
+      "label": "Corporate District enters Story",
+      "pass": true
+    },
+    {
+      "label": "Corporate District correct scene plate",
+      "pass": true
+    },
+    {
+      "label": "Corporate District tracked objective retained",
+      "pass": true
+    },
+    {
+      "label": "Corporate District no overflow",
+      "pass": true
+    },
+    {
+      "label": "Orbital Ring preview has artwork",
+      "pass": true
+    },
+    {
+      "label": "Orbital Ring enters Story",
+      "pass": true
+    },
+    {
+      "label": "Orbital Ring correct scene plate",
+      "pass": true
+    },
+    {
+      "label": "Orbital Ring tracked objective retained",
+      "pass": true
+    },
+    {
+      "label": "Orbital Ring no overflow",
+      "pass": true
+    },
+    {
+      "label": "district visits persist",
+      "pass": true
+    },
+    {
+      "label": "purchased repairs persist",
+      "pass": true
+    },
+    {
+      "label": "escape returns to confrontation",
+      "pass": true
+    },
+    {
+      "label": "escaped mission can complete peacefully",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

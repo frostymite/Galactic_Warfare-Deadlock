@@ -1,7 +1,7 @@
 {
-  "name": "Deadlock v12 \u2014 Standalone RPG Foundation",
-  "short_name": "Deadlock 12",
-  "description": "Offline-first standalone Android RPG foundation with GPU cinematic runtime, diegetic HUDs, living scenes, forced combat, Blackglass HQ and interplanetary travel.",
+  "name": "Deadlock \u2014 The 3.2 Apex Protocol",
+  "short_name": "Deadlock",
+  "description": "A cinematic bounty-hunter RPG with an animated flight deck, ship encounters, a persistent flight archive and offline play.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

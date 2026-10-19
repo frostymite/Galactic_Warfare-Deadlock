@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "12.0.0",
-    "campaign": "Deadlock \u2014 Standalone RPG Foundation",
+    "version": "17.0.0",
+    "campaign": "Deadlock \u2014 The 3.2 Apex Protocol",
     "note": "Established story facts are filled in. Mechanical values that were never firmly established remain editable.",
     "rulesNote": "Combat and dogfight numeric formulas are dashboard mechanics, not story canon. Edit them in GM Controls."
   },
@@ -10,13 +10,13 @@
     "callsign": "Deadlock",
     "species": "Clawdite",
     "role": "Gunslinger / Bounty Hunter",
-    "affiliation": "Independent",
+    "affiliation": "The 3.2 Apex Protocol",
     "alignment": "Pragmatic",
     "status": "Active",
     "level": 1,
     "xp": 0,
     "xpNext": 300,
-    "credits": 0,
+    "credits": 358400,
     "health": 100,
     "healthMax": 100,
     "shields": 0,
@@ -458,7 +458,13 @@
     "livingGalaxy": true,
     "gpuBackdrop": true,
     "diegeticHud": true,
-    "graphicsQuality": "high"
+    "graphicsQuality": "high",
+    "shipScene": "cockpit",
+    "cinematicSequences": true,
+    "actorRigs": true,
+    "worldFx": true,
+    "worldAudio": true,
+    "effectsVolume": 42
   },
   "targets": [
     {

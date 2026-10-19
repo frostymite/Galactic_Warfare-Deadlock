@@ -1,0 +1,154 @@
+{
+  "results": [
+    {
+      "label": "HQ room blackglass_hq loaded",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_hq contained",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_briefing loaded",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_briefing contained",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_quarters loaded",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_quarters contained",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_hangar loaded",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_hangar contained",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_contracts loaded",
+      "pass": true
+    },
+    {
+      "label": "HQ room blackglass_contracts contained",
+      "pass": true
+    },
+    {
+      "label": "Ship room cockpit loaded",
+      "pass": true
+    },
+    {
+      "label": "Ship room cockpit contained",
+      "pass": true
+    },
+    {
+      "label": "Ship room cargo loaded",
+      "pass": true
+    },
+    {
+      "label": "Ship room cargo contained",
+      "pass": true
+    },
+    {
+      "label": "Ship room engineering loaded",
+      "pass": true
+    },
+    {
+      "label": "Ship room engineering contained",
+      "pass": true
+    },
+    {
+      "label": "Ship room weapons loaded",
+      "pass": true
+    },
+    {
+      "label": "Ship room weapons contained",
+      "pass": true
+    },
+    {
+      "label": "Ship room prisoner loaded",
+      "pass": true
+    },
+    {
+      "label": "Ship room prisoner contained",
+      "pass": true
+    },
+    {
+      "label": "Ship room quarters loaded",
+      "pass": true
+    },
+    {
+      "label": "Ship room quarters contained",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination blackglass_station",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination veyra_prime",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination drekthar",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination nerath",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination cindar",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination talos",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination orivon",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination xerra",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination sable_belt",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination thalos",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination rethis",
+      "pass": true
+    },
+    {
+      "label": "galaxy destination umber",
+      "pass": true
+    },
+    {
+      "label": "reduced-motion removes weather canvas",
+      "pass": true
+    },
+    {
+      "label": "reduced-motion skips cinematic overlays",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

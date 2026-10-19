@@ -1,5 +1,11 @@
-const CACHE="deadlock-v13-0-1-sticky-header-cleanup-cache-1";
+const CACHE="deadlock-v17-apex-1";
 const APP_SHELL=[
+ "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.svg",
+ "./runtime/port-engine.js", "./runtime/lower-port.js", "./runtime/lower-port.css", "./assets/scenes/port_market_v16.svg", "./assets/scenes/port_cantina_v16.svg", "./assets/scenes/port_tunnels_v16.svg", "./assets/scenes/port_hideout_v16.svg",
+ "./assets/ships/beacon_vector_v15.svg", "./runtime/engagement.js", "./runtime/engagement.css", "./assets/ships/raven_cutout_v15.svg", "./assets/scenes/veyra_orbit_v15.svg", "./assets/ships/raven_vector_v15.svg", "./assets/ships/courier_vector_v15.svg", "./assets/ships/patrol_vector_v15.svg",
+ "./runtime/world-polish.js", "./assets/scenes/veyra_upper_v14.svg", "./assets/scenes/veyra_undercity_v14.svg",
+ "./assets/scenes/raven_cockpit_v14.svg",
+ "./runtime/polish.js", "./runtime/polish.css", "./assets/scenes/blackglass_command_v14.svg", "./assets/scenes/veyra_port_v14.svg",
  './',
  './app.js',
  './asset-packs.json',
@@ -117,7 +123,7 @@ self.addEventListener("install",event=>{
 });
 
 self.addEventListener("activate",event=>{
- event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
+ event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith("deadlock-")&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
 
 self.addEventListener("fetch",event=>{

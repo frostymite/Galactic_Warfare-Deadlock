@@ -4,6 +4,7 @@ let DATA=null,GALAXY=null,ASSET_MANIFEST=null,SCENES=null,currentPage="Overview"
 let uiSound=true;
 let AMBIENT=null;
 let AUDIO_UNLOCKED=false;
+let WORLD_AUDIO=null;
 let LAST_SPOKEN={speaker:"",text:"",at:0};
 let SCENE_LAST_DIALOGUE={speaker:"",text:"",at:0};
 let SCENE_RUNTIME={raf:0,el:null,pointerX:0,pointerY:0};
@@ -41,9 +42,11 @@ function characterVisual(id,state="neutral",alt=""){
  const e=assetEntry("characters",id)||{};return imgTag(e[state]||e.neutral||e.fallback,alt||id,e.fallback||null,"character-visual");
 }
 function ravenVisual(state="flight",alt="The Raven"){
+ if(state!=="schematic")return imgTag("assets/ships/raven_cutout_v15.svg",alt,null,"raven-visual");
  const e=assetEntry("ships","raven")||{};return imgTag(e[state]||e.flight||e.fallback,alt,e.fallback||null,"raven-visual");
 }
-function save(){const raw=JSON.stringify(DATA);localStorage.setItem(STORAGE_KEY,raw);window.DeadlockNative?.persistSave?.(STORAGE_KEY,raw)}
+function validCampaignSave(value){return !!value&&typeof value==="object"&&!Array.isArray(value)&&!!value.character&&Number.isFinite(value.character.health)&&Number.isFinite(value.character.credits)&&!!value.ship&&Number.isFinite(value.ship.hull)&&!!value.combat&&Array.isArray(value.combat.participants)&&["weapons","contracts","targets","contacts","inventory","gear","identities","factions","journal","locations"].every(k=>Array.isArray(value[k]));}
+function save(){const raw=JSON.stringify(DATA);try{localStorage.setItem(STORAGE_KEY,raw);window.DEADLOCK_SAVE_FAILED=false;}catch(err){window.DEADLOCK_SAVE_FAILED=true;document.getElementById("saveStatus")?.remove();const warning=document.createElement("div");warning.id="saveStatus";warning.setAttribute("role","alert");warning.textContent="Saving is unavailable. Use Export to keep your progress before closing.";document.querySelector("main")?.prepend(warning);}window.DeadlockNative?.persistSave?.(STORAGE_KEY,raw)?.catch?.(()=>{});}
 function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");navigator.vibrate?.(20);uiBeep(520,.035,.035);setTimeout(()=>t.classList.remove("show"),1500)}
 let AUDIO_CTX=null;
 function audioContext(){
@@ -144,8 +147,16 @@ function startAmbientMusic(){
 function stopAmbientMusic(){
  if(!AMBIENT)return;const old=AMBIENT;AMBIENT=null;try{if(old.timer)clearInterval(old.timer);if(AUDIO_CTX&&old.master){const now=AUDIO_CTX.currentTime;old.master.gain.cancelScheduledValues(now);old.master.gain.setTargetAtTime(.0001,now,.08);setTimeout(()=>{try{old.master.disconnect();old.tone.disconnect();old.verb.disconnect()}catch(e){}},320)}}catch(e){}
 }
-function unlockGameAudio(){AUDIO_UNLOCKED=true;if(uiSound&&audioPrefs().music!==false)startAmbientMusic()}
-function syncAudioState(){if(!uiSound){stopAmbientMusic();try{window.speechSynthesis?.cancel()}catch(e){};return}if(audioPrefs().music===false)stopAmbientMusic();else if(AUDIO_UNLOCKED)startAmbientMusic()}
+function unlockGameAudio(){AUDIO_UNLOCKED=true;if(uiSound&&audioPrefs().music!==false)startAmbientMusic();if(uiSound&&audioPrefs().worldAudio!==false)startWorldAudio()}
+function syncAudioState(){if(!uiSound){stopAmbientMusic();stopWorldAudio();try{window.speechSynthesis?.cancel()}catch(e){};return}if(audioPrefs().music===false)stopAmbientMusic();else if(AUDIO_UNLOCKED)startAmbientMusic();if(audioPrefs().worldAudio===false)stopWorldAudio();else if(AUDIO_UNLOCKED)startWorldAudio();retuneWorldAudio()}
+function worldAudioTarget(){return clamp(Number(audioPrefs().effectsVolume??42),0,100)/100*.16}
+function makeLoopNoise(ctx,seconds=2){const len=Math.floor(ctx.sampleRate*seconds),b=ctx.createBuffer(1,len,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;return b}
+function worldAudioProfile(){const theme=document.body.dataset.sceneTheme||scenePresetFor?.(currentPage)||'ambient';const map={hq:{hum:54,noise:520,noiseGain:.10},ship:{hum:68,noise:760,noiseGain:.055},cockpit:{hum:74,noise:900,noiseGain:.045},urban:{hum:43,noise:1250,noiseGain:.09},combat:{hum:46,noise:680,noiseGain:.12},desert:{hum:38,noise:1550,noiseGain:.065},jungle:{hum:36,noise:900,noiseGain:.07},ice:{hum:42,noise:2200,noiseGain:.055},volcanic:{hum:34,noise:430,noiseGain:.11},ocean:{hum:39,noise:1100,noiseGain:.08},asteroid:{hum:58,noise:700,noiseGain:.045},orbit:{hum:66,noise:1000,noiseGain:.035},unknown:{hum:47,noise:820,noiseGain:.07}};return map[theme]||map.ship}
+function startWorldAudio(){if(!uiSound||audioPrefs().worldAudio===false)return;const ctx=audioContext();if(!ctx||WORLD_AUDIO)return;try{const master=ctx.createGain(),hum=ctx.createOscillator(),humGain=ctx.createGain(),noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),noiseGain=ctx.createGain();master.gain.value=.0001;hum.type='sine';hum.frequency.value=60;humGain.gain.value=.34;noise.buffer=makeLoopNoise(ctx);noise.loop=true;filter.type='bandpass';filter.frequency.value=850;filter.Q.value=.55;noiseGain.gain.value=.06;hum.connect(humGain);humGain.connect(master);noise.connect(filter);filter.connect(noiseGain);noiseGain.connect(master);master.connect(ctx.destination);hum.start();noise.start();WORLD_AUDIO={master,hum,humGain,noise,filter,noiseGain};retuneWorldAudio();}catch(e){WORLD_AUDIO=null}}
+function stopWorldAudio(){if(!WORLD_AUDIO)return;const w=WORLD_AUDIO;WORLD_AUDIO=null;try{const now=AUDIO_CTX?.currentTime||0;w.master.gain.setTargetAtTime(.0001,now,.07);setTimeout(()=>{try{w.hum.stop();w.noise.stop();w.master.disconnect()}catch(e){}},260)}catch(e){}}
+function retuneWorldAudio(){if(!WORLD_AUDIO||!AUDIO_CTX)return;const p=worldAudioProfile(),now=AUDIO_CTX.currentTime;WORLD_AUDIO.hum.frequency.setTargetAtTime(p.hum,now,.8);WORLD_AUDIO.filter.frequency.setTargetAtTime(p.noise,now,.9);WORLD_AUDIO.noiseGain.gain.setTargetAtTime(p.noiseGain,now,.7);WORLD_AUDIO.master.gain.setTargetAtTime(worldAudioTarget(),now,.7)}
+function gameSfx(type='ui',strength=1){if(!uiSound||audioPrefs().worldAudio===false)return;const ctx=audioContext();if(!ctx)return;strength=clamp(Number(strength||1),.1,2);const now=ctx.currentTime,vol=(clamp(Number(audioPrefs().effectsVolume??42),0,100)/100)*.12*strength;const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();o.connect(f);f.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(Math.max(.0001,vol),now);g.gain.exponentialRampToValueAtTime(.0001,now+.28);if(type==='blaster'){o.type='sawtooth';o.frequency.setValueAtTime(480,now);o.frequency.exponentialRampToValueAtTime(92,now+.16);f.type='bandpass';f.frequency.value=1300}else if(type==='impact'){o.type='square';o.frequency.setValueAtTime(120,now);o.frequency.exponentialRampToValueAtTime(48,now+.21);f.type='lowpass';f.frequency.value=700}else if(type==='door'){o.type='triangle';o.frequency.setValueAtTime(145,now);o.frequency.linearRampToValueAtTime(210,now+.18);f.type='lowpass';f.frequency.value=850}else if(type==='engine'){o.type='sawtooth';o.frequency.setValueAtTime(64,now);o.frequency.linearRampToValueAtTime(128,now+.25);f.type='lowpass';f.frequency.value=520}else if(type==='hyperspace'){o.type='sawtooth';o.frequency.setValueAtTime(90,now);o.frequency.exponentialRampToValueAtTime(820,now+.24);f.type='bandpass';f.frequency.value=1100}else{o.type='sine';o.frequency.value=320;f.type='lowpass';f.frequency.value=1800}o.start(now);o.stop(now+.3)}
+window.DeadlockSFX={play:gameSfx,retune:retuneWorldAudio,start:startWorldAudio,stop:stopWorldAudio};
 function availableSpeechVoices(){
  try{return (window.speechSynthesis?.getVoices?.()||[]).filter(v=>/^en([_-]|$)/i.test(v.lang||"en"))}catch(e){return []}
 }
@@ -181,14 +192,15 @@ function speakCharacter(speaker,text,{force=false}={}){
   const u=new SpeechSynthesisUtterance(clean),p=NPC_VOICE_PROFILES[id]||NPC_VOICE_PROFILES.unknown;
   const voice=speechVoiceFor(id);if(voice)u.voice=voice;
   u.lang=voice?.lang||"en-US";u.pitch=p.pitch;u.rate=p.rate;u.volume=clamp(Number(audioPrefs().voiceVolume??78),0,100)/100;
-  u.onstart=()=>{setAmbientDuck(true);setSceneSpeaker(id,true)};
-  u.onend=u.onerror=()=>{setAmbientDuck(false);setSceneSpeaker(id,false)};
+  u.onstart=()=>{setAmbientDuck(true);setSceneSpeaker(id,true);window.DeadlockActors?.setSpeaking?.(id,true)};
+  u.onboundary=e=>{if(e.name==="word"||Number.isFinite(e.charIndex))window.DeadlockActors?.pulseSpeech?.(id,.55+Math.random()*.75)};
+  u.onend=u.onerror=()=>{setAmbientDuck(false);setSceneSpeaker(id,false);window.DeadlockActors?.setSpeaking?.(id,false)};
   window.speechSynthesis.speak(u);return true;
  }catch(e){setAmbientDuck(false);return false}
 }
 window.speechSynthesis?.addEventListener?.("voiceschanged",()=>availableSpeechVoices());
 document.addEventListener("pointerdown",unlockGameAudio,{passive:true,once:true});
-function weaponSound(id){
+function weaponSound(id){gameSfx('blaster',id==='blackwake'?1.35:.85);
  if(id==="blackwake"){uiBeep(92,.10,.055,"square");setTimeout(()=>uiBeep(58,.09,.035,"sawtooth"),35)}
  else{uiBeep(id==="luna"?310:270,.075,.04,"square");setTimeout(()=>uiBeep(170,.045,.02,"sawtooth"),25)}
 }
@@ -275,7 +287,7 @@ function skillBonus(name){return Math.round(Number(DATA.character.skills?.[name]
 function groundDefense(){return 10+Math.max(0,Math.floor((Number(DATA.character.attributes?.Agility||10)-10)/2))}
 function syncRovanCombatant(){
  const c=DATA.combat;let r=c.participants.find(x=>x.id==="rovan");if(!r)return;
- r.hp=clamp(Number(DATA.character.health||r.hp),0,DATA.character.healthMax);r.hpMax=DATA.character.healthMax;r.conditions=r.conditions||[];
+ r.hp=clamp(Number(DATA.character.health??r.hp),0,DATA.character.healthMax);r.hpMax=DATA.character.healthMax;r.conditions=r.conditions||[];
 }
 function encounterEnemyTemplates(source="danger"){
  const table={
@@ -306,7 +318,7 @@ function startForcedCombat(ctx={}){
  selectedCombatTarget=liveCombatEnemies()[0]?.id||null;
  DATA.story.danger=clamp(Math.max(Number(DATA.story.danger||0),danger)+5,0,100);
  storyPush("system","TACTICAL ALERT",`COMBAT INITIATED — ${c.reason}`);storyPush("narration","Narrator",ctx.narration||"Weapons clear holsters and the situation goes loud. Deadlock no longer has the luxury of treating this as conversation.");
- logCombat(`FORCED ENCOUNTER: ${c.reason}`);addNotification(`Combat initiated: ${c.reason}`,"danger");eventBanner("COMBAT INITIATED");navigator.vibrate?.([60,35,80]);save();
+ logCombat(`FORCED ENCOUNTER: ${c.reason}`);addNotification(`Combat initiated: ${c.reason}`,"danger");eventBanner("COMBAT INITIATED");navigator.vibrate?.([60,35,80]);save();if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.("combat",{reason:c.reason});
  setTimeout(()=>{render("Combat");autoEnemyTurns()},80);return true;
 }
 function finishForcedCombat(outcome="victory"){
@@ -322,7 +334,8 @@ function finishForcedCombat(outcome="victory"){
  }else{
   DATA.character.health=Math.max(1,Math.round(DATA.character.healthMax*.15));syncRovanCombatant();DATA.story.danger=clamp(Number(DATA.story.danger||0)+16,0,100);addConsequence("Forced retreat",`Deadlock was overwhelmed and escaped injured.`,"danger",{source:c.source});storyPush("narration","Narrator","The fight turns against Deadlock. An emergency retreat keeps the campaign alive, but the price is blood, lost momentum, and a hotter situation.");
  }
- c.context=null;save();eventBanner(outcome==="victory"?"THREAT NEUTRALIZED":outcome==="escape"?"CONTACT BROKEN":"FORCED RETREAT");render(returnPage);
+ window.DeadlockPolish?.combatOutcome(ctx,outcome);window.DeadlockPort?.combatOutcome(ctx,outcome);
+ c.context=null;save();eventBanner(outcome==="victory"?"THREAT NEUTRALIZED":outcome==="escape"?"CONTACT BROKEN":"FORCED RETREAT");if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.(outcome==="victory"?"victory":"defeat",{reason:c.reason});render(returnPage);
 }
 function checkCombatResolution(){
  if(!DATA.combat.active)return true;
@@ -345,7 +358,7 @@ function autoEnemyTurns(){
  const c=DATA.combat;if(!c.active||checkCombatResolution())return;
  const current=c.participants[c.turnIndex];if(!current||current.hp<=0){advanceCombatTurn();return}
  if(current.side!=="Enemy"){save();if(currentPage!=="Combat")render("Combat");else render("Combat");return}
- enemyCombatAttack(current);if(checkCombatResolution())return;save();setTimeout(()=>advanceCombatTurn(),360);
+ enemyCombatAttack(current);if(checkCombatResolution())return;advanceCombatTurn();
 }
 function combatPlayerGuard(){
  const c=DATA.combat,current=c.participants[c.turnIndex];if(!c.active||current?.id!=="rovan")return toast("Wait for Rovan's turn");const r=c.participants.find(x=>x.id==="rovan");if(!r.conditions.includes("Guarded"))r.conditions.push("Guarded");logCombat("Rovan takes cover. Next incoming hit is reduced.");DATA.character.stamina=clamp(Number(DATA.character.stamina||0)+3,0,DATA.character.staminaMax);save();advanceCombatTurn();
@@ -361,7 +374,7 @@ function makeDogfightEnemies(source="travel",risk=40){
 function startForcedDogfight(ctx={}){
  ensureEncounterState();const d=DATA.dogfight;if(d.active&&liveDogfightEnemies().length)return false;const risk=clamp(Number(ctx.risk??ctx.danger??50),0,100);
  d.active=true;d.forced=true;d.round=1;d.enemyIndex=0;d.source=ctx.source||"travel";d.reason=ctx.reason||"Hostile craft have weapons lock.";d.returnPage=ctx.returnPage||"Galaxy";d.escapeDC=Number(ctx.escapeDC||12)+Math.floor(risk/30);d.context=ctx;d.enemies=ctx.enemies||makeDogfightEnemies(d.source,risk);
- logDogfight(`FORCED DOGFIGHT: ${d.reason}`);storyPush("system","Raven Tactical",`DOGFIGHT INITIATED — ${d.reason}`);addNotification(`Dogfight initiated: ${d.reason}`,"danger");eventBanner("DOGFIGHT");navigator.vibrate?.([70,30,70]);save();setTimeout(()=>render("Dogfight"),60);return true;
+ logDogfight(`FORCED DOGFIGHT: ${d.reason}`);storyPush("system","Raven Tactical",`DOGFIGHT INITIATED — ${d.reason}`);addNotification(`Dogfight initiated: ${d.reason}`,"danger");eventBanner("DOGFIGHT");navigator.vibrate?.([70,30,70]);save();if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.("combat",{reason:d.reason});setTimeout(()=>render("Dogfight"),60);return true;
 }
 function enemyDogfightVolley(){
  const d=DATA.dogfight,s=DATA.ship;if(!d.active)return;
@@ -378,7 +391,7 @@ function finishForcedDogfight(outcome="victory"){
  if(outcome==="victory"){DATA.story.danger=clamp(Number(DATA.story.danger||0)-8,0,100);storyPush("narration","Narrator","The last hostile craft falls off the Raven's scope. The route is clear again.");addConsequence("Dogfight won",d.reason||"Hostile craft neutralized.","good")}
  else if(outcome==="escape"){DATA.story.danger=clamp(Number(DATA.story.danger||0)+3,0,100);storyPush("narration","Narrator","The Raven breaks weapons lock and disappears back into the route.");addConsequence("Broke pursuit",d.reason||"Hostiles left behind.","warn")}
  else{DATA.ship.hull=Math.max(1,Math.round(DATA.ship.hullMax*.2));DATA.story.danger=clamp(Number(DATA.story.danger||0)+14,0,100);storyPush("narration","Narrator","The Raven takes a brutal beating and limps clear under emergency power. The route survives, but the ship needs attention.");addConsequence("Raven forced retreat","Ship combat ended with heavy damage.","danger")}
- d.context=null;save();eventBanner(outcome==="victory"?"SPACE CLEAR":outcome==="escape"?"PURSUIT BROKEN":"RAVEN DAMAGED");render(returnPage);
+ d.context=null;save();eventBanner(outcome==="victory"?"SPACE CLEAR":outcome==="escape"?"PURSUIT BROKEN":"RAVEN DAMAGED");if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.(outcome==="victory"?"victory":"defeat",{reason:d.reason});render(returnPage);
 }
 function attemptDogfightEscape(){
  const d=DATA.dogfight,total=rollDie(20)+skillBonus("Piloting"),dc=Number(d.escapeDC||13);logDogfight(`Break pursuit: ${total} vs DC ${dc}.`);if(total>=dc)return finishForcedDogfight("escape");addNotification("Could not shake pursuit.","danger");enemyDogfightVolley();
@@ -389,6 +402,10 @@ function migrateOfflineData(current,defaults){
  current.story=current.story||structuredClone(defaults.story);
  current.settings=current.settings||structuredClone(defaults.settings||{});
  for(const [k,v] of Object.entries(defaults.settings||{}))if(current.settings[k]===undefined)current.settings[k]=structuredClone(v);
+ current.settings.shipScene=current.settings.shipScene||"cockpit";
+ if(current.settings.cinematicSequences===undefined)current.settings.cinematicSequences=true;
+ if(current.settings.actorRigs===undefined)current.settings.actorRigs=true;
+ if(current.settings.worldFx===undefined)current.settings.worldFx=true;
  const s=current.story, ds=defaults.story;
 
  if(s.provider==="local")s.provider="offline";
@@ -448,7 +465,8 @@ function migrateOfflineData(current,defaults){
  s.activeContractId=s.activeContractId||"marr";
  const marrChoice=(s.choices||[]).find(c=>/marr/i.test(c.label||""));
  if(marrChoice){marrChoice.contractId="marr";marrChoice.actionType=marrChoice.actionType||"contract_review";}
- current.meta.version="11.0.0";
+ current.meta.version="17.0.0";
+ window.ApexEngine?.ensure(current);
  return current;
 }
 
@@ -527,7 +545,7 @@ function chooseTravelEncounter(risk=0){
 function beginLivingTravel(){
  const g=galaxyState(),r=g.route;if(!r||r.phase!=="plotted")return toast("Plot a route first");
  if(DATA.ship.fuel<r.fuelCost)return toast(`Need ${r.fuelCost} fuel`);
- DATA.ship.fuel-=r.fuelCost;r.phase="transit";g.phase="transit";g.transit={progress:0,encounter:chooseTravelEncounter(r.risk),encounterResolved:false};
+ DATA.ship.fuel-=r.fuelCost;r.phase="transit";g.phase="transit";g.transit={progress:0,encounter:chooseTravelEncounter(r.risk),encounterResolved:false};if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.("departure",{destination:galaxyLocation(r.destinationId)?.name});gameSfx('engine',1.0);
  g.travelLog.unshift({ts:new Date().toLocaleString(),text:`The Raven departed for ${galaxyLocation(r.destinationId)?.name}.`});storyPush("system","Navigation",`The Raven departs ${galaxyLocation(r.originId)?.name||"the current position"} for ${galaxyLocation(r.destinationId)?.name}.`);save();eventBanner("HYPERSPACE");render("Galaxy");
 }
 function resolveTravelEncounter(mode){
@@ -543,32 +561,36 @@ function resolveTravelEncounter(mode){
 function continueLivingTravel(){
  const g=galaxyState(),t=g.transit,r=g.route;if(!t||!r||r.phase!=="transit")return;
  if(t.encounter&&!t.encounterResolved)return toast("Resolve the transit event first");
- t.progress=Math.min(100,Number(t.progress||0)+50);if(t.progress<100){g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Transit ${t.progress}% — route stable.`});save();return render("Galaxy")}
- r.phase="arrived";g.phase="orbit";g.currentLocationId=r.destinationId;g.selectedLocationId=r.destinationId;g.discovered=[...new Set([...(g.discovered||[]),r.destinationId])];g.visited=[...new Set([...(g.visited||[]),r.destinationId])];const l=galaxyLocation(r.destinationId);const dl=DATA.locations.find(x=>x.id===r.destinationId);if(dl)dl.known=true;g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Arrived in orbit: ${l?.name}.`});storyPush("system","Navigation",`The Raven arrives in orbit of ${l?.name}.`);g.transit=null;save();storyCinematic("hyperspace",`${l?.name} // ARRIVAL`);render("Galaxy");
+ t.progress=Math.min(100,Number(t.progress||0)+50);if(t.progress<100){g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Transit ${t.progress}% — route stable.`});if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.("hyperspace",{destination:galaxyLocation(r.destinationId)?.name});gameSfx('hyperspace',.85);save();return render("Galaxy")}
+ r.phase="arrived";g.phase="orbit";g.currentLocationId=r.destinationId;if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.("arrival",{destination:galaxyLocation(r.destinationId)?.name});g.selectedLocationId=r.destinationId;g.discovered=[...new Set([...(g.discovered||[]),r.destinationId])];g.visited=[...new Set([...(g.visited||[]),r.destinationId])];const l=galaxyLocation(r.destinationId);const dl=DATA.locations.find(x=>x.id===r.destinationId);if(dl)dl.known=true;g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Arrived in orbit: ${l?.name}.`});storyPush("system","Navigation",`The Raven arrives in orbit of ${l?.name}.`);g.transit=null;save();storyCinematic("hyperspace",`${l?.name} // ARRIVAL`);render("Galaxy");
 }
 function commitGalaxyLocationToStory(){const l=currentGalaxyLocation();if(!l)return;DATA.story.location=l.name;storyPush("narration","Narrator",`The current operation is now established at ${l.name}.`);save();toast(`${l.name} committed to Story`);render("Story")}
 function performLocalAction(action){
+ if(galaxyState().phase==="transit")return toast("Finish the transit encounter and arrival before local operations.");
  const g=galaxyState(),l=currentGalaxyLocation();if(!l)return toast("No current destination");
  if(action==="scan"){g.scanIntel[l.id]=(g.scanIntel[l.id]||0)+1;g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Orbital scan completed at ${l.name}.`});storyPush("system","The Raven",`Orbital scan of ${l.name} completed. Traffic, local services, and approach vectors updated.`)}
- if(action==="dock"){g.phase=l.type.includes("Station")?"docked":"surface";g.currentSiteId=l.id==="blackglass_station"?"blackglass_hq":null;g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${l.landing||"Approach"} completed at ${l.name}.`});storyPush("system","Navigation",`${l.landing||"Landing"} completed at ${l.name}.`)}
+ if(action==="dock"){g.phase=l.type.includes("Station")?"docked":"surface";g.currentSiteId=l.id==="blackglass_station"?"blackglass_hq":null;if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.(l.type.includes("Station")?"docking":"landing",{destination:l.name});g.travelLog.unshift({ts:new Date().toLocaleString(),text:`${l.landing||"Approach"} completed at ${l.name}.`});storyPush("system","Navigation",`${l.landing||"Landing"} completed at ${l.name}.`)}
  if(action==="hq")return render("HQ");
  if(action==="story")return commitGalaxyLocationToStory();
  save();render("Galaxy");
 }
-function startLocalSite(siteName){
+function startLocalSite(siteName){return window.DeadlockWorld?.previewSite(siteName)}
+function enterLocalSite(siteName){
  const g=galaxyState(),l=currentGalaxyLocation();if(!l)return toast("No current location");if(!["docked","surface"].includes(g.phase))return toast(`Dock or land at ${l.name} first`);
- DATA.story.sceneNumber=Number(DATA.story.sceneNumber||1)+1;DATA.story.currentSceneId=uid("scene");DATA.story.location=`${l.name} — ${siteName}`;DATA.story.objective=`Operate at ${siteName}.`;
+ DATA.story.sceneNumber=Number(DATA.story.sceneNumber||1)+1;DATA.story.currentSceneId=uid("scene");DATA.story.location=`${l.name} — ${siteName}`;const localContract=contractById(DATA.story.activeContractId);DATA.story.objective=localContract?contractStageInfo(localContract).goal:`Operate at ${siteName}.`;
  storyPush("narration","Narrator",`The Raven's local operation shifts to ${siteName} on ${l.name}. The location is now part of the active scene.`);g.travelLog.unshift({ts:new Date().toLocaleString(),text:`Local operation opened: ${l.name} / ${siteName}.`});
  const d=clamp(Number(l.danger||0),0,100),ambushChance=d<35?0:d<55?.12:d<75?.24:.38;if(l.id!==g.homeId&&chance(ambushChance)){save();startForcedCombat({source:"local_ambush",danger:d,reason:`Hostile contact at ${siteName}, ${l.name}.`,objective:`Survive the ambush at ${siteName} or break contact.`,returnPage:"Story",narration:`The moment Deadlock enters ${siteName}, movement turns into muzzle flashes. Someone was waiting.`});return render("Combat")}
  save();eventBanner(String(siteName).toUpperCase());render("Story")
 }
 function handleWorldService(service){
+ if(window.DeadlockWorld?.service(service))return;
  const s=String(service||"").toLowerCase();if(/bounty/.test(s))return render("Bounties");if(/repair|parts|salvage/.test(s))return render("Ship");if(/black market|market|trade|broker/.test(s))return render("Inventory");if(/medical/.test(s))return render("Character");if(/research|information|forged|smuggler/.test(s)){const l=currentGalaxyLocation();DATA.story.objective=`Gather local intelligence on ${l?.name||"the current world"}.`;storyPush("system","Local Network",`Deadlock opens a local intelligence channel through ${service}.`);save();return render("Story")};return toast(`${service}: local hook ready`)
 }
 function hqSite(id){return GALAXY?.hq?.sites?.find(x=>x.id===id)||null}
 function hqSiteAsset(site){if(!site)return assetEntry("blackglass","hq");const key=site.asset?.replace("blackglass_","")||"hq";return assetEntry("blackglass",key)||assetEntry("blackglass","hq")}
 function handleHqSite(id){const g=galaxyState();g.currentSiteId=id;save();render("HQ")}
 function handleHqAction(action){
+ if(action==='Open Syndicate command')return render('Syndicate');
  const a=String(action).toLowerCase();if(/contract/.test(a))return render("Contracts");if(/target/.test(a))return render("Targets");if(/journal/.test(a))return render("Journal");if(/identity/.test(a))return render("Identities");if(/gear/.test(a))return render("Gear");if(/diagnostic|repair|raven/.test(a))return render("Ship");if(/contact|call/.test(a))return render("Holonet");if(/galaxy|intel/.test(a))return render("Galaxy");return toast(action)
 }
 function galaxyMapSvg(){
@@ -583,11 +605,13 @@ async function load(){
  GALAXY=galaxy;ASSET_MANIFEST=assets;SCENES=scenes;
  const nativeLocal=await window.DeadlockNative?.readSave?.(STORAGE_KEY);
  const local=nativeLocal||localStorage.getItem(STORAGE_KEY);
- DATA=migrateOfflineData(local?JSON.parse(local):defaults,defaults);ensureGalaxyState();ensureMissionLoopState();ensureEncounterState();
+ let restored=defaults;try{if(local){restored=JSON.parse(local);if(!validCampaignSave(restored))throw new Error("Invalid save");}}catch(err){try{localStorage.setItem(STORAGE_KEY+"_recovery",local||"")}catch{}window.DEADLOCK_RECOVERED=true;restored=structuredClone(defaults);}
+ DATA=migrateOfflineData(restored,defaults);ensureGalaxyState();ensureMissionLoopState();ensureEncounterState();
  uiSound=DATA.settings.sound!==false;
  save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);document.body.dataset.graphics=DATA.settings.graphicsQuality||"high";window.DeadlockGPU?.setEnabled?.(DATA.settings.gpuBackdrop!==false);window.DeadlockHUD?.setEnabled?.(DATA.settings.diegeticHud!==false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");
  if($("#soundBtn"))$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;
- requestAnimationFrame(detectFoldLayout)
+ requestAnimationFrame(detectFoldLayout);
+ if(DATA.combat?.active&&DATA.combat.forced)setTimeout(autoEnemyTurns,150);
 }
 function buildNav(){
  $("#nav").innerHTML="";
@@ -603,20 +627,27 @@ function runtimeStateSnapshot(){
   character:{name:DATA?.character?.name,callsign:DATA?.character?.callsign,health:DATA?.character?.health,healthMax:DATA?.character?.healthMax,stamina:DATA?.character?.stamina,staminaMax:DATA?.character?.staminaMax,credits:DATA?.character?.credits},
   ship:{name:DATA?.ship?.name,class:DATA?.ship?.class,hull:DATA?.ship?.hull,hullMax:DATA?.ship?.hullMax,shields:DATA?.ship?.shields,shieldsMax:DATA?.ship?.shieldsMax,fuel:DATA?.ship?.fuel,fuelMax:DATA?.ship?.fuelMax},
   story:{location:DATA?.story?.location,objective:DATA?.story?.objective,danger:DATA?.story?.danger,turn:DATA?.story?.director?.turn||0},
-  encounter:{active:!!(enc?.active||forcedEncounterPage()),reason:enc?.reason||DATA?.combat?.encounter?.reason||'',objective:enc?.objective||'',source:enc?.source||''},
-  galaxy:{phase:g?.phase||'idle',location:loc?.name||'Unknown Space',route:route?.destinationId||route?.phase||'none'}
+  encounter:{active:!!(enc?.active||forcedEncounterPage()),reason:enc?.reason||DATA?.combat?.encounter?.reason||'',objective:enc?.objective||'',source:enc?.source||'',groundEnemies:typeof liveCombatEnemies==="function"?liveCombatEnemies().length:0,spaceEnemies:typeof liveDogfightEnemies==="function"?liveDogfightEnemies().length:0},
+  galaxy:{phase:g?.phase||'idle',location:loc?.name||'Unknown Space',route:route?.destinationId||route?.phase||'none'},
+  weapon:(DATA?.weapons||[]).find(w=>w.id===selectedCombatWeapon)||(DATA?.weapons||[])[0]||{},
+  npc:(typeof currentStoryVisualNpc==="function"?currentStoryVisualNpc():null),
+  presentation:{shipScene:DATA?.settings?.shipScene||"cockpit",graphics:DATA?.settings?.graphicsQuality||"high"}
  };
 }
 window.getDeadlockRuntimeState=runtimeStateSnapshot;
 function render(page=currentPage){
+ window.DeadlockEngagement?.cleanup();
+ window.DeadlockPolish?.closeViewer();
  const locked=forcedEncounterPage();if(locked&&page!==locked){page=locked;}
- currentPage=page;document.body.dataset.page=page;let activeNav=null;$$('#nav button').forEach(b=>{const active=b.textContent===page;b.classList.toggle("active",active);if(active)activeNav=b});
+ currentPage=page;document.body.dataset.page=page;delete document.body.dataset.sceneTheme;let activeNav=null;$$('#nav button').forEach(b=>{const active=b.textContent===page;b.classList.toggle("active",active);if(active)activeNav=b});
  if(activeNav)requestAnimationFrame(()=>activeNav.scrollIntoView({block:"nearest",inline:"nearest"}));
  $("#title").textContent=page;$("#crumb").textContent=`DEADLOCK // ${page.toUpperCase()}`;
  const content=$("#content");content.classList.remove("page-transition");void content.offsetWidth;content.classList.add("page-transition");
  let key="page"+page.replace(/\s/g,"");content.innerHTML=(window[key]||(()=>`<div class="card">No renderer.</div>`))();wire();enhanceLivingScene(page);
  window.DeadlockGPU?.setEnabled?.(DATA.settings.gpuBackdrop!==false);window.DeadlockGPU?.setPage?.(page);window.DeadlockHUD?.setEnabled?.(DATA.settings.diegeticHud!==false);window.DeadlockHUD?.update?.(page,runtimeStateSnapshot());
- if(AMBIENT?.running)retuneAmbient();
+ window.dispatchEvent(new CustomEvent("deadlock:page-rendered",{detail:{page,state:runtimeStateSnapshot()}}));
+ window.DeadlockPolish?.afterRender(page);window.DeadlockWorld?.afterRender(page);window.DeadlockEngagement?.afterRender(page);window.DeadlockPort?.afterRender(page);window.DeadlockApex?.afterRender(page);
+ if(AMBIENT?.running)retuneAmbient();if(WORLD_AUDIO)retuneWorldAudio();
  setTimeout(()=>content.classList.remove("page-transition"),300)
 }
 function healthControls(key,maxKey,label){
@@ -885,10 +916,10 @@ function pageGalaxy(){
  </div>`
 }
 function pageHQ(){
- const g=galaxyState(),atHome=g.currentLocationId===g.homeId,site=hqSite(g.currentSiteId)||GALAXY.hq.sites[0];
- return `<div class="grid hq-shell"><div class="card full hq-hero"><div class="hq-image">${imgTag(hqSiteAsset(site),site.name,assetEntry("blackglass","hq"),"hq-scene-img")}<div class="hq-ambient"><i></i><i></i><i></i></div></div><div class="hq-copy"><div class="micro">BLACKGLASS STATION // DEADLOCK HQ</div><h2>${esc(site.name)}</h2><div class="cyan">${atHome?"PHYSICAL ACCESS":"REMOTE SECURE LINK"}</div><p>${esc(site.description)}</p><div class="controls">${(site.actions||[]).map(a=>`<button class="btn" data-hq-action="${esc(a)}">${esc(a)}</button>`).join("")}</div></div></div>
+ const g=galaxyState(),atHome=g.currentLocationId===g.homeId&&['docked','surface'].includes(g.phase),site=hqSite(g.currentSiteId)||GALAXY.hq.sites[0];
+ return `<div class="grid hq-shell"><div class="card full hq-hero"><div class="hq-image">${imgTag(hqSiteAsset(site),site.name,assetEntry("blackglass","hq"),"hq-scene-img")}<div class="hq-ambient"><i></i><i></i><i></i></div></div><div class="hq-copy"><div class="micro">BLACKGLASS STATION // APEX HEADQUARTERS</div><h2>${esc(site.name)}</h2><div class="cyan">${atHome?"PHYSICAL ACCESS":"REMOTE SECURE LINK"}</div><p>${esc(site.description)}</p><div class="controls">${(site.actions||[]).map(a=>`<button class="btn" data-hq-action="${esc(a)}">${esc(a)}</button>`).join("")}</div></div></div>
  <div class="card span8"><h3>HQ Spaces</h3><div class="hq-site-grid">${GALAXY.hq.sites.map(x=>`<button class="hq-site ${x.id===site.id?"active":""}" data-hq-site="${x.id}">${imgTag(hqSiteAsset(x),x.name,assetEntry("blackglass","hq"))}<span><b>${esc(x.name)}</b><small>${esc(x.description)}</small></span></button>`).join("")}</div></div>
- <div class="card span4"><h3>Blackglass Status</h3><div class="row"><span class="muted">Home Base</span><b>BLACKGLASS</b></div><div class="row"><span class="muted">Raven</span><b>${atHome?"DOCKED":"AWAY"}</b></div><div class="row"><span class="muted">Active Contracts</span><b>${activeContracts().length}</b></div><div class="row"><span class="muted">Known Systems</span><b>${g.discovered.length}/${GALAXY.locations.length}</b></div><div class="controls">${atHome?'<button class="btn good" onclick="render(\'Ship\')">Board The Raven</button>':'<button class="btn" onclick="galaxyState().selectedLocationId=galaxyState().homeId;save();render(\'Galaxy\')">Plot Course Home</button>'}<button class="btn" onclick="render('Contracts')">Contract Board</button></div><div class="holonet-mini"><div class="small muted">HQ CANON</div><p class="small">Blackglass Station is Deadlock's established headquarters. Interior details are gameplay defaults and remain editable as the campaign develops.</p></div></div></div>`
+ <div class="card span4"><h3>Blackglass Status</h3><div class="row"><span class="muted">Home Base</span><b>BLACKGLASS</b></div><div class="row"><span class="muted">Raven</span><b>${atHome?"DOCKED":"AWAY"}</b></div><div class="row"><span class="muted">Active Contracts</span><b>${activeContracts().length}</b></div><div class="row"><span class="muted">Known Systems</span><b>${g.discovered.length}/${GALAXY.locations.length}</b></div><div class="controls">${atHome?'<button class="btn good" onclick="render(\'Ship\')">Board The Raven</button>':'<button class="btn" onclick="galaxyState().selectedLocationId=galaxyState().homeId;save();render(\'Galaxy\')">Plot Course Home</button>'}<button class="btn" onclick="render('Contracts')">Contract Board</button></div><div class="holonet-mini"><div class="small muted">HQ CANON</div><p class="small">Blackglass Station belongs to The 3.2 Apex Protocol. Its lab, armory, workshop, hangar, defenses and isolated vault are established campaign assets. Open Syndicate for the full record.</p></div></div></div>`
 }
 function pageDogfight(){
  let s=DATA.ship,d=DATA.dogfight;ensureEncounterState();const forced=d.active&&d.forced;
@@ -913,7 +944,7 @@ function pageWeapons(){return `<div class="grid">${DATA.weapons.map(w=>`<div cla
 function pageShip(){
  let s=DATA.ship;
  const node=(id,label,left,top)=>{let x=s.systems.find(q=>q.id===id);return `<button class="schematic-node ${!x?.online?"offline":Number(x?.condition||100)<70?"warn":""}" style="left:${left}%;top:${top}%" data-hotspot="${id}" title="${esc(x?.name||label)}">${label}</button>`};
- return `<div class="grid"><div class="card full"><div class="ship-layout"><div class="raven-hero-frame">${ravenVisual("landed","The Raven in hangar")}<div class="raven-hero-code">RVN // DEADLOCK // CUSTOM HULL</div><div class="raven-hero-label"><div><div class="raven-hero-name">THE RAVEN</div><div class="small cyan">DEADLOCK'S PERSONAL SHIP</div></div><div class="raven-hero-type">LIGHT FREIGHTER / FIGHTER HYBRID<br>BOUNTY RECOVERY CONFIGURATION</div></div></div><div><h3>${s.name}</h3><div class="cyan">${esc(s.class)}</div><p>${esc(s.role)}</p><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="controls"><button class="btn step" data-shipstep="hull:-5">-5</button><button class="btn step" data-shipstep="hull:5">+5</button></div><div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="controls"><button class="btn step" data-shipstep="shields:-5">-5</button><button class="btn step" data-shipstep="shields:5">+5</button></div><div class="row"><span>Fuel</span><b>${s.fuel}/${s.fuelMax}</b></div>${meter(s.fuel,s.fuelMax,statusClass(s.fuel,s.fuelMax))}<div class="controls"><button class="btn step" data-shipstep="fuel:-5">-5</button><button class="btn step" data-shipstep="fuel:5">+5</button></div></div></div></div>
+ return `<div class="grid"><div class="card full ship-interior-selector"><div class="row"><div><div class="micro">THE RAVEN // PHYSICAL INTERIOR</div><h3>Current View: ${esc(String(DATA.settings.shipScene||"cockpit").replace(/_/g," ").toUpperCase())}</h3></div><span class="pill cyan">LIVE SCENE</span></div><div class="ship-room-tabs">${[["cockpit","Cockpit"],["cargo","Cargo Bay"],["engineering","Engineering"],["weapons","Weapons Bench"],["prisoner","Prisoner Area"],["quarters","Living Quarters"]].map(([id,label])=>`<button class="btn ${DATA.settings.shipScene===id?"good":""}" data-ship-scene="${id}">${label}</button>`).join("")}</div></div><div class="card full"><div class="ship-layout"><div class="raven-hero-frame">${ravenVisual("landed","The Raven in hangar")}<div class="raven-hero-code">RVN // DEADLOCK // CUSTOM HULL</div><div class="raven-hero-label"><div><div class="raven-hero-name">THE RAVEN</div><div class="small cyan">DEADLOCK'S PERSONAL SHIP</div></div><div class="raven-hero-type">LIGHT FREIGHTER / FIGHTER HYBRID<br>BOUNTY RECOVERY CONFIGURATION</div></div></div><div><h3>${s.name}</h3><div class="cyan">${esc(s.class)}</div><p>${esc(s.role)}</p><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="controls"><button class="btn step" data-shipstep="hull:-5">-5</button><button class="btn step" data-shipstep="hull:5">+5</button></div><div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="controls"><button class="btn step" data-shipstep="shields:-5">-5</button><button class="btn step" data-shipstep="shields:5">+5</button></div><div class="row"><span>Fuel</span><b>${s.fuel}/${s.fuelMax}</b></div>${meter(s.fuel,s.fuelMax,statusClass(s.fuel,s.fuelMax))}<div class="controls"><button class="btn step" data-shipstep="fuel:-5">-5</button><button class="btn step" data-shipstep="fuel:5">+5</button></div></div></div></div>
  <div class="card span6"><h3>Ship Systems</h3>${s.systems.map(x=>`<div class="system-row ${!x.online?"offline":""}" data-system="${x.id}"><div><b>${esc(x.name)}</b><div class="small">${x.online?"ONLINE":"OFFLINE"} • ${x.condition}%</div></div>${meter(x.condition,100,statusClass(x.condition))}</div>`).join("")}</div>
  <div class="card span6"><h3>Raven Specs</h3>${Object.entries(s.specs).map(([k,v])=>`<div class="row"><span class="muted">${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}</div>
  <div class="card full"><div class="row"><h3>Holographic Diagnostic Schematic</h3><span class="pill cyan">LIVE TELEMETRY</span></div><div class="aurebesh-strip">RAVEN // ⌖ SYS-7 // ⟐ POWER BUS // ⌁ FLIGHT CONTROL // DEADLOCK</div><div class="raven-schematic">${ravenVisual("schematic","The Raven holographic schematic")}<div class="schematic-sweep"></div>
@@ -922,6 +953,7 @@ function pageShip(){
  </div>`
 }
 function contractHTML(c){
+ if(c.id==="v14_signal_in_the_rain")return `<div class="contract"><h3>Signal in the Rain</h3><p>Guided recovery contract · ${esc(c.status)} · 2,400 cr</p><button class="btn" data-contract="${c.id}:story">${c.status==="Completed"?"View mission record":"Continue guided mission"}</button></div>`;
  const st=contractStageInfo(c),active=DATA.story?.activeContractId===c.id,p=Number(c.progress||0),confidence=contractConfidenceLabel(c);
  return `<div class="contract mission-contract ${active?"active-contract":""}"><div class="contract-top"><div><b>${esc(c.title)}</b><div class="small cyan">STAGE ${st.index}/6 // ${esc(st.title)}</div><div class="small muted">${esc(st.goal)}</div></div><div class="reward">${money(c.reward)}</div><div class="${c.status==='Completed'?'good-text':c.status==='Failed'?'danger-text':'cyan'}">${c.status}</div></div>${missionStageStripHTML(c)}<div class="mission-contract-progress"><span>${confidence}</span><b>${p}%</b></div>${meter(p)}<div class="controls">${c.status==="Active"?`<button class="btn ${active?'good':''}" data-contract="${c.id}:track">${active?'TRACKING':'TRACK THIS JOB'}</button>`:""}${p>=100&&c.status==="Active"?`<button class="btn good" data-contract="${c.id}:turnin">TURN IN</button>`:""}<button class="btn" data-contract="${c.id}:story">OPEN IN STORY</button><button class="btn" data-contract="${c.id}:edit">Details</button></div></div>`
 }
@@ -938,8 +970,8 @@ function pageGMControls(){
  <div class="card full"><h3>Raw Campaign Data</h3><p class="muted">Advanced: edit the entire save. This is the fastest way to change anything the UI does not expose yet.</p><button class="btn" id="rawEdit">Open Raw JSON Editor</button></div></div>`
 }
 function pageSettings(){return `<div class="grid"><div class="card span6"><h3>Android / PWA</h3><p>This build is installable as a Progressive Web App when served over HTTPS. On Android Chrome, use <b>Install App</b> or <b>Add to Home screen</b>.</p><div class="controls"><button class="btn" id="installSettings">Install App</button><button class="btn" id="wakeSettings">Keep Screen Awake</button></div></div>
- <div class="card span6"><h3>Interface / Renderer</h3><div class="row"><span>Compact mode</span><input id="compactToggle" type="checkbox" ${DATA.settings.compact?'checked':''} style="width:auto"></div><div class="row"><span>Animations</span><input id="animToggle" type="checkbox" ${DATA.settings.animations!==false?'checked':''} style="width:auto"></div><div class="row"><span>GPU cinematic backdrop</span><input id="gpuToggle" type="checkbox" ${DATA.settings.gpuBackdrop!==false?'checked':''} style="width:auto"></div><div class="row"><span>Diegetic game HUD</span><input id="hudToggle" type="checkbox" ${DATA.settings.diegeticHud!==false?'checked':''} style="width:auto"></div><div class="field"><label>Graphics profile</label><select id="graphicsQuality"><option value="performance" ${DATA.settings.graphicsQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${DATA.settings.graphicsQuality==='balanced'?'selected':''}>Balanced</option><option value="high" ${DATA.settings.graphicsQuality!=='performance'&&DATA.settings.graphicsQuality!=='balanced'?'selected':''}>High</option></select></div><div class="row"><span>Fold Optimization</span><input id="foldToggle" type="checkbox" ${DATA.settings.foldOptimization!==false?'checked':''} style="width:auto"></div><div class="field"><label>Center-crease gutter (px)</label><input id="hingeGutterInput" type="number" min="12" max="48" value="${Number(DATA.settings.hingeGutter||22)}"></div><div class="small muted">v12 keeps game logic separate from presentation. GPU/HUD options can be disabled without affecting saves, combat, story, or galaxy state.</div></div>
- <div class="card span6 audio-settings"><h3>Audio</h3><div class="row"><span>Master sound</span><input id="soundToggle" type="checkbox" ${uiSound?'checked':''} style="width:auto"></div><div class="row"><span>Cinematic orchestral score</span><input id="musicToggle" type="checkbox" ${DATA.settings.music!==false?'checked':''} style="width:auto"></div><div class="field"><label>Music volume <span id="musicVolumeLabel">${Number(DATA.settings.musicVolume??55)}%</span></label><input id="musicVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.musicVolume??55)}"></div><div class="row"><span>NPC spoken dialogue</span><input id="voiceToggle" type="checkbox" ${DATA.settings.characterVoices!==false?'checked':''} style="width:auto"></div><div class="field"><label>Voice volume <span id="voiceVolumeLabel">${Number(DATA.settings.voiceVolume??78)}%</span></label><input id="voiceVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.voiceVolume??78)}"></div><div class="controls"><button class="btn" id="testNpcVoice">Test Dren Voice</button></div><div class="small muted">Dialogue uses your device's installed text-to-speech voices. Offline speech depends on having an Android TTS voice downloaded; the procedural orchestral score itself needs no network or audio files.</div></div>
+ <div class="card span6"><h3>Interface / Renderer</h3><div class="row"><span>Compact mode</span><input id="compactToggle" type="checkbox" ${DATA.settings.compact?'checked':''} style="width:auto"></div><div class="row"><span>Animations</span><input id="animToggle" type="checkbox" ${DATA.settings.animations!==false?'checked':''} style="width:auto"></div><div class="row"><span>GPU cinematic backdrop</span><input id="gpuToggle" type="checkbox" ${DATA.settings.gpuBackdrop!==false?'checked':''} style="width:auto"></div><div class="row"><span>Diegetic game HUD</span><input id="hudToggle" type="checkbox" ${DATA.settings.diegeticHud!==false?'checked':''} style="width:auto"></div><div class="row"><span>Cinematic travel / encounter sequences</span><input id="cinematicToggle" type="checkbox" ${DATA.settings.cinematicSequences!==false?'checked':''} style="width:auto"></div><div class="row"><span>Living character rigs</span><input id="actorRigToggle" type="checkbox" ${DATA.settings.actorRigs!==false?'checked':''} style="width:auto"></div><div class="row"><span>Environmental weather / particles</span><input id="worldFxToggle" type="checkbox" ${DATA.settings.worldFx!==false?'checked':''} style="width:auto"></div><div class="field"><label>Graphics profile</label><select id="graphicsQuality"><option value="performance" ${DATA.settings.graphicsQuality==='performance'?'selected':''}>Performance</option><option value="balanced" ${DATA.settings.graphicsQuality==='balanced'?'selected':''}>Balanced</option><option value="high" ${DATA.settings.graphicsQuality!=='performance'&&DATA.settings.graphicsQuality!=='balanced'?'selected':''}>High</option></select></div><div class="row"><span>Fold Optimization</span><input id="foldToggle" type="checkbox" ${DATA.settings.foldOptimization!==false?'checked':''} style="width:auto"></div><div class="field"><label>Center-crease gutter (px)</label><input id="hingeGutterInput" type="number" min="12" max="48" value="${Number(DATA.settings.hingeGutter||22)}"></div><div class="small muted">v13 keeps game logic separate from presentation. Cinematics, actor rigs, environmental FX, GPU, and HUD layers can be disabled without affecting saves, combat, story, or galaxy state.</div></div>
+ <div class="card span6 audio-settings"><h3>Audio</h3><div class="row"><span>Master sound</span><input id="soundToggle" type="checkbox" ${uiSound?'checked':''} style="width:auto"></div><div class="row"><span>Cinematic orchestral score</span><input id="musicToggle" type="checkbox" ${DATA.settings.music!==false?'checked':''} style="width:auto"></div><div class="field"><label>Music volume <span id="musicVolumeLabel">${Number(DATA.settings.musicVolume??55)}%</span></label><input id="musicVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.musicVolume??55)}"></div><div class="row"><span>Environmental audio / effects</span><input id="worldAudioToggle" type="checkbox" ${DATA.settings.worldAudio!==false?'checked':''} style="width:auto"></div><div class="field"><label>Effects volume <span id="effectsVolumeLabel">${Number(DATA.settings.effectsVolume??42)}%</span></label><input id="effectsVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.effectsVolume??42)}"></div><div class="row"><span>NPC spoken dialogue</span><input id="voiceToggle" type="checkbox" ${DATA.settings.characterVoices!==false?'checked':''} style="width:auto"></div><div class="field"><label>Voice volume <span id="voiceVolumeLabel">${Number(DATA.settings.voiceVolume??78)}%</span></label><input id="voiceVolumeInput" type="range" min="0" max="100" step="1" value="${Number(DATA.settings.voiceVolume??78)}"></div><div class="controls"><button class="btn" id="testNpcVoice">Test Dren Voice</button></div><div class="small muted">Dialogue uses your device's installed text-to-speech voices. Offline speech depends on having an Android TTS voice downloaded; the procedural orchestral score itself needs no network or audio files.</div></div>
  <div class="card full"><h3>Data</h3><p class="muted">Campaign state auto-saves locally. Export a JSON backup before major changes.</p><div class="controls"><button class="btn" id="saveNow">Save Now</button><button class="btn warn" id="resetData">Reset Included Data</button></div></div></div>`}
 
 function roll(sides=20,count=1,mod=0){let rolls=Array.from({length:count},()=>rollDie(sides)),total=rolls.reduce((a,b)=>a+b,0)+mod;diceHistory.unshift({sides,count,mod,rolls,total,time:new Date().toLocaleTimeString()});diceHistory=diceHistory.slice(0,25);return {rolls,total}}
@@ -958,6 +990,7 @@ function wire(){
  $$("[data-local-action]").forEach(b=>b.onclick=()=>performLocalAction(b.dataset.localAction));
  $$("[data-hq-site]").forEach(b=>b.onclick=()=>handleHqSite(b.dataset.hqSite));
  $$("[data-hq-action]").forEach(b=>b.onclick=()=>handleHqAction(b.dataset.hqAction));
+ $$("[data-ship-scene]").forEach(b=>b.onclick=()=>{DATA.settings.shipScene=b.dataset.shipScene;save();render("Ship")});
  $$("[data-world-site]").forEach(b=>b.onclick=()=>startLocalSite(b.dataset.worldSite));
  $$("[data-world-service]").forEach(b=>b.onclick=()=>handleWorldService(b.dataset.worldService));
 
@@ -1006,6 +1039,9 @@ function wire(){
  if($("#animToggle"))$("#animToggle").onchange=e=>{DATA.settings.animations=e.target.checked;document.body.classList.toggle("no-anim",!e.target.checked);save()};
  if($("#gpuToggle"))$("#gpuToggle").onchange=e=>{DATA.settings.gpuBackdrop=e.target.checked;window.DeadlockGPU?.setEnabled?.(e.target.checked);save()};
  if($("#hudToggle"))$("#hudToggle").onchange=e=>{DATA.settings.diegeticHud=e.target.checked;window.DeadlockHUD?.setEnabled?.(e.target.checked);save();render()};
+ if($("#cinematicToggle"))$("#cinematicToggle").onchange=e=>{DATA.settings.cinematicSequences=e.target.checked;save()};
+ if($("#actorRigToggle"))$("#actorRigToggle").onchange=e=>{DATA.settings.actorRigs=e.target.checked;save();render()};
+ if($("#worldFxToggle"))$("#worldFxToggle").onchange=e=>{DATA.settings.worldFx=e.target.checked;save();render()};
  if($("#graphicsQuality"))$("#graphicsQuality").onchange=e=>{DATA.settings.graphicsQuality=e.target.value;document.body.dataset.graphics=e.target.value;save();toast(`Graphics: ${e.target.value}`)};
  if($("#soundToggle"))$("#soundToggle").onchange=e=>{uiSound=e.target.checked;DATA.settings.sound=uiSound;$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;save();syncAudioState()};
  if($("#musicToggle"))$("#musicToggle").onchange=e=>{DATA.settings.music=e.target.checked;save();syncAudioState()};
@@ -1042,6 +1078,14 @@ function weaponAttack(id,targetId=null){
  let w=DATA.weapons.find(x=>x.id===id),c=DATA.combat,enemies=liveCombatEnemies();if(!enemies.length)return toast("No hostile combatants");
  const current=c.participants[c.turnIndex];if(c.active&&current?.id!=="rovan")return toast("Wait for Rovan's turn");
  let target=c.participants.find(x=>x.id===(targetId||selectedCombatTarget))||enemies[0],natural=rollDie(20),attack=natural+skillBonus("Marksmanship")+Number(w.combat.attackMod||0),def=Number(target.defense||11),dmg=parseDice(w.combat.damage),isCrit=natural===20,hit=isCrit||attack>=def;
+ if(c.forced){
+  const damage=hit?dmg.total*(isCrit?2:1):0;
+  sceneActionFx("player-shot",w.id);weaponSound(w.id);
+  if(hit){target.hp=clamp(target.hp-damage,0,target.hpMax);sceneActionFx("hit");floatNumber("-"+damage,"damage");if(isCrit)criticalFx();}
+  logCombat(`${w.name}: ${attack} vs DEF ${def} — ${hit?`${isCrit?"CRITICAL ":""}HIT for ${damage}`:"MISS"}.`);
+  toast(hit?`${w.name}: ${damage} damage to ${target.name}`:`${w.name} misses — turn spent`);
+  save();if(checkCombatResolution())return;advanceCombatTurn();render("Combat");return;
+ }
  sceneActionFx("player-shot",w.id);if(isCrit){criticalFx();addNotification(`CRITICAL opportunity with ${w.name} against ${target.name}.`,"warn")}
  openModal(`${w.name} // ${isCrit?"CRITICAL ":""}${hit?"HIT":"MISS"}`, `<div class="big-number">${attack}</div><p>Attack roll against <b>${esc(target.name)}</b> // DEF <b>${def}</b>.</p><p>${hit?`Damage roll: <b>${dmg.total}</b> (${esc(w.combat.damage)})`:'<b class="danger-text">The shot misses. The turn is spent.</b>'}</p><div class="field"><label>Target</label><select id="attackTarget">${enemies.map(e=>`<option value="${e.id}" ${e.id===target.id?"selected":""}>${esc(e.name)}</option>`).join("")}</select></div><div class="controls">${hit?`<button class="btn good" id="applyAttackDamage">Apply ${dmg.total} Damage</button>${isCrit?`<button class="btn warn" id="applyCritDamage">Apply Critical ×2 (${dmg.total*2})</button>`:""}`:'<button class="btn" id="finishMiss">Continue</button>'}</div><p class="small muted">${esc(w.combat.note||"")}</p>`);
  setTimeout(()=>{
@@ -1066,6 +1110,7 @@ function dogCommand(cmd){
 function dogEnemyAction(spec){let[id,act]=spec.split(":"),e=DATA.dogfight.enemies.find(x=>x.id===id);if(!e)return;if(act==="remove"){DATA.dogfight.enemies=DATA.dogfight.enemies.filter(x=>x.id!==id);save();return render()}if(act==="damage"){openModal(`Damage ${e.name}`,`<div class="field"><label>Damage</label><input id="shipDmg" type="number" value="10"></div><button class="btn" id="applyShipDmg">Apply</button>`);setTimeout(()=>$("#applyShipDmg").onclick=()=>{e.hp=clamp(e.hp-Number($("#shipDmg").value||0),0,e.hpMax);save();$("#modal").close();render()},0)}}
 function handleContract(spec){
  let[id,act]=spec.split(":"),c=DATA.contracts.find(x=>x.id===id);if(!c)return;
+ if(id==="v14_signal_in_the_rain")return render("First Flight");
  if(act==="track"){setActiveContract(c);DATA.story.objective=contractStageInfo(c).goal;DATA.story.choices=missionChoices(c);save();toast(`Tracking ${c.title}`);return render("Contracts")}
  if(act==="story"){setActiveContract(c);DATA.story.objective=contractStageInfo(c).goal;DATA.story.choices=missionChoices(c);save();return render("Story")}
  if(act==="turnin"){turnInContract(c);save();return render("Story")}
@@ -1115,7 +1160,7 @@ $("#installBtn").onclick=triggerInstall;$("#wakeBtn").onclick=toggleWake;
 $("#quickRoll").onclick=()=>{let r=roll(20,1,0);toast(`d20: ${r.total}`);if(currentPage==="Dice")render("Dice")};
 $("#exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(DATA,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="deadlock-campaign-save-v3.json";a.click();URL.revokeObjectURL(a.href)};
 $("#importBtn").onclick=()=>$("#importFile").click();
-$("#importFile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=async()=>{try{let imported=JSON.parse(r.result);let defaults=await fetch("character-data.json").then(x=>x.json());DATA=migrateOfflineData(imported,defaults);save();render("Overview");toast("Campaign save imported + upgraded for offline play")}catch(err){alert("Invalid JSON save file.")}};r.readAsText(f)};
+$("#importFile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=async()=>{try{let imported=JSON.parse(r.result);if(!validCampaignSave(imported))throw new Error("Not a campaign save");let defaults=await fetch("character-data.json").then(x=>x.json());const upgraded=migrateOfflineData(imported,defaults);DATA=upgraded;ensureGalaxyState();ensureMissionLoopState();ensureEncounterState();save();render("Overview");if(DATA.combat?.active&&DATA.combat.forced)setTimeout(autoEnemyTurns,150);toast("Campaign save imported + upgraded for offline play")}catch(err){alert("Invalid JSON save file.")}};r.readAsText(f)};
 document.addEventListener("visibilitychange",async()=>{
  if(document.visibilityState==="visible"){
   if(wakeLock){try{wakeLock=await navigator.wakeLock.request("screen")}catch(e){}}
@@ -1160,7 +1205,7 @@ document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement
 
 $("#soundBtn").onclick=()=>{uiSound=!uiSound;if(DATA?.settings)DATA.settings.sound=uiSound;$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;if(uiSound){unlockGameAudio();uiBeep(560,.06,.025)}syncAudioState();save()};
 
-load();
+load().catch(()=>{document.getElementById("content").innerHTML='<div class="card"><h3>Unable to load the game</h3><p>Check your connection for the first launch, then reload. Your saved campaign has not been reset.</p><button class="btn" onclick="location.reload()">Retry</button></div>';});
 function storyNpc(id){
  return (DATA.story?.npcs||[]).find(x=>x.id===id) || DATA.contacts.find(x=>x.id===id) || null;
 }
@@ -1398,7 +1443,7 @@ async function aiStoryGenerate(action="",choice=null){
   const endpoint=(DATA.story.aiEndpoint||"/api/story").trim();
   const response=await fetch(endpoint,{
    method:"POST",headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({state:{character:DATA.character,weapons:DATA.weapons,ship:DATA.ship,contracts:DATA.contracts,contacts:DATA.contacts,targets:DATA.targets,story:{location:DATA.story.location,objective:DATA.story.objective,danger:DATA.story.danger,campaignMemory:DATA.story.campaignMemory,recentHistory:DATA.story.history.slice(-18)}},action,choice,pendingRoll:DATA.story.pendingRoll})
+   body:JSON.stringify({state:{character:DATA.character,weapons:DATA.weapons,ship:DATA.ship,syndicate:DATA.apex,contracts:DATA.contracts,contacts:DATA.contacts,targets:DATA.targets,story:{location:DATA.story.location,objective:DATA.story.objective,danger:DATA.story.danger,campaignMemory:DATA.story.campaignMemory,recentHistory:DATA.story.history.slice(-18)}},action,choice,pendingRoll:DATA.story.pendingRoll})
   });
   if(!response.ok)throw new Error(`Bridge ${response.status}`);
   applyOfflineAiResponse(await response.json());
@@ -1637,6 +1682,7 @@ function resolveContractEncounter(contract,choice,roll){
 }
 function turnInContract(contract){
  if(!contract)return false;
+ if(contract.id==="v14_signal_in_the_rain"){toast("Complete the handoff in First Flight.");return false;}
  if(Number(contract.progress||0)<100){const st=contractStageInfo(contract);storyPush("system","Mission Guidance",`Turn-in is locked. ${st.goal}`);DATA.story.objective=st.goal;DATA.story.choices=missionChoices(contract);return false}
  if(contract.status==="Completed")return true;
  contract.status="Completed";contract.progress=100;DATA.character.credits+=Number(contract.reward||0);
@@ -2474,11 +2520,12 @@ function sceneLocationId(){
  return g?.currentLocationId||g?.homeId||"blackglass_station";
 }
 function scenePresetFor(page){
+ const district=DATA.exploration?.current;if(page==="Story"&&district?.locationId==="veyra_prime"&&DATA.story.location.includes(district.name)){const key={"Upper City":"veyra_upper","Corporate District":"veyra_upper","Undercity":"veyra_undercity","Lower Port":"urban","Orbital Ring":"cockpit"}[district.name];if(key)return key;}
  const g=galaxyState?.(),locId=sceneLocationId(),theme=SCENES?.locationThemes?.[locId]||"unknown";
- if(page==="HQ")return "blackglass";
+ if(page==="HQ"){const site=galaxyState?.()?.currentSiteId||"blackglass_hq";return SCENES?.blackglassSitePresets?.[site]||"blackglass"}
  if(page==="Combat")return "combat";
  if(page==="Dogfight")return "orbit";
- if(page==="Ship")return "cockpit";
+ if(page==="Ship"){const room=DATA?.settings?.shipScene||"cockpit";return SCENES?.ravenInteriorPresets?.[room]||"cockpit"}
  if(page==="Galaxy"&&g?.phase==="transit")return "cockpit";
  if(page==="Galaxy"&&g?.phase==="orbit")return "orbit";
  if(page==="Story"){
@@ -2491,8 +2538,8 @@ function sceneContext(page){
  const presetId=scenePresetFor(page),preset=SCENES?.presets?.[presetId]||SCENES?.presets?.unknown||{};
  const g=galaxyState?.(),loc=galaxyLocation?.(sceneLocationId()),npc=currentStoryVisualNpc?.();
  let title=loc?.name||DATA?.story?.location||"Deadlock Reach",sub="LIVING SCENE";
- if(page==="HQ"){title="Blackglass Station";sub="DEADLOCK HQ // COMMAND DECK"}
- if(page==="Ship"){title="The Raven";sub="COCKPIT // LIVE FLIGHT DECK"}
+ if(page==="HQ"){const site=hqSite?.(g?.currentSiteId)||hqSite?.("blackglass_hq");title=site?.name||"Blackglass Station";sub=`DEADLOCK HQ // ${String(preset.room||"COMMAND").toUpperCase()}`}
+ if(page==="Ship"){title="The Raven";sub=`INTERIOR // ${String(preset.room||"COCKPIT").toUpperCase()}`}
  if(page==="Combat"){title=DATA?.combat?.reason||"Hostile Contact";sub="GROUND ENCOUNTER // LIVE"}
  if(page==="Dogfight"){title=DATA?.dogfight?.reason||"The Raven";sub="SPACE COMBAT // LIVE"}
  if(page==="Galaxy"&&g?.phase==="transit"){title="Hyperspace Transit";sub=`ROUTE // ${g?.transit?.progress||0}%`}
@@ -2520,11 +2567,27 @@ function sceneMoodClass(npc){
 function actorMarkup(id,side,state="neutral",label="",mood="mood-neutral"){
  const src=sceneActorAsset(id,state),fallback=assetFallback("characters",id==="kade"?"nera":id)||sceneActorAsset(id,"neutral");
  const injury=id==="rovan"&&Number(DATA?.character?.health||100)<=Math.max(1,Number(DATA?.character?.healthMax||100)*.35)?" actor-injured":"";
- return `<div class="scene-actor actor-${side} ${esc(mood)}${injury}" data-scene-actor="${esc(id)}"><div class="actor-shadow"></div><img src="${esc(src)}" alt="${esc(label||id)}" ${fallback&&fallback!==src?`onerror="this.onerror=null;this.src='${esc(fallback)}'"`:""}><div class="actor-rim"></div><div class="actor-breath"></div></div>`;
+ const interactive=side==="right"&&id!=="rovan"?` data-scene-contact="${esc(id)}" role="button" tabindex="0" aria-label="Interact with ${esc(label||id)}"`:"";
+ return `<div class="scene-actor actor-${side} ${esc(mood)}${injury}" data-scene-actor="${esc(id)}"${interactive}><div class="actor-shadow"></div><img src="${esc(src)}" alt="${esc(label||id)}" ${fallback&&fallback!==src?`onerror="this.onerror=null;this.src='${esc(fallback)}'"`:""}><div class="actor-rim"></div><div class="actor-breath"></div></div>`;
 }
 function sceneTraffic(count=3){return Array.from({length:count},(_,i)=>`<i class="scene-ship ship-${i%4}" style="--lane:${i};--delay:${-(i*2.7)}s"></i>`).join("")}
 function sceneParticles(count=18,theme="hq"){return Array.from({length:count},(_,i)=>`<i class="scene-particle p-${i%6}" style="--i:${i};--x:${(i*37)%101};--y:${(i*61)%97};--delay:${-(i*.41)}s"></i>`).join("")}
 function sceneCrowd(count=4){return `<div class="scene-crowd">${Array.from({length:count},(_,i)=>`<i style="--i:${i};--delay:${-(i*1.7)}s"></i>`).join("")}</div>`}
+function sceneHotspots(ctx){
+ const id=ctx.presetId;let spots=[];
+ if(id==="blackglass")spots=[["Galaxy","HOLO TABLE",50,58],["Holonet","COMMS",20,36],["Contracts","CONTRACT NET",82,42]];
+ if(id==="blackglass_briefing")spots=[["Contracts","MISSION FILES",33,43],["Targets","TARGET DOSSIERS",68,43],["Galaxy","TACTICAL MAP",50,62]];
+ if(id==="blackglass_hangar")spots=[["Ship","THE RAVEN",50,53],["Galaxy","DEPARTURE CONTROL",79,34],["Weapons","BENCH ACCESS",22,58]];
+ if(id==="blackglass_quarters")spots=[["Journal","JOURNAL",72,41],["Gear","GEAR LOCKER",27,47],["Identities","IDENTITIES",76,62]];
+ if(id==="blackglass_contracts")spots=[["Contracts","ACTIVE WORK",31,38],["Bounties","BOUNTY NET",51,38],["Targets","DOSSIERS",72,38]];
+ if(id==="cockpit")spots=[["Galaxy","NAVCOM",50,64],["Dogfight","FLIGHT HUD",79,47],["Ship","SYSTEMS",20,52]];
+ if(id==="raven_cargo")spots=[["Inventory","CARGO MANIFEST",50,58],["Gear","FIELD KIT",22,48]];
+ if(id==="raven_engineering")spots=[["Ship","POWER CORE",50,46],["Ship","DIAGNOSTICS",79,48]];
+ if(id==="raven_weapons")spots=[["Weapons","WEAPON BENCH",50,52],["Combat","TACTICAL LOADOUT",79,40]];
+ if(id==="raven_prisoner")spots=[["Targets","PRISONER DOSSIER",50,48],["Contracts","RECOVERY JOBS",78,55]];
+ if(id==="raven_quarters")spots=[["Journal","JOURNAL",73,42],["Gear","GEAR",27,49]];
+ return spots.map(([page,label,x,y])=>`<button type="button" class="scene-hotspot" data-scene-page-link="${esc(page)}" style="--hx:${x}%;--hy:${y}%"><i></i><span>${esc(label)}</span></button>`).join("");
+}
 function livingSceneMarkup(ctx){
  const p=ctx.preset||{},page=ctx.page,theme=p.theme||ctx.presetId;
  const recent=[...(DATA?.story?.history||[])].reverse().find(h=>h.type==="dialogue");
@@ -2537,8 +2600,12 @@ function livingSceneMarkup(ctx){
  else if(page==="Combat")actors.push(actorMarkup("rovan","left","focused","Rovan Kes","mood-neutral"));
  else if(page==="Ship"||page==="Galaxy"&&ctx.presetId==="cockpit")actors.push(actorMarkup("rovan","left","focused","Rovan Kes","mood-neutral"));
  const danger=clamp(Number(DATA?.story?.danger||0),0,100);
- const groundEnemyCount=page==="Combat"?Math.max(1,Math.min(5,(typeof liveCombatEnemies==="function"?liveCombatEnemies().length:0)||3)):0;
- const dogEnemyCount=page==="Dogfight"?Math.max(1,Math.min(5,(typeof liveDogfightEnemies==="function"?liveDogfightEnemies().length:0)||3)):0;
+ const groundEnemies=page==="Combat"&&typeof liveCombatEnemies==="function"?liveCombatEnemies().slice(0,5):[];
+ const groundEnemyCount=page==="Combat"?Math.max(1,groundEnemies.length||3):0;
+ const dogEnemies=page==="Dogfight"&&typeof liveDogfightEnemies==="function"?liveDogfightEnemies().slice(0,5):[];
+ const dogEnemyCount=page==="Dogfight"?Math.max(1,dogEnemies.length||3):0;
+ const groundEnemyMarkup=groundEnemies.length?groundEnemies.map((e,i)=>`<button class="scene-enemy-unit ${e.id===selectedCombatTarget?"targeted":""}" data-scene-enemy-target="${esc(e.id)}" style="--slot:${i}"><i></i><span>${esc(e.name)}</span><b><em style="width:${clamp(Number(e.hp||0)/Math.max(1,Number(e.hpMax||1))*100,0,100)}%"></em></b></button>`).join(""):Array.from({length:groundEnemyCount},(_,i)=>`<i class="scene-enemy-placeholder" style="--slot:${i}"></i>`).join("");
+ const dogEnemyMarkup=dogEnemies.length?dogEnemies.map((e,i)=>`<i class="scene-fighter-unit" data-fighter-id="${esc(e.id)}" style="--slot:${i};--hp:${clamp(Number(e.hp||0)/Math.max(1,Number(e.hpMax||1))*100,0,100)}"><b>${esc(e.name)}</b></i>`).join(""):Array.from({length:dogEnemyCount},(_,i)=>`<i class="scene-fighter-unit" style="--slot:${i}"></i>`).join("");
  const inTransit=page==="Galaxy"&&galaxyState?.()?.phase==="transit";
  return `<section class="living-scene theme-${esc(theme)} camera-${esc(p.camera||"slow")} ${danger>=75?"scene-high-danger":""} ${inTransit?"scene-transit":""}" data-living-scene data-scene-page="${esc(page)}" data-scene-preset="${esc(ctx.presetId)}">
   <div class="scene-camera">
@@ -2549,28 +2616,31 @@ function livingSceneMarkup(ctx){
     <div class="scene-atmosphere">${sceneParticles(Number(p.particles||12),theme)}</div>
     ${theme==="hq"?'<div class="scene-holo-table"><i></i><b></b><em></em></div><div class="scene-window-reflection"></div>':""}
     ${theme==="cockpit"?'<div class="scene-cockpit-glass"></div><div class="scene-instruments"><i></i><i></i><i></i><i></i><i></i></div>':""}
-    ${theme==="combat"?`<div class="scene-cover cover-a"></div><div class="scene-cover cover-b"></div><div class="scene-enemies">${Array.from({length:groundEnemyCount},()=>"<i></i>").join("")}</div>`:""}
-    ${page==="Dogfight"?`<div class="scene-raven-flight"><img src="assets/raven_dedicated.jpg" alt="The Raven"></div><div class="scene-enemy-fighters">${Array.from({length:dogEnemyCount},()=>"<i></i>").join("")}</div>`:""}
+    ${theme==="combat"?`<div class="scene-cover cover-a"></div><div class="scene-cover cover-b"></div><div class="scene-enemies">${groundEnemyMarkup}</div>`:""}
+    ${page==="Dogfight"?`<div class="scene-raven-flight"><img src="assets/ships/raven_cutout_v15.svg" alt="The Raven"></div><div class="scene-enemy-fighters">${dogEnemyMarkup}</div>`:""}
     ${inTransit?`<div class="scene-hyperspace">${Array.from({length:28},(_,i)=>`<i style="--i:${i};--a:${(i*47)%360}deg;--delay:${-(i*.11)}s"></i>`).join("")}</div>`:""}
     ${page==="Galaxy"&&ctx.presetId==="orbit"?'<div class="scene-orbit-raven"><img src="assets/raven_dedicated.jpg" alt="The Raven in orbit"></div>':""}
     ${sceneCrowd(Number(p.crowd||0))}
     <div class="scene-actors">${actors.join("")}</div>
+    <div class="scene-interactives">${sceneHotspots(ctx)}</div>
     <div class="scene-light-sweep"></div><div class="scene-vignette"></div>
     <div class="scene-muzzle muzzle-player"></div><div class="scene-muzzle muzzle-enemy"></div><div class="scene-hit-flash"></div>
    </div>
   </div>
-  <div class="scene-livebar"><div><span class="scene-live-dot"></span><b>${esc(ctx.title)}</b><small>${esc(ctx.sub)}</small></div><div class="scene-live-actions"><span>${danger}% THREAT</span><button class="scene-cinema-btn" type="button" data-scene-cinema>EXPAND</button></div></div>
+  <div class="scene-livebar"><div><span class="scene-live-dot"></span><b>${esc(ctx.title)}</b><small>${esc(ctx.sub)}</small></div><div class="scene-live-actions"><button class="scene-cinema-btn" type="button" data-scene-cinema>EXPAND</button></div></div>
  </section>`;
 }
 function enhanceLivingScene(page){
  if(!SCENES||!DATA)return;
  const allowed=["Story","HQ","Galaxy","Ship","Combat","Dogfight"];
  if(!allowed.includes(page))return stopSceneRuntime();
- const content=$("#content"),ctx=sceneContext(page);if(!content||!ctx)return;
+ const content=$("#content"),ctx=sceneContext(page);if(!content||!ctx)return;document.body.dataset.sceneTheme=ctx.preset?.theme||ctx.presetId||'unknown';
  const wrap=document.createElement("div");wrap.className="living-scene-card";wrap.innerHTML=livingSceneMarkup(ctx);
  if(page==="Story")content.querySelector(".story-topbar")?.after(wrap);
  else {if(page==="HQ")content.querySelector(".hq-shell")?.classList.add("scene-enhanced");const root=content.firstElementChild; if(root)root.insertBefore(wrap,root.firstChild); else content.prepend(wrap)}
- startSceneRuntime(wrap.querySelector("[data-living-scene]"));
+ const liveScene=wrap.querySelector("[data-living-scene]");startSceneRuntime(liveScene);
+ if(DATA.settings.worldFx!==false&&DATA.settings.animations!==false&&!matchMedia('(prefers-reduced-motion: reduce)').matches)window.DeadlockWorldFX?.attach?.(liveScene,ctx.preset);else window.DeadlockWorldFX?.detach?.();
+ if(DATA.settings.actorRigs!==false)window.DeadlockActors?.sync?.();
  const recent=[...(DATA.story?.history||[])].reverse().find(h=>h.type==="dialogue");
  if(recent&&Date.now()-Number(SCENE_LAST_DIALOGUE.at||0)<7000){const id=speakerNpcId(recent.speaker);if(id){setSceneSpeaker(id,true);setTimeout(()=>setSceneSpeaker(id,false),1800)}}
 }
@@ -2578,16 +2648,20 @@ function startSceneRuntime(el){
  stopSceneRuntime(false);SCENE_RUNTIME.el=el;if(!el)return;
  const move=e=>{const r=el.getBoundingClientRect(),x=((e.clientX-r.left)/Math.max(1,r.width)-.5),y=((e.clientY-r.top)/Math.max(1,r.height)-.5);SCENE_RUNTIME.pointerX=x;SCENE_RUNTIME.pointerY=y;el.style.setProperty("--px",x.toFixed(3));el.style.setProperty("--py",y.toFixed(3))};
  el.addEventListener("pointermove",move,{passive:true});
- el.querySelector("[data-scene-cinema]")?.addEventListener("click",()=>{el.classList.toggle("scene-cinema");document.body.classList.toggle("scene-cinema-open",el.classList.contains("scene-cinema"));el.querySelector("[data-scene-cinema]").textContent=el.classList.contains("scene-cinema")?"CLOSE":"EXPAND"});
+ el.querySelector("[data-scene-cinema]")?.addEventListener("click",()=>window.DeadlockPolish?.openViewer(el));
+ el.querySelectorAll("[data-scene-enemy-target]").forEach(b=>b.addEventListener("click",()=>{selectedCombatTarget=b.dataset.sceneEnemyTarget;window.DeadlockActors?.react?.("rovan","notice");render("Combat")}));
+ el.querySelectorAll("[data-scene-page-link]").forEach(b=>b.addEventListener("click",()=>{window.DeadlockNative?.impact?.("light").catch?.(()=>{});gameSfx('door',.55);render(b.dataset.scenePageLink)}));
+ el.querySelectorAll("[data-scene-contact]").forEach(actor=>{const engage=()=>{const id=actor.dataset.sceneContact,n=storyNpc(id);if(n&&currentPage==="Story"){DATA.story.currentNpc=id;DATA.story.currentSpeaker=n.name;window.DeadlockActors?.react?.(id,"notice");window.DeadlockNative?.impact?.("light").catch?.(()=>{});gameSfx("ui",.35);toast(`${n.name} has your attention.`);setTimeout(()=>$("#storyInput")?.focus(),40)}};actor.addEventListener("click",engage);actor.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();engage()}})});
  const loop=()=>{if(!SCENE_RUNTIME.el||!document.body.contains(SCENE_RUNTIME.el))return;const t=performance.now()/1000;el.style.setProperty("--scene-time",t.toFixed(2));SCENE_RUNTIME.raf=requestAnimationFrame(loop)};SCENE_RUNTIME.raf=requestAnimationFrame(loop);
 }
-function stopSceneRuntime(clear=true){if(SCENE_RUNTIME.raf)cancelAnimationFrame(SCENE_RUNTIME.raf);SCENE_RUNTIME.raf=0;if(clear)SCENE_RUNTIME.el=null;document.body.classList.remove("scene-cinema-open")}
+function stopSceneRuntime(clear=true){if(SCENE_RUNTIME.raf)cancelAnimationFrame(SCENE_RUNTIME.raf);SCENE_RUNTIME.raf=0;if(clear)SCENE_RUNTIME.el=null;window.DeadlockWorldFX?.detach?.();document.body.classList.remove("scene-cinema-open")}
 function setSceneSpeaker(id,on=true){
  if(!id)return;const el=document.querySelector(`[data-scene-actor="${CSS.escape(id)}"]`)||document.querySelector(`[data-scene-actor="${CSS.escape(id==="nera"?"kade":id)}"]`);if(!el)return;
- el.classList.toggle("speaking",!!on);el.closest("[data-living-scene]")?.classList.toggle("scene-dialogue-active",!!on);
+ el.classList.toggle("speaking",!!on);el.closest("[data-living-scene]")?.classList.toggle("scene-dialogue-active",!!on);window.DeadlockActors?.setSpeaking?.(id,!!on);
 }
 function sceneActionFx(type,detail=""){
  const s=document.querySelector("[data-living-scene]");if(!s)return;
  const cls={"player-shot":"scene-fx-player-shot","enemy-shot":"scene-fx-enemy-shot","hit":"scene-fx-hit","ship-fire":"scene-fx-ship-fire","ship-hit":"scene-fx-ship-hit","enemy-flyby":"scene-fx-flyby","narration":"scene-fx-narration"}[type]||"scene-fx-beat";
  s.classList.remove(cls);void s.offsetWidth;s.classList.add(cls);setTimeout(()=>s.classList.remove(cls),type.includes("hit")?700:480);
+ window.DeadlockCinematics?.action?.(type,{detail});window.DeadlockEngagement?.feedback(type);if(type==="hit")window.DeadlockActors?.react?.("rovan","hit");if(type==="player-shot"||type==="enemy-shot")window.DeadlockWorldFX?.burst?.("sparks",type==="player-shot"?.62:.38,.47);
 }

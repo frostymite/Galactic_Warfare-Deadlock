@@ -123,14 +123,14 @@
       "id": "blackglass_station",
       "systemId": "kaelor",
       "name": "Blackglass Station",
-      "type": "Orbital Station",
-      "subtitle": "DEADLOCK HQ",
+      "type": "Asteroid Installation",
+      "subtitle": "3.2 APEX PROTOCOL HQ",
       "danger": 18,
       "known": true,
       "home": true,
       "landing": "Dock",
       "asset": "blackglass_exterior",
-      "description": "A dark ring-station of mirrored armor, cyan traffic lanes, repair docks, mercenary offices, and secure berths. Deadlock maintains a private HQ inside the station.",
+      "description": "A decommissioned repair installation buried inside an asteroid, owned by The 3.2 Apex Protocol. Only its armored docking throat breaks the rock. Secure research, an armory, repair positions and flight-ready fighters lie within.",
       "services": [
         "HQ",
         "Fuel",
@@ -562,9 +562,9 @@
     }
   ],
   "hq": {
-    "name": "Deadlock HQ",
+    "name": "The 3.2 Apex Protocol HQ",
     "stationId": "blackglass_station",
-    "description": "Rovan Kes maintains a secure operations suite inside Blackglass Station. It serves as a briefing room, contract intake point, equipment staging area, and personal safe harbor.",
+    "description": "A decommissioned repair installation buried inside an asteroid, owned by The 3.2 Apex Protocol. Only its armored docking throat breaks the rock. Secure research, an armory, repair positions and flight-ready fighters lie within.",
     "sites": [
       {
         "id": "blackglass_hq",
@@ -572,6 +572,7 @@
         "asset": "blackglass_hq",
         "description": "Central operations room with tactical table, encrypted comms, galaxy display, and direct access to Deadlock campaign intelligence.",
         "actions": [
+          "Open Syndicate command",
           "Review active hunt",
           "Call a contact",
           "Review galaxy intel"
@@ -603,7 +604,7 @@
         "id": "blackglass_hangar",
         "name": "Hangar Access",
         "asset": "blackglass_hangar",
-        "description": "Private hangar spur connected to The Raven\u2019s berth, repair gantries, fuel lines, and weapons bench access.",
+        "description": "Main hangar inside Blackglass\u2019s asteroid shell. Two repair positions, The Raven\u2019s access berth, and flight-ready Kestrel F-4 interceptors 128 and 129. Permanent pilots unappointed.",
         "actions": [
           "Board The Raven",
           "Run diagnostics",

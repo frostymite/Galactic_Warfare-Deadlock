@@ -1,0 +1,265 @@
+{
+  "results": [
+    {
+      "label": "new campaign personal baseline",
+      "pass": true
+    },
+    {
+      "label": "founder command renders",
+      "pass": true
+    },
+    {
+      "label": "new exterior image decoded",
+      "pass": true
+    },
+    {
+      "label": "heist names the syndicate",
+      "pass": true
+    },
+    {
+      "label": "two unpiloted fighters represented",
+      "pass": true
+    },
+    {
+      "label": "Sera free contact remains explicit",
+      "pass": true
+    },
+    {
+      "label": "UI deposit exact",
+      "pass": true
+    },
+    {
+      "label": "UI withdrawal exact",
+      "pass": true
+    },
+    {
+      "label": "reload preserves treasury and ledger",
+      "pass": true
+    },
+    {
+      "label": "v16 import preserves credits and injury",
+      "pass": true
+    },
+    {
+      "label": "v16 import establishes correct reserve once",
+      "pass": true
+    },
+    {
+      "label": "council reply changes",
+      "pass": true
+    },
+    {
+      "label": "Apex contract identity opted in",
+      "pass": true
+    },
+    {
+      "label": "resident learns leader identity on disclosure",
+      "pass": true
+    },
+    {
+      "label": "accepted job signed Apex",
+      "pass": true
+    },
+    {
+      "label": "changing field identity preserves active contract owner",
+      "pass": true
+    },
+    {
+      "label": "real completed case credits Apex reserve",
+      "pass": true
+    },
+    {
+      "label": "Apex payout leaves personal funds untouched",
+      "pass": true
+    },
+    {
+      "label": "one public case recorded",
+      "pass": true
+    },
+    {
+      "label": "journal identifies payment recipient",
+      "pass": true
+    },
+    {
+      "label": "remote HQ link while Raven away",
+      "pass": true
+    },
+    {
+      "label": "command labels visible 320",
+      "pass": true
+    },
+    {
+      "label": "command fits 320",
+      "pass": true
+    },
+    {
+      "label": "facilities labels visible 320",
+      "pass": true
+    },
+    {
+      "label": "facilities fits 320",
+      "pass": true
+    },
+    {
+      "label": "people labels visible 320",
+      "pass": true
+    },
+    {
+      "label": "people fits 320",
+      "pass": true
+    },
+    {
+      "label": "ledger labels visible 320",
+      "pass": true
+    },
+    {
+      "label": "ledger fits 320",
+      "pass": true
+    },
+    {
+      "label": "canon labels visible 320",
+      "pass": true
+    },
+    {
+      "label": "canon fits 320",
+      "pass": true
+    },
+    {
+      "label": "command labels visible 393",
+      "pass": true
+    },
+    {
+      "label": "command fits 393",
+      "pass": true
+    },
+    {
+      "label": "facilities labels visible 393",
+      "pass": true
+    },
+    {
+      "label": "facilities fits 393",
+      "pass": true
+    },
+    {
+      "label": "people labels visible 393",
+      "pass": true
+    },
+    {
+      "label": "people fits 393",
+      "pass": true
+    },
+    {
+      "label": "ledger labels visible 393",
+      "pass": true
+    },
+    {
+      "label": "ledger fits 393",
+      "pass": true
+    },
+    {
+      "label": "canon labels visible 393",
+      "pass": true
+    },
+    {
+      "label": "canon fits 393",
+      "pass": true
+    },
+    {
+      "label": "command labels visible 744",
+      "pass": true
+    },
+    {
+      "label": "command fits 744",
+      "pass": true
+    },
+    {
+      "label": "facilities labels visible 744",
+      "pass": true
+    },
+    {
+      "label": "facilities fits 744",
+      "pass": true
+    },
+    {
+      "label": "people labels visible 744",
+      "pass": true
+    },
+    {
+      "label": "people fits 744",
+      "pass": true
+    },
+    {
+      "label": "ledger labels visible 744",
+      "pass": true
+    },
+    {
+      "label": "ledger fits 744",
+      "pass": true
+    },
+    {
+      "label": "canon labels visible 744",
+      "pass": true
+    },
+    {
+      "label": "canon fits 744",
+      "pass": true
+    },
+    {
+      "label": "command labels visible 1280",
+      "pass": true
+    },
+    {
+      "label": "command fits 1280",
+      "pass": true
+    },
+    {
+      "label": "facilities labels visible 1280",
+      "pass": true
+    },
+    {
+      "label": "facilities fits 1280",
+      "pass": true
+    },
+    {
+      "label": "people labels visible 1280",
+      "pass": true
+    },
+    {
+      "label": "people fits 1280",
+      "pass": true
+    },
+    {
+      "label": "ledger labels visible 1280",
+      "pass": true
+    },
+    {
+      "label": "ledger fits 1280",
+      "pass": true
+    },
+    {
+      "label": "canon labels visible 1280",
+      "pass": true
+    },
+    {
+      "label": "canon fits 1280",
+      "pass": true
+    },
+    {
+      "label": "offline command loads",
+      "pass": true
+    },
+    {
+      "label": "offline new exterior loads",
+      "pass": true
+    },
+    {
+      "label": "offline treasury preserved",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

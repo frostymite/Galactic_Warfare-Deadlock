@@ -7,11 +7,16 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Deadlock RPG // Rovan Kes</title>
+<title>Deadlock v17 // The 3.2 Apex Protocol</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="runtime/runtime.css">
+<link rel="stylesheet" href="runtime/cinematic-rpg.css">
+<link rel="stylesheet" href="runtime/polish.css">
+<link rel="stylesheet" href="runtime/engagement.css">
+<link rel="stylesheet" href="runtime/lower-port.css">
+<link rel="stylesheet" href="runtime/apex.css">
 </head>
 <body>
 <div id="bootScreen" class="boot-screen">
@@ -200,7 +205,17 @@
 <script src="runtime/native-bridge.js"></script>
 <script src="runtime/deadlock-gpu.js"></script>
 <script src="runtime/diegetic-hud.js"></script>
+<script src="runtime/actor-rig.js"></script>
+<script src="runtime/world-fx.js"></script>
+<script src="runtime/cinematic-director.js"></script>
+<script src="runtime/apex-engine.js"></script>
 <script src="app.js"></script>
+<script src="runtime/polish.js"></script>
+<script src="runtime/world-polish.js"></script>
+<script src="runtime/engagement.js"></script>
+<script src="runtime/port-engine.js"></script>
+<script src="runtime/lower-port.js"></script>
+<script src="runtime/apex.js"></script>
 <script>
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));

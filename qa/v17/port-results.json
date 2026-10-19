@@ -1,0 +1,270 @@
+{
+  "results": [
+    {
+      "label": "district inaccessible away from Veyra",
+      "pass": true
+    },
+    {
+      "label": "remote visit does not create local progress",
+      "pass": true
+    },
+    {
+      "label": "actual travel opens district",
+      "pass": true
+    },
+    {
+      "label": "navigation does not reroll leads",
+      "pass": true
+    },
+    {
+      "label": "reload preserves generated district",
+      "pass": true
+    },
+    {
+      "label": "repair changes world power",
+      "pass": true
+    },
+    {
+      "label": "job pays exact credits once",
+      "pass": true
+    },
+    {
+      "label": "reward action disappears",
+      "pass": true
+    },
+    {
+      "label": "NPC remembers completed work",
+      "pass": true
+    },
+    {
+      "label": "stealth route completes without combat",
+      "pass": true
+    },
+    {
+      "label": "resolved job survives reload",
+      "pass": true
+    },
+    {
+      "label": "actual district combat starts",
+      "pass": true
+    },
+    {
+      "label": "combat victory returns to district",
+      "pass": true
+    },
+    {
+      "label": "combat marks job ready",
+      "pass": true
+    },
+    {
+      "label": "escape returns to market with job open",
+      "pass": true
+    },
+    {
+      "label": "escort can finish peacefully after escape",
+      "pass": true
+    },
+    {
+      "label": "landing fits 320",
+      "pass": true
+    },
+    {
+      "label": "landing art decoded 320",
+      "pass": true
+    },
+    {
+      "label": "market fits 320",
+      "pass": true
+    },
+    {
+      "label": "market art decoded 320",
+      "pass": true
+    },
+    {
+      "label": "cantina fits 320",
+      "pass": true
+    },
+    {
+      "label": "cantina art decoded 320",
+      "pass": true
+    },
+    {
+      "label": "hideout fits 320",
+      "pass": true
+    },
+    {
+      "label": "hideout art decoded 320",
+      "pass": true
+    },
+    {
+      "label": "tunnels fits 320",
+      "pass": true
+    },
+    {
+      "label": "tunnels art decoded 320",
+      "pass": true
+    },
+    {
+      "label": "viewer preserves ratio 320",
+      "pass": true
+    },
+    {
+      "label": "viewer preserves light state 320",
+      "pass": true
+    },
+    {
+      "label": "landing fits 393",
+      "pass": true
+    },
+    {
+      "label": "landing art decoded 393",
+      "pass": true
+    },
+    {
+      "label": "market fits 393",
+      "pass": true
+    },
+    {
+      "label": "market art decoded 393",
+      "pass": true
+    },
+    {
+      "label": "cantina fits 393",
+      "pass": true
+    },
+    {
+      "label": "cantina art decoded 393",
+      "pass": true
+    },
+    {
+      "label": "hideout fits 393",
+      "pass": true
+    },
+    {
+      "label": "hideout art decoded 393",
+      "pass": true
+    },
+    {
+      "label": "tunnels fits 393",
+      "pass": true
+    },
+    {
+      "label": "tunnels art decoded 393",
+      "pass": true
+    },
+    {
+      "label": "viewer preserves ratio 393",
+      "pass": true
+    },
+    {
+      "label": "viewer preserves light state 393",
+      "pass": true
+    },
+    {
+      "label": "landing fits 744",
+      "pass": true
+    },
+    {
+      "label": "landing art decoded 744",
+      "pass": true
+    },
+    {
+      "label": "market fits 744",
+      "pass": true
+    },
+    {
+      "label": "market art decoded 744",
+      "pass": true
+    },
+    {
+      "label": "cantina fits 744",
+      "pass": true
+    },
+    {
+      "label": "cantina art decoded 744",
+      "pass": true
+    },
+    {
+      "label": "hideout fits 744",
+      "pass": true
+    },
+    {
+      "label": "hideout art decoded 744",
+      "pass": true
+    },
+    {
+      "label": "tunnels fits 744",
+      "pass": true
+    },
+    {
+      "label": "tunnels art decoded 744",
+      "pass": true
+    },
+    {
+      "label": "viewer preserves ratio 744",
+      "pass": true
+    },
+    {
+      "label": "viewer preserves light state 744",
+      "pass": true
+    },
+    {
+      "label": "landing fits 1280",
+      "pass": true
+    },
+    {
+      "label": "landing art decoded 1280",
+      "pass": true
+    },
+    {
+      "label": "market fits 1280",
+      "pass": true
+    },
+    {
+      "label": "market art decoded 1280",
+      "pass": true
+    },
+    {
+      "label": "cantina fits 1280",
+      "pass": true
+    },
+    {
+      "label": "cantina art decoded 1280",
+      "pass": true
+    },
+    {
+      "label": "hideout fits 1280",
+      "pass": true
+    },
+    {
+      "label": "hideout art decoded 1280",
+      "pass": true
+    },
+    {
+      "label": "tunnels fits 1280",
+      "pass": true
+    },
+    {
+      "label": "tunnels art decoded 1280",
+      "pass": true
+    },
+    {
+      "label": "viewer preserves ratio 1280",
+      "pass": true
+    },
+    {
+      "label": "viewer preserves light state 1280",
+      "pass": true
+    },
+    {
+      "label": "weather respects reduced motion",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,1474 @@
+{
+  "results": [
+    {
+      "label": "first mission briefing visible",
+      "pass": true
+    },
+    {
+      "label": "viewer 16:9 393x873",
+      "pass": true,
+      "detail": {
+        "x": 12,
+        "y": 337.21875,
+        "width": 369,
+        "height": 207.5625
+      }
+    },
+    {
+      "label": "viewer close visible",
+      "pass": true
+    },
+    {
+      "label": "viewer cleanup",
+      "pass": true
+    },
+    {
+      "label": "mission overflow 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "viewer 16:9 744x828",
+      "pass": true,
+      "detail": {
+        "x": 12,
+        "y": 225.75,
+        "width": 720,
+        "height": 405
+      }
+    },
+    {
+      "label": "viewer close visible",
+      "pass": true
+    },
+    {
+      "label": "viewer cleanup",
+      "pass": true
+    },
+    {
+      "label": "mission overflow 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "viewer 16:9 828x744",
+      "pass": true,
+      "detail": {
+        "x": 12,
+        "y": 160.125,
+        "width": 804,
+        "height": 452.25
+      }
+    },
+    {
+      "label": "viewer close visible",
+      "pass": true
+    },
+    {
+      "label": "viewer cleanup",
+      "pass": true
+    },
+    {
+      "label": "mission overflow 828x744",
+      "pass": true,
+      "detail": {
+        "width": 828,
+        "scroll": 828
+      }
+    },
+    {
+      "label": "viewer 16:9 744x460",
+      "pass": true,
+      "detail": {
+        "x": 34.21875,
+        "y": 68,
+        "width": 675.546875,
+        "height": 380
+      }
+    },
+    {
+      "label": "viewer close visible",
+      "pass": true
+    },
+    {
+      "label": "viewer cleanup",
+      "pass": true
+    },
+    {
+      "label": "mission overflow 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "viewer 16:9 320x568",
+      "pass": true,
+      "detail": {
+        "x": 12,
+        "y": 205.25,
+        "width": 296,
+        "height": 166.5
+      }
+    },
+    {
+      "label": "viewer close visible",
+      "pass": true
+    },
+    {
+      "label": "viewer cleanup",
+      "pass": true
+    },
+    {
+      "label": "mission overflow 320x568",
+      "pass": true,
+      "detail": {
+        "width": 320,
+        "scroll": 320
+      }
+    },
+    {
+      "label": "mission step accept",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "mission step depart",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "mission step quiet",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "mission step land",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "mid-mission reload resumes investigation",
+      "pass": true
+    },
+    {
+      "label": "mission step contact",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "mission step talk",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "mission step return",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "mission step claim",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "peaceful payout exact",
+      "pass": true,
+      "detail": {
+        "name": "Rovan Kes",
+        "callsign": "Deadlock",
+        "species": "Clawdite",
+        "role": "Gunslinger / Bounty Hunter",
+        "affiliation": "Independent",
+        "alignment": "Pragmatic",
+        "status": "Active",
+        "level": 1,
+        "xp": 50,
+        "xpNext": 300,
+        "credits": 2400,
+        "health": 100,
+        "healthMax": 100,
+        "shields": 0,
+        "shieldsMax": 0,
+        "stamina": 100,
+        "staminaMax": 100,
+        "appearance": "Clawdite with a single diagonal facial scar. Rough, beaten obsidian mercenary clothing and leather with electric-cyan highlights.",
+        "armor": "Hard armor only over the vitals, shoulders, and knees. Everything else is layered leather, cloth, straps, gloves, boots, holsters, and utility gear.",
+        "code": [
+          "Works for the highest bidder, but keeps a personal mercy circuit.",
+          "A deal is a deal until the other side breaks it.",
+          "Information is valuable; loose ends are liabilities.",
+          "Never confuse temporary cooperation with permanent loyalty."
+        ],
+        "attributes": {
+          "Strength": 14,
+          "Agility": 18,
+          "Endurance": 14,
+          "Intelligence": 13,
+          "Perception": 17,
+          "Charisma": 11
+        },
+        "skills": {
+          "Marksmanship": 92,
+          "Stealth": 88,
+          "Technical": 76,
+          "Piloting": 74,
+          "Negotiation": 62,
+          "Survival": 85,
+          "Deception": 71,
+          "Investigation": 58,
+          "Melee Combat": 66
+        }
+      }
+    },
+    {
+      "label": "completed contract",
+      "pass": true
+    },
+    {
+      "label": "peaceful damage-free",
+      "pass": true
+    },
+    {
+      "label": "reward cannot be reclaimed",
+      "pass": true
+    },
+    {
+      "label": "Overview 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Overview rendered",
+      "pass": true
+    },
+    {
+      "label": "First Flight 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "First Flight rendered",
+      "pass": true
+    },
+    {
+      "label": "Flight Deck 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Flight Deck rendered",
+      "pass": true
+    },
+    {
+      "label": "Story 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Story rendered",
+      "pass": true
+    },
+    {
+      "label": "Holonet 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Holonet rendered",
+      "pass": true
+    },
+    {
+      "label": "Combat 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Combat rendered",
+      "pass": true
+    },
+    {
+      "label": "Targets 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Targets rendered",
+      "pass": true
+    },
+    {
+      "label": "Bounties 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Bounties rendered",
+      "pass": true
+    },
+    {
+      "label": "Galaxy 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Galaxy rendered",
+      "pass": true
+    },
+    {
+      "label": "Lower Port 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Lower Port rendered",
+      "pass": true
+    },
+    {
+      "label": "HQ 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "HQ rendered",
+      "pass": true
+    },
+    {
+      "label": "Dogfight 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Dogfight rendered",
+      "pass": true
+    },
+    {
+      "label": "Character 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Character rendered",
+      "pass": true
+    },
+    {
+      "label": "Identities 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Identities rendered",
+      "pass": true
+    },
+    {
+      "label": "Gear 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Gear rendered",
+      "pass": true
+    },
+    {
+      "label": "Weapons 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Weapons rendered",
+      "pass": true
+    },
+    {
+      "label": "Ship 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Ship rendered",
+      "pass": true
+    },
+    {
+      "label": "Contracts 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Contracts rendered",
+      "pass": true
+    },
+    {
+      "label": "Contacts 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Contacts rendered",
+      "pass": true
+    },
+    {
+      "label": "Inventory 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Inventory rendered",
+      "pass": true
+    },
+    {
+      "label": "Journal 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Journal rendered",
+      "pass": true
+    },
+    {
+      "label": "Factions 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Factions rendered",
+      "pass": true
+    },
+    {
+      "label": "Dice 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Dice rendered",
+      "pass": true
+    },
+    {
+      "label": "GM Controls 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "GM Controls rendered",
+      "pass": true
+    },
+    {
+      "label": "Settings 393x873",
+      "pass": true,
+      "detail": {
+        "width": 393,
+        "scroll": 393
+      }
+    },
+    {
+      "label": "Settings rendered",
+      "pass": true
+    },
+    {
+      "label": "Overview 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Overview rendered",
+      "pass": true
+    },
+    {
+      "label": "First Flight 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "First Flight rendered",
+      "pass": true
+    },
+    {
+      "label": "Flight Deck 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Flight Deck rendered",
+      "pass": true
+    },
+    {
+      "label": "Story 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Story rendered",
+      "pass": true
+    },
+    {
+      "label": "Holonet 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Holonet rendered",
+      "pass": true
+    },
+    {
+      "label": "Combat 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Combat rendered",
+      "pass": true
+    },
+    {
+      "label": "Targets 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Targets rendered",
+      "pass": true
+    },
+    {
+      "label": "Bounties 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Bounties rendered",
+      "pass": true
+    },
+    {
+      "label": "Galaxy 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Galaxy rendered",
+      "pass": true
+    },
+    {
+      "label": "Lower Port 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Lower Port rendered",
+      "pass": true
+    },
+    {
+      "label": "HQ 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "HQ rendered",
+      "pass": true
+    },
+    {
+      "label": "Dogfight 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Dogfight rendered",
+      "pass": true
+    },
+    {
+      "label": "Character 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Character rendered",
+      "pass": true
+    },
+    {
+      "label": "Identities 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Identities rendered",
+      "pass": true
+    },
+    {
+      "label": "Gear 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Gear rendered",
+      "pass": true
+    },
+    {
+      "label": "Weapons 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Weapons rendered",
+      "pass": true
+    },
+    {
+      "label": "Ship 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Ship rendered",
+      "pass": true
+    },
+    {
+      "label": "Contracts 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Contracts rendered",
+      "pass": true
+    },
+    {
+      "label": "Contacts 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Contacts rendered",
+      "pass": true
+    },
+    {
+      "label": "Inventory 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Inventory rendered",
+      "pass": true
+    },
+    {
+      "label": "Journal 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Journal rendered",
+      "pass": true
+    },
+    {
+      "label": "Factions 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Factions rendered",
+      "pass": true
+    },
+    {
+      "label": "Dice 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Dice rendered",
+      "pass": true
+    },
+    {
+      "label": "GM Controls 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "GM Controls rendered",
+      "pass": true
+    },
+    {
+      "label": "Settings 744x828",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Settings rendered",
+      "pass": true
+    },
+    {
+      "label": "Overview 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Overview rendered",
+      "pass": true
+    },
+    {
+      "label": "First Flight 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "First Flight rendered",
+      "pass": true
+    },
+    {
+      "label": "Flight Deck 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Flight Deck rendered",
+      "pass": true
+    },
+    {
+      "label": "Story 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Story rendered",
+      "pass": true
+    },
+    {
+      "label": "Holonet 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Holonet rendered",
+      "pass": true
+    },
+    {
+      "label": "Combat 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Combat rendered",
+      "pass": true
+    },
+    {
+      "label": "Targets 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Targets rendered",
+      "pass": true
+    },
+    {
+      "label": "Bounties 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Bounties rendered",
+      "pass": true
+    },
+    {
+      "label": "Galaxy 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Galaxy rendered",
+      "pass": true
+    },
+    {
+      "label": "Lower Port 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Lower Port rendered",
+      "pass": true
+    },
+    {
+      "label": "HQ 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "HQ rendered",
+      "pass": true
+    },
+    {
+      "label": "Dogfight 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Dogfight rendered",
+      "pass": true
+    },
+    {
+      "label": "Character 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Character rendered",
+      "pass": true
+    },
+    {
+      "label": "Identities 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Identities rendered",
+      "pass": true
+    },
+    {
+      "label": "Gear 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Gear rendered",
+      "pass": true
+    },
+    {
+      "label": "Weapons 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Weapons rendered",
+      "pass": true
+    },
+    {
+      "label": "Ship 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Ship rendered",
+      "pass": true
+    },
+    {
+      "label": "Contracts 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Contracts rendered",
+      "pass": true
+    },
+    {
+      "label": "Contacts 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Contacts rendered",
+      "pass": true
+    },
+    {
+      "label": "Inventory 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Inventory rendered",
+      "pass": true
+    },
+    {
+      "label": "Journal 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Journal rendered",
+      "pass": true
+    },
+    {
+      "label": "Factions 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Factions rendered",
+      "pass": true
+    },
+    {
+      "label": "Dice 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Dice rendered",
+      "pass": true
+    },
+    {
+      "label": "GM Controls 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "GM Controls rendered",
+      "pass": true
+    },
+    {
+      "label": "Settings 744x460",
+      "pass": true,
+      "detail": {
+        "width": 744,
+        "scroll": 744
+      }
+    },
+    {
+      "label": "Settings rendered",
+      "pass": true
+    },
+    {
+      "label": "Overview 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Overview rendered",
+      "pass": true
+    },
+    {
+      "label": "First Flight 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "First Flight rendered",
+      "pass": true
+    },
+    {
+      "label": "Flight Deck 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Flight Deck rendered",
+      "pass": true
+    },
+    {
+      "label": "Story 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Story rendered",
+      "pass": true
+    },
+    {
+      "label": "Holonet 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Holonet rendered",
+      "pass": true
+    },
+    {
+      "label": "Combat 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Combat rendered",
+      "pass": true
+    },
+    {
+      "label": "Targets 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Targets rendered",
+      "pass": true
+    },
+    {
+      "label": "Bounties 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Bounties rendered",
+      "pass": true
+    },
+    {
+      "label": "Galaxy 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Galaxy rendered",
+      "pass": true
+    },
+    {
+      "label": "Lower Port 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Lower Port rendered",
+      "pass": true
+    },
+    {
+      "label": "HQ 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "HQ rendered",
+      "pass": true
+    },
+    {
+      "label": "Dogfight 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Dogfight rendered",
+      "pass": true
+    },
+    {
+      "label": "Character 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Character rendered",
+      "pass": true
+    },
+    {
+      "label": "Identities 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Identities rendered",
+      "pass": true
+    },
+    {
+      "label": "Gear 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Gear rendered",
+      "pass": true
+    },
+    {
+      "label": "Weapons 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Weapons rendered",
+      "pass": true
+    },
+    {
+      "label": "Ship 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Ship rendered",
+      "pass": true
+    },
+    {
+      "label": "Contracts 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Contracts rendered",
+      "pass": true
+    },
+    {
+      "label": "Contacts 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Contacts rendered",
+      "pass": true
+    },
+    {
+      "label": "Inventory 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Inventory rendered",
+      "pass": true
+    },
+    {
+      "label": "Journal 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Journal rendered",
+      "pass": true
+    },
+    {
+      "label": "Factions 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Factions rendered",
+      "pass": true
+    },
+    {
+      "label": "Dice 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Dice rendered",
+      "pass": true
+    },
+    {
+      "label": "GM Controls 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "GM Controls rendered",
+      "pass": true
+    },
+    {
+      "label": "Settings 1280x800",
+      "pass": true,
+      "detail": {
+        "width": 1280,
+        "scroll": 1280
+      }
+    },
+    {
+      "label": "Settings rendered",
+      "pass": true
+    },
+    {
+      "label": "no uncaught browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

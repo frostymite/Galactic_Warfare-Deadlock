@@ -1,0 +1,112 @@
+{
+  "results": [
+    {
+      "label": "100 seeded worlds generate deterministically",
+      "pass": true
+    },
+    {
+      "label": "600 generated cases are solvable and pay once",
+      "pass": true
+    },
+    {
+      "label": "all six objective families exercised",
+      "pass": true
+    },
+    {
+      "label": "substantial structural variation",
+      "pass": true,
+      "detail": 577
+    },
+    {
+      "label": "offered families distinct and recent family avoided",
+      "pass": true
+    },
+    {
+      "label": "recovery stealth resolution works",
+      "pass": true
+    },
+    {
+      "label": "recovery combat resolution works",
+      "pass": true
+    },
+    {
+      "label": "escort combat resolution works",
+      "pass": true
+    },
+    {
+      "label": "dispute selfish resolution works",
+      "pass": true
+    },
+    {
+      "label": "forgery selfish resolution works",
+      "pass": true
+    },
+    {
+      "label": "trace selfish resolution works",
+      "pass": true
+    },
+    {
+      "label": "repair paid resolution works",
+      "pass": true
+    },
+    {
+      "label": "insufficient funds do not mutate repair",
+      "pass": true
+    },
+    {
+      "label": "repairs change persistent power",
+      "pass": true
+    },
+    {
+      "label": "residents retain action memory",
+      "pass": true
+    },
+    {
+      "label": "district actions blocked during combat",
+      "pass": true
+    },
+    {
+      "label": "escape retains unresolved job and moves to safety",
+      "pass": true
+    },
+    {
+      "label": "peaceful approach available after escape",
+      "pass": true
+    },
+    {
+      "label": "stale combat outcome cannot change another job",
+      "pass": true
+    },
+    {
+      "label": "withdrawal closes the case without reward",
+      "pass": true
+    },
+    {
+      "label": "unfinished job cannot pay out",
+      "pass": true
+    },
+    {
+      "label": "trusted client unlocks direct clearance",
+      "pass": true
+    },
+    {
+      "label": "trusted clearance resolves without combat",
+      "pass": true
+    },
+    {
+      "label": "NPC dialogue avoids its last three replies",
+      "pass": true
+    },
+    {
+      "label": "observation avoids immediate repeat",
+      "pass": true
+    },
+    {
+      "label": "save roundtrip preserves RNG sequence",
+      "pass": true
+    }
+  ],
+  "worlds": 100,
+  "cases": 600,
+  "uniqueCaseSignatures": 577
+}

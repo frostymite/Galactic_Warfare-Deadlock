@@ -1,0 +1,44 @@
+{
+  "results": [
+    {
+      "label": "real combat starts",
+      "pass": true
+    },
+    {
+      "label": "combat reload is playable",
+      "pass": true
+    },
+    {
+      "label": "combat victory returns to mission",
+      "pass": true
+    },
+    {
+      "label": "risky route shield damage persists",
+      "pass": true,
+      "detail": 88
+    },
+    {
+      "label": "combat reward exact",
+      "pass": true,
+      "detail": 2400
+    },
+    {
+      "label": "combat result recorded",
+      "pass": true
+    },
+    {
+      "label": "corrupt save recovery notice",
+      "pass": true
+    },
+    {
+      "label": "corrupt bytes retained",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

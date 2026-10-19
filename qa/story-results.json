@@ -1,0 +1,110 @@
+{
+  "results": [
+    {
+      "label": "story interaction 1 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 1 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 2 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 2 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 3 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 3 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 4 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 4 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 5 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 5 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 6 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 6 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 7 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 7 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 8 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 8 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 9 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 9 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story interaction 10 remains rendered",
+      "pass": true
+    },
+    {
+      "label": "story interaction 10 no overflow",
+      "pass": true
+    },
+    {
+      "label": "story danger remains finite",
+      "pass": true
+    },
+    {
+      "label": "incomplete import rejected",
+      "pass": true
+    },
+    {
+      "label": "invalid import preserves campaign",
+      "pass": true
+    },
+    {
+      "label": "save failure visible",
+      "pass": true
+    },
+    {
+      "label": "save failure preserves in-memory campaign",
+      "pass": true
+    },
+    {
+      "label": "no browser errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,302 @@
+{
+  "meta": {
+    "version": "13.0.0",
+    "name": "Deadlock Cinematic RPG Scene Runtime",
+    "goal": "Layered, continuously animated 2.5D scenes that remain offline and fold-friendly."
+  },
+  "presets": {
+    "blackglass": {
+      "background": "assets/scenes/blackglass_command_v14.svg",
+      "theme": "hq",
+      "traffic": 5,
+      "particles": 18,
+      "crowd": 4,
+      "camera": "slow",
+      "actors": true,
+      "weather": "interior",
+      "room": "command"
+    },
+    "cockpit": {
+      "background": "assets/scenes/raven_cockpit_v14.svg",
+      "theme": "cockpit",
+      "traffic": 0,
+      "particles": 10,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": true,
+      "weather": "space",
+      "room": "cockpit"
+    },
+    "urban": {
+      "background": "assets/scenes/veyra_port_v14.svg",
+      "theme": "urban",
+      "traffic": 4,
+      "particles": 24,
+      "crowd": 7,
+      "camera": "medium",
+      "actors": true,
+      "weather": "rain",
+      "room": null
+    },
+    "combat": {
+      "background": "assets/scenes/combat_industrial_v2.svg",
+      "theme": "combat",
+      "traffic": 0,
+      "particles": 32,
+      "crowd": 0,
+      "camera": "combat",
+      "actors": true,
+      "weather": "smoke",
+      "room": null
+    },
+    "orbit": {
+      "background": "assets/scenes/orbit.svg",
+      "theme": "orbit",
+      "traffic": 3,
+      "particles": 14,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": false,
+      "weather": "space",
+      "room": null
+    },
+    "desert": {
+      "background": "assets/scenes/desert.svg",
+      "theme": "desert",
+      "traffic": 1,
+      "particles": 28,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true,
+      "weather": "dust",
+      "room": null
+    },
+    "jungle": {
+      "background": "assets/scenes/jungle.svg",
+      "theme": "jungle",
+      "traffic": 0,
+      "particles": 30,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true,
+      "weather": "mist",
+      "room": null
+    },
+    "ice": {
+      "background": "assets/scenes/ice.svg",
+      "theme": "ice",
+      "traffic": 1,
+      "particles": 36,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true,
+      "weather": "snow",
+      "room": null
+    },
+    "volcanic": {
+      "background": "assets/scenes/volcanic.svg",
+      "theme": "volcanic",
+      "traffic": 0,
+      "particles": 34,
+      "crowd": 1,
+      "camera": "medium",
+      "actors": true,
+      "weather": "embers",
+      "room": null
+    },
+    "ocean": {
+      "background": "assets/scenes/ocean.svg",
+      "theme": "ocean",
+      "traffic": 2,
+      "particles": 18,
+      "crowd": 4,
+      "camera": "slow",
+      "actors": true,
+      "weather": "rain",
+      "room": null
+    },
+    "asteroid": {
+      "background": "assets/scenes/asteroid.svg",
+      "theme": "asteroid",
+      "traffic": 4,
+      "particles": 26,
+      "crowd": 0,
+      "camera": "medium",
+      "actors": false,
+      "weather": "debris",
+      "room": null
+    },
+    "ruins": {
+      "background": "assets/scenes/ruins.svg",
+      "theme": "ruins",
+      "traffic": 0,
+      "particles": 22,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true,
+      "weather": "dust",
+      "room": null
+    },
+    "unknown": {
+      "background": "assets/scenes/unknown.svg",
+      "theme": "unknown",
+      "traffic": 2,
+      "particles": 36,
+      "crowd": 0,
+      "camera": "medium",
+      "actors": true,
+      "weather": "anomaly",
+      "room": null
+    },
+    "raven_cargo": {
+      "background": "assets/scenes/raven_cargo.svg",
+      "theme": "ship",
+      "traffic": 0,
+      "particles": 8,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": false,
+      "room": "cargo",
+      "weather": "interior"
+    },
+    "raven_engineering": {
+      "background": "assets/scenes/raven_engineering.svg",
+      "theme": "ship",
+      "traffic": 0,
+      "particles": 8,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": false,
+      "room": "engineering",
+      "weather": "interior"
+    },
+    "raven_weapons": {
+      "background": "assets/scenes/raven_weapons.svg",
+      "theme": "ship",
+      "traffic": 0,
+      "particles": 8,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": false,
+      "room": "weapons",
+      "weather": "interior"
+    },
+    "raven_prisoner": {
+      "background": "assets/scenes/raven_prisoner.svg",
+      "theme": "ship",
+      "traffic": 0,
+      "particles": 8,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": false,
+      "room": "prisoner",
+      "weather": "interior"
+    },
+    "raven_quarters": {
+      "background": "assets/scenes/raven_quarters.svg",
+      "theme": "ship",
+      "traffic": 0,
+      "particles": 8,
+      "crowd": 0,
+      "camera": "slow",
+      "actors": false,
+      "room": "quarters",
+      "weather": "interior"
+    },
+    "blackglass_briefing": {
+      "background": "assets/scenes/blackglass_briefing_v3.svg",
+      "theme": "hq",
+      "traffic": 1,
+      "particles": 14,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true,
+      "room": "briefing",
+      "weather": "interior"
+    },
+    "blackglass_hangar": {
+      "background": "assets/scenes/blackglass_hangar_v3.svg",
+      "theme": "hq",
+      "traffic": 3,
+      "particles": 14,
+      "crowd": 5,
+      "camera": "slow",
+      "actors": true,
+      "room": "hangar",
+      "weather": "interior"
+    },
+    "blackglass_quarters": {
+      "background": "assets/scenes/blackglass_quarters_v2.svg",
+      "theme": "hq",
+      "traffic": 1,
+      "particles": 14,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true,
+      "room": "quarters",
+      "weather": "interior"
+    },
+    "blackglass_contracts": {
+      "background": "assets/scenes/blackglass_contracts_v2.svg",
+      "theme": "hq",
+      "traffic": 1,
+      "particles": 14,
+      "crowd": 2,
+      "camera": "slow",
+      "actors": true,
+      "room": "contracts",
+      "weather": "interior"
+    },
+    "veyra_upper": {
+      "background": "assets/scenes/veyra_upper_v14.svg",
+      "theme": "urban",
+      "traffic": 4,
+      "particles": 8,
+      "crowd": 3,
+      "camera": "medium",
+      "actors": true,
+      "weather": "ambient",
+      "room": null
+    },
+    "veyra_undercity": {
+      "background": "assets/scenes/veyra_undercity_v14.svg",
+      "theme": "urban",
+      "traffic": 4,
+      "particles": 24,
+      "crowd": 7,
+      "camera": "medium",
+      "actors": true,
+      "weather": "mist",
+      "room": null
+    }
+  },
+  "locationThemes": {
+    "blackglass_station": "blackglass",
+    "veyra_prime": "urban",
+    "drekthar": "desert",
+    "nerath": "jungle",
+    "cindar": "ice",
+    "talos": "ocean",
+    "orivon": "volcanic",
+    "xerra": "urban",
+    "sable_belt": "asteroid",
+    "thalos": "ocean",
+    "rethis": "ruins",
+    "umber": "unknown"
+  },
+  "blackglassSitePresets": {
+    "blackglass_hq": "blackglass",
+    "blackglass_briefing": "blackglass_briefing",
+    "blackglass_quarters": "blackglass_quarters",
+    "blackglass_hangar": "blackglass_hangar",
+    "blackglass_contracts": "blackglass_contracts"
+  },
+  "ravenInteriorPresets": {
+    "cockpit": "cockpit",
+    "cargo": "raven_cargo",
+    "engineering": "raven_engineering",
+    "weapons": "raven_weapons",
+    "prisoner": "raven_prisoner",
+    "quarters": "raven_quarters"
+  }
+}
