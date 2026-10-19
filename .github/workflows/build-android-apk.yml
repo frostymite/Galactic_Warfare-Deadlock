@@ -25,30 +25,44 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
-      - uses: android-actions/setup-android@v3
+
+      # setup-android v3 attempted to install Google's retired "tools" SDK
+      # package and failed before the Deadlock build could even begin.
+      - name: Set up Android SDK 36
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+
       - name: Build offline web bundle
         run: npm run build:web
+
       - name: Create Android shell
         run: npx cap add android
+
       - name: Sync Capacitor
         run: npx cap sync android
+
       - name: Build debug APK
         run: |
           chmod +x android/gradlew
           cd android
-          ./gradlew assembleDebug
+          ./gradlew --no-daemon assembleDebug
+
       - name: Upload Deadlock APK
         uses: actions/upload-artifact@v4
         with:
-          name: Deadlock-v13-debug-apk
+          name: Deadlock-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
