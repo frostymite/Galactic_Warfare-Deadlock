@@ -8,6 +8,14 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
+## ShipForge Phase 2 — v17.4.0
+
+ShipForge is now a gameplay system rather than only a procedural visual generator. Open **Ship** to use the new Shipyard, where the Raven and future owned craft keep exact component instances, paint, ownership, condition, damage and derived performance in the campaign save. Components can be purchased from local exchanges or salvage yards, installed or replaced according to ship-class/mount compatibility, repaired, removed when optional, sold, or recovered from defeated modular ships.
+
+Hull-penetrating space-combat damage can degrade installed components. Hull capacity, shields, fuel, attack, evasion, weapon damage, cargo capability, speed and value are recalculated from the installed parts and their current condition. Persistent NPCs and repeated encounter sources keep their generated ships and accumulated damage between encounters. General scene traffic and Lower Port flybys also use save-persistent ShipForge builds instead of rerolling generic craft.
+
+The durable ShipForge state is plain JSON (`deadlock.shipforge.world.v1` / `deadlock.shipforge.persistent-ship.v1`) and references component IDs rather than browser-only objects, preserving the planned native/Godot handoff. See `SHIPFORGE_PHASE2_V17_4.md` for the schema and system details.
+
 ## Launch
 
 This is a browser/PWA build. Run `python3 -m http.server 8080` from this folder and open http://localhost:8080, or host the contents of `dist` on your existing HTTPS address. Direct file:// opening cannot load the game data. Offline installation requires a complete first load on HTTPS or localhost. This package is not an Android APK.

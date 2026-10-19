@@ -1,0 +1,106 @@
+{
+  "results": [
+    {
+      "label": "v17.4 package version",
+      "pass": true,
+      "detail": "17.4.0"
+    },
+    {
+      "label": "ShipForge world runtime loads before app",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "ShipForge world stylesheet loads",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "Ship page renders Phase 2 shipyard",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "Shipyard controls persist through normal save path",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "campaign migration initializes persistent ShipForge world",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "dogfight enemies bind to persistent modular ships",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "dogfight damage degrades NPC components",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "Raven hull impacts degrade installed components",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "dogfight victory generates salvage",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "scene traffic uses persistent ShipForge population",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "Lower Port flyby uses persistent ShipForge population",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "first-seen traffic is saved immediately",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "regular dogfight evasion includes installed ship handling",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "world runtime exposes commerce fleet damage salvage and traffic APIs",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "persistent records are plain JSON schemas",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "offline cache includes Phase 2 world runtime",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "offline cache version bumped",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "Raven presentation references vector asset",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "label": "Phase 2 world has no network dependency",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "passed": 20,
+  "failed": 0
+}

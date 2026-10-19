@@ -373,28 +373,28 @@ function makeDogfightEnemies(source="travel",risk=40){
 }
 function startForcedDogfight(ctx={}){
  ensureEncounterState();const d=DATA.dogfight;if(d.active&&liveDogfightEnemies().length)return false;const risk=clamp(Number(ctx.risk??ctx.danger??50),0,100);
- d.active=true;d.forced=true;d.round=1;d.enemyIndex=0;d.source=ctx.source||"travel";d.reason=ctx.reason||"Hostile craft have weapons lock.";d.returnPage=ctx.returnPage||"Galaxy";d.escapeDC=Number(ctx.escapeDC||12)+Math.floor(risk/30);d.context=ctx;d.enemies=ctx.enemies||makeDogfightEnemies(d.source,risk);
+ d.active=true;d.forced=true;d.round=1;d.enemyIndex=0;d.source=ctx.source||"travel";d.reason=ctx.reason||"Hostile craft have weapons lock.";d.returnPage=ctx.returnPage||"Galaxy";d.escapeDC=Number(ctx.escapeDC||12)+Math.floor(risk/30);d.context=ctx;d.enemies=ctx.enemies||makeDogfightEnemies(d.source,risk);d.enemies=window.DeadlockShipForge?.bindDogfightEnemies?.(DATA,d.enemies,{source:d.source,ownerKeys:ctx.ownerKeys})||d.enemies;d.shipForgeEncounterKey=`dogfight-${DATA.shipForge?.encounterSerial||Date.now()}`;
  logDogfight(`FORCED DOGFIGHT: ${d.reason}`);storyPush("system","Raven Tactical",`DOGFIGHT INITIATED — ${d.reason}`);addNotification(`Dogfight initiated: ${d.reason}`,"danger");eventBanner("DOGFIGHT");navigator.vibrate?.([70,30,70]);save();if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.("combat",{reason:d.reason});setTimeout(()=>render("Dogfight"),60);return true;
 }
 function enemyDogfightVolley(){
  const d=DATA.dogfight,s=DATA.ship;if(!d.active)return;
  for(const e of liveDogfightEnemies()){
   sceneActionFx("enemy-flyby",e.id);
-  const attack=rollDie(20)+Number(e.attackMod||1),evade=12+Math.round(Number(DATA.character.skills?.Piloting||50)/25);if(attack<evade){logDogfight(`${e.name} attack ${attack} vs EVADE ${evade}: MISS.`);continue}
-  let dmg=parseDice(e.damage||"1d10+2").total;if(s.shields>0){const absorbed=Math.min(s.shields,dmg);s.shields-=absorbed;dmg-=absorbed}if(dmg>0)s.hull=clamp(s.hull-dmg,0,s.hullMax);logDogfight(`${e.name} scores a hit. Raven shields ${s.shields}/${s.shieldsMax}, hull ${s.hull}/${s.hullMax}.`);fx("hit");sceneActionFx("ship-hit");
+  const attack=rollDie(20)+Number(e.attackMod||1),evade=12+Math.round(Number(DATA.character.skills?.Piloting||50)/25)+Number(DATA.ship.dogfight?.evasionBonus||0);if(attack<evade){logDogfight(`${e.name} attack ${attack} vs EVADE ${evade}: MISS.`);continue}
+  let dmg=parseDice(e.damage||"1d10+2").total;if(s.shields>0){const absorbed=Math.min(s.shields,dmg);s.shields-=absorbed;dmg-=absorbed}if(dmg>0){s.hull=clamp(s.hull-dmg,0,s.hullMax);window.DeadlockShipForge?.damage?.(DATA,'raven',dmg,`dogfight:${d.source}:${d.round}:${e.id}`)}logDogfight(`${e.name} scores a hit. Raven shields ${s.shields}/${s.shieldsMax}, hull ${s.hull}/${s.hullMax}.`);fx("hit");sceneActionFx("ship-hit");
  }
  if(s.hull<=0){finishForcedDogfight("defeat");return}d.round++;save();render("Dogfight");
 }
 function finishForcedDogfight(outcome="victory"){
  const d=DATA.dogfight,ctx=d.context||{},returnPage=d.returnPage||"Galaxy";d.active=false;d.forced=false;
  const g=galaxyState();if(ctx.travelEncounter&&g.transit)g.transit.encounterResolved=true;
- if(outcome==="victory"){DATA.story.danger=clamp(Number(DATA.story.danger||0)-8,0,100);storyPush("narration","Narrator","The last hostile craft falls off the Raven's scope. The route is clear again.");addConsequence("Dogfight won",d.reason||"Hostile craft neutralized.","good")}
+ if(outcome==="victory"){DATA.story.danger=clamp(Number(DATA.story.danger||0)-8,0,100);const drops=window.DeadlockShipForge?.salvageEncounter?.(DATA,d.enemies,d.shipForgeEncounterKey||`dogfight-${d.source}-${d.round}`)||[];storyPush("narration","Narrator",`The last hostile craft falls off the Raven's scope. The route is clear again.${drops.length?` Recovery sensors flag ${drops.length} salvage component${drops.length>1?'s':''}.`:''}`);addConsequence("Dogfight won",d.reason||"Hostile craft neutralized.","good")}
  else if(outcome==="escape"){DATA.story.danger=clamp(Number(DATA.story.danger||0)+3,0,100);storyPush("narration","Narrator","The Raven breaks weapons lock and disappears back into the route.");addConsequence("Broke pursuit",d.reason||"Hostiles left behind.","warn")}
  else{DATA.ship.hull=Math.max(1,Math.round(DATA.ship.hullMax*.2));DATA.story.danger=clamp(Number(DATA.story.danger||0)+14,0,100);storyPush("narration","Narrator","The Raven takes a brutal beating and limps clear under emergency power. The route survives, but the ship needs attention.");addConsequence("Raven forced retreat","Ship combat ended with heavy damage.","danger")}
  d.context=null;save();eventBanner(outcome==="victory"?"SPACE CLEAR":outcome==="escape"?"PURSUIT BROKEN":"RAVEN DAMAGED");if(DATA.settings.cinematicSequences!==false)window.DeadlockCinematics?.play?.(outcome==="victory"?"victory":"defeat",{reason:d.reason});render(returnPage);
 }
 function attemptDogfightEscape(){
- const d=DATA.dogfight,total=rollDie(20)+skillBonus("Piloting"),dc=Number(d.escapeDC||13);logDogfight(`Break pursuit: ${total} vs DC ${dc}.`);if(total>=dc)return finishForcedDogfight("escape");addNotification("Could not shake pursuit.","danger");enemyDogfightVolley();
+ const d=DATA.dogfight,total=rollDie(20)+skillBonus("Piloting")+Number(DATA.ship.dogfight?.evasionBonus||0),dc=Number(d.escapeDC||13);logDogfight(`Break pursuit: ${total} vs DC ${dc}.`);if(total>=dc)return finishForcedDogfight("escape");addNotification("Could not shake pursuit.","danger");enemyDogfightVolley();
 }
 
 function migrateOfflineData(current,defaults){
@@ -465,7 +465,9 @@ function migrateOfflineData(current,defaults){
  s.activeContractId=s.activeContractId||"marr";
  const marrChoice=(s.choices||[]).find(c=>/marr/i.test(c.label||""));
  if(marrChoice){marrChoice.contractId="marr";marrChoice.actionType=marrChoice.actionType||"contract_review";}
- current.meta.version="17.0.0";
+ window.DeadlockShipForge?.ensure?.(current);
+ window.DeadlockShipForge?.syncLegacyShip?.(current);
+ current.meta.version="17.4.0";
  window.ApexEngine?.ensure(current);
  return current;
 }
@@ -625,7 +627,7 @@ function runtimeStateSnapshot(){
  return {
   page:currentPage,
   character:{name:DATA?.character?.name,callsign:DATA?.character?.callsign,health:DATA?.character?.health,healthMax:DATA?.character?.healthMax,stamina:DATA?.character?.stamina,staminaMax:DATA?.character?.staminaMax,credits:DATA?.character?.credits},
-  ship:{name:DATA?.ship?.name,class:DATA?.ship?.class,hull:DATA?.ship?.hull,hullMax:DATA?.ship?.hullMax,shields:DATA?.ship?.shields,shieldsMax:DATA?.ship?.shieldsMax,fuel:DATA?.ship?.fuel,fuelMax:DATA?.ship?.fuelMax},
+  ship:{name:DATA?.ship?.name,class:DATA?.ship?.class,hull:DATA?.ship?.hull,hullMax:DATA?.ship?.hullMax,shields:DATA?.ship?.shields,shieldsMax:DATA?.ship?.shieldsMax,fuel:DATA?.ship?.fuel,fuelMax:DATA?.ship?.fuelMax,shipForgeId:DATA?.shipForge?.activeShipId||'raven',componentStats:DATA?.ship?.shipForgeStats||null},
   story:{location:DATA?.story?.location,objective:DATA?.story?.objective,danger:DATA?.story?.danger,turn:DATA?.story?.director?.turn||0},
   encounter:{active:!!(enc?.active||forcedEncounterPage()),reason:enc?.reason||DATA?.combat?.encounter?.reason||'',objective:enc?.objective||'',source:enc?.source||'',groundEnemies:typeof liveCombatEnemies==="function"?liveCombatEnemies().length:0,spaceEnemies:typeof liveDogfightEnemies==="function"?liveDogfightEnemies().length:0},
   galaxy:{phase:g?.phase||'idle',location:loc?.name||'Unknown Space',route:route?.destinationId||route?.phase||'none'},
@@ -950,6 +952,7 @@ function pageShip(){
  <div class="card full"><div class="row"><h3>Holographic Diagnostic Schematic</h3><span class="pill cyan">LIVE TELEMETRY</span></div><div class="aurebesh-strip">RAVEN // ⌖ SYS-7 // ⟐ POWER BUS // ⌁ FLIGHT CONTROL // DEADLOCK</div><div class="raven-schematic">${ravenVisual("schematic","The Raven holographic schematic")}<div class="schematic-sweep"></div>
  ${node("engines","ENG",15,61)}${node("thrusters","THR",35,72)}${node("hyperdrive","HYP",49,55)}${node("comms","COM",70,26)}${node("overcharge","SHD",55,39)}${node("bench","WPN",66,68)}${node("cells","CEL",43,31)}${node("smuggling","HID",28,42)}
  <div class="schematic-caption"><div><div class="schematic-title">THE RAVEN // SYSTEM MAP</div><div class="schematic-code">HOLOGRAPHIC DIAGNOSTIC // TAP NODES FOR CONTROL</div></div><button class="btn" onclick="render('Dogfight')">FLIGHT HUD</button></div></div></div>
+ <div class="card full"><div class="row"><div><div class="micro">SHIPFORGE // PHASE 2 COMPLETE</div><h3>Shipyard, Parts & Persistent Fleet</h3></div><span class="pill cyan">OFFLINE / SAVE-PERSISTENT</span></div>${window.DeadlockShipForge?.renderShipyard?.(DATA)||'<p class="muted">ShipForge world layer unavailable.</p>'}</div>
  </div>`
 }
 function contractHTML(c){
@@ -991,6 +994,7 @@ function wire(){
  $$("[data-hq-site]").forEach(b=>b.onclick=()=>handleHqSite(b.dataset.hqSite));
  $$("[data-hq-action]").forEach(b=>b.onclick=()=>handleHqAction(b.dataset.hqAction));
  $$("[data-ship-scene]").forEach(b=>b.onclick=()=>{DATA.settings.shipScene=b.dataset.shipScene;save();render("Ship")});
+ $$("[data-sf-action]").forEach(b=>b.onclick=()=>{const result=window.DeadlockShipForge?.handleAction?.(DATA,b.dataset.sfAction,b.dataset.sfA,b.dataset.sfB);if(!result)return toast("ShipForge action unavailable");window.DeadlockShipForge?.syncLegacyShip?.(DATA);save();toast(result.message||"ShipForge updated");render("Ship")});
  $$("[data-world-site]").forEach(b=>b.onclick=()=>startLocalSite(b.dataset.worldSite));
  $$("[data-world-service]").forEach(b=>b.onclick=()=>handleWorldService(b.dataset.worldService));
 
@@ -1102,12 +1106,12 @@ function dogCommand(cmd){
  if(cmd==="end"){if(d.forced)return toast("Forced dogfight: destroy hostiles or break pursuit");d.active=false;logDogfight("Dogfight ended.");save();return render()}
  if(!d.active)return toast("Start the dogfight first");
  if(cmd==="escape")return attemptDogfightEscape();
- if(cmd==="fire"){sceneActionFx("ship-fire");let live=liveDogfightEnemies();if(!live.length)return finishForcedDogfight("victory");let target=live[0],atk=rollDie(20)+skillBonus("Piloting")+Number(s.dogfight.attackMod||0),def=10+Number(target.threat||1),dmg=parseDice(s.dogfight.damage);if(atk>=def){target.hp=clamp(target.hp-dmg.total,0,target.hpMax);uiBeep(120,.12,.055,"square");fx("hit");floatNumber("-"+dmg.total,"damage");logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}, ${dmg.total} damage to ${target.name}.`);addNotification(`Raven cannons struck ${target.name} for ${dmg.total}.`,"danger")}else logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}: MISS.`);if(!liveDogfightEnemies().length)return finishForcedDogfight("victory");save();return setTimeout(()=>enemyDogfightVolley(),220)}
+ if(cmd==="fire"){sceneActionFx("ship-fire");let live=liveDogfightEnemies();if(!live.length)return finishForcedDogfight("victory");let target=live[0],atk=rollDie(20)+skillBonus("Piloting")+Number(s.dogfight.attackMod||0),def=10+Number(target.threat||1),dmg=parseDice(s.dogfight.damage);if(atk>=def){target.hp=clamp(target.hp-dmg.total,0,target.hpMax);if(target.shipForgeId){const impact=window.DeadlockShipForge?.damageNpcShip?.(DATA,target.shipForgeId,dmg.total,`raven-fire:${d.round}:${target.id}`);if(impact?.stats){target.attackMod=impact.stats.attackMod+Math.max(0,Number(target.threat||1)-1);target.damage=impact.stats.damageFormula;target.shipForgeStats={condition:impact.stats.condition,attackMod:impact.stats.attackMod,evasionBonus:impact.stats.evasionBonus,damageFormula:impact.stats.damageFormula}}}uiBeep(120,.12,.055,"square");fx("hit");floatNumber("-"+dmg.total,"damage");logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}, ${dmg.total} damage to ${target.name}.`);addNotification(`Raven cannons struck ${target.name} for ${dmg.total}.`,"danger")}else logDogfight(`Forward cannons: attack ${atk} vs DEF ${def}: MISS.`);if(!liveDogfightEnemies().length)return finishForcedDogfight("victory");save();return setTimeout(()=>enemyDogfightVolley(),220)}
  if(cmd==="evade"){let r=rollDie(20)+Number(s.dogfight.evasionBonus||0);logDogfight(`Evasive maneuver roll: ${r}.`);if(r>=15){s.shields=clamp(s.shields+5,0,s.shieldsMax);logDogfight("The Raven gains separation; shields recover 5.")}save();return setTimeout(()=>enemyDogfightVolley(),220)}
  if(cmd==="boost"){let cost=Number(s.dogfight.boostFuelCost||0);if(s.fuel<cost)return toast("Not enough fuel");s.fuel-=cost;logDogfight(`Engine boost engaged. Fuel -${cost}.`);glitch();uiBeep(145,.18,.035,"sawtooth");addNotification("Raven boost engaged.","warn");save();return setTimeout(()=>enemyDogfightVolley(),220)}
  if(cmd==="overcharge"){let cost=Number(s.dogfight.shieldOverchargeCost||0);if(s.fuel<cost)return toast("Not enough fuel");s.fuel-=cost;s.shields=clamp(s.shields+20,0,s.shieldsMax);logDogfight(`Shield overcharge engaged. Shields +20, fuel -${cost}.`);fx("heal");uiBeep(760,.16,.03,"sine");floatNumber("+20 SHIELD","heal");addNotification("Shield overcharge engaged.","info");save();return setTimeout(()=>enemyDogfightVolley(),220)}
 }
-function dogEnemyAction(spec){let[id,act]=spec.split(":"),e=DATA.dogfight.enemies.find(x=>x.id===id);if(!e)return;if(act==="remove"){DATA.dogfight.enemies=DATA.dogfight.enemies.filter(x=>x.id!==id);save();return render()}if(act==="damage"){openModal(`Damage ${e.name}`,`<div class="field"><label>Damage</label><input id="shipDmg" type="number" value="10"></div><button class="btn" id="applyShipDmg">Apply</button>`);setTimeout(()=>$("#applyShipDmg").onclick=()=>{e.hp=clamp(e.hp-Number($("#shipDmg").value||0),0,e.hpMax);save();$("#modal").close();render()},0)}}
+function dogEnemyAction(spec){let[id,act]=spec.split(":"),e=DATA.dogfight.enemies.find(x=>x.id===id);if(!e)return;if(act==="remove"){DATA.dogfight.enemies=DATA.dogfight.enemies.filter(x=>x.id!==id);save();return render()}if(act==="damage"){openModal(`Damage ${e.name}`,`<div class="field"><label>Damage</label><input id="shipDmg" type="number" value="10"></div><button class="btn" id="applyShipDmg">Apply</button>`);setTimeout(()=>$("#applyShipDmg").onclick=()=>{const amount=Number($("#shipDmg").value||0);e.hp=clamp(e.hp-amount,0,e.hpMax);if(e.shipForgeId)window.DeadlockShipForge?.damageNpcShip?.(DATA,e.shipForgeId,amount,`manual:${e.id}`);save();$("#modal").close();render()},0)}}
 function handleContract(spec){
  let[id,act]=spec.split(":"),c=DATA.contracts.find(x=>x.id===id);if(!c)return;
  if(id==="v14_signal_in_the_rain")return render("First Flight");
@@ -2574,7 +2578,7 @@ function sceneTraffic(count=3){
  const forge=window.ShipForge;if(!forge)return Array.from({length:count},(_,i)=>`<i class="scene-ship ship-${i%4}" style="--lane:${i};--delay:${-(i*2.7)}s"></i>`).join("");
  const seed=forge.hashSeed(`${currentPage||"scene"}|${DATA?.story?.location||"deadlock"}|${DATA?.world?.seed||DATA?.created||"0"}`);
  const classes=["fighter","shuttle","light_freighter","freighter","cargo","patrol"];
- return forge.population(seed,count,classes).map((ship,i)=>`<i class="scene-shipforge ${i%2?"from-right":"from-left"}" style="--lane:${i};--delay:${-(i*3.1)}s;--flight:${13+(i%4)*2}s;--ship-scale:${.62+(i%4)*.09}">${forge.renderMarkup(ship,{label:`${forge.catalog.classes[ship.classId].label} traffic`})}</i>`).join("");
+ const key=`${currentPage||"scene"}|${DATA?.galaxyState?.currentLocationId||DATA?.story?.location||"deadlock"}|traffic`;const hadPersistent=!!DATA?.shipForge?.traffic?.[key]?.length;const persistent=window.DeadlockShipForge?.trafficPopulation?.(DATA,key,count,classes);if(!hadPersistent&&persistent?.length)save();const ships=persistent?.map(x=>x.blueprint)||forge.population(seed,count,classes);return ships.map((ship,i)=>`<i class="scene-shipforge ${i%2?"from-right":"from-left"}" style="--lane:${i};--delay:${-(i*3.1)}s;--flight:${13+(i%4)*2}s;--ship-scale:${.62+(i%4)*.09}">${forge.renderMarkup(ship,{label:`${forge.catalog.classes[ship.classId].label} traffic`})}</i>`).join("");
 }
 function sceneParticles(count=18,theme="hq"){return Array.from({length:count},(_,i)=>`<i class="scene-particle p-${i%6}" style="--i:${i};--x:${(i*37)%101};--y:${(i*61)%97};--delay:${-(i*.41)}s"></i>`).join("")}
 function sceneCrowd(count=4){return `<div class="scene-crowd">${Array.from({length:count},(_,i)=>{const dir=i%2?"from-right":"from-left",variant=`person-${i%4}`,speed=13+(i%5)*2.2,depth=3+(i*17)%18,scale=.62+((i*7)%5)*.07;return `<i class="scene-person ${dir} ${variant}" style="--i:${i};--delay:${-(i*2.9)}s;--walk-speed:${speed}s;--depth:${depth};--person-scale:${scale}"><span class="person-rig"><span class="person-head"></span><span class="person-body"></span><span class="person-arm arm-a"></span><span class="person-arm arm-b"></span><span class="person-leg leg-a"></span><span class="person-leg leg-b"></span></span></i>`}).join("")}</div>`}
@@ -2610,7 +2614,7 @@ function livingSceneMarkup(ctx){
  const dogEnemies=page==="Dogfight"&&typeof liveDogfightEnemies==="function"?liveDogfightEnemies().slice(0,5):[];
  const dogEnemyCount=page==="Dogfight"?Math.max(1,dogEnemies.length||3):0;
  const groundEnemyMarkup=groundEnemies.length?groundEnemies.map((e,i)=>`<button class="scene-enemy-unit ${e.id===selectedCombatTarget?"targeted":""}" data-scene-enemy-target="${esc(e.id)}" style="--slot:${i}"><i></i><span>${esc(e.name)}</span><b><em style="width:${clamp(Number(e.hp||0)/Math.max(1,Number(e.hpMax||1))*100,0,100)}%"></em></b></button>`).join(""):Array.from({length:groundEnemyCount},(_,i)=>`<i class="scene-enemy-placeholder" style="--slot:${i}"></i>`).join("");
- const dogEnemyMarkup=dogEnemies.length?dogEnemies.map((e,i)=>`<i class="scene-fighter-unit" data-fighter-id="${esc(e.id)}" style="--slot:${i};--hp:${clamp(Number(e.hp||0)/Math.max(1,Number(e.hpMax||1))*100,0,100)}"><b>${esc(e.name)}</b></i>`).join(""):Array.from({length:dogEnemyCount},(_,i)=>`<i class="scene-fighter-unit" style="--slot:${i}"></i>`).join("");
+ const dogEnemyMarkup=dogEnemies.length?dogEnemies.map((e,i)=>{const rec=e.shipForgeId&&DATA.shipForge?.ships?.[e.shipForgeId],bp=rec&&window.DeadlockShipForge?.blueprint?.(DATA,rec),art=bp&&window.ShipForge?.renderMarkup?.(bp,{label:e.name});return`<i class="scene-fighter-unit ${art?'sf-forge-enemy':''}" data-fighter-id="${esc(e.id)}" style="--slot:${i};--hp:${clamp(Number(e.hp||0)/Math.max(1,Number(e.hpMax||1))*100,0,100)}">${art||''}<b>${esc(e.name)}</b></i>`}).join(""):Array.from({length:dogEnemyCount},(_,i)=>`<i class="scene-fighter-unit" style="--slot:${i}"></i>`).join("");
  const inTransit=page==="Galaxy"&&galaxyState?.()?.phase==="transit";
  return `<section class="living-scene theme-${esc(theme)} camera-${esc(p.camera||"slow")} ${danger>=75?"scene-high-danger":""} ${inTransit?"scene-transit":""}" data-living-scene data-scene-page="${esc(page)}" data-scene-preset="${esc(ctx.presetId)}">
   <div class="scene-camera">

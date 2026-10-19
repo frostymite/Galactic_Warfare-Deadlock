@@ -1,0 +1,587 @@
+{
+  "results": [
+    {
+      "label": "Phase 2 world schema loads",
+      "pass": true,
+      "detail": {
+        "schema": "deadlock.shipforge.world.v1",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "label": "Raven becomes persistent owned ship",
+      "pass": true,
+      "detail": {
+        "id": "rovan",
+        "name": "Rovan Kes",
+        "kind": "player"
+      }
+    },
+    {
+      "label": "Raven stores exact modular installation ids",
+      "pass": true,
+      "detail": {
+        "core": "cmp-1-420c02",
+        "cockpit": "cmp-2-450c06",
+        "wing": "cmp-3-440c05",
+        "engine": "cmp-9-4a0c0e",
+        "weapon": "cmp-5-460c08",
+        "cargo": "cmp-6-490c0d"
+      }
+    },
+    {
+      "label": "installed components store condition damage and ownership",
+      "pass": true
+    },
+    {
+      "label": "Raven paint and registry persist",
+      "pass": true,
+      "detail": {
+        "schema": "deadlock.shipforge.persistent-ship.v1",
+        "id": "raven",
+        "name": "The Raven",
+        "classId": "light_freighter",
+        "seed": 1772410469,
+        "palette": "navy_teal",
+        "markings": 3,
+        "wear": 2,
+        "registry": "RVN-DL-01",
+        "owner": {
+          "id": "rovan",
+          "name": "Rovan Kes",
+          "kind": "player"
+        },
+        "installations": {
+          "core": "cmp-1-420c02",
+          "cockpit": "cmp-2-450c06",
+          "wing": "cmp-3-440c05",
+          "engine": "cmp-9-4a0c0e",
+          "weapon": "cmp-5-460c08",
+          "cargo": "cmp-6-490c0d"
+        },
+        "status": "operational",
+        "hull": 108,
+        "shields": 84,
+        "fuel": 91,
+        "damageLog": [],
+        "createdAt": "2026-10-19T11:03:01.425Z",
+        "lastSeenAt": "2026-10-19T11:03:01.425Z",
+        "persistentKey": null,
+        "stats": {
+          "raw": {
+            "mass": 9,
+            "armor": 12,
+            "speed": 7,
+            "power": 5,
+            "damage": 11,
+            "capacity": 18,
+            "sensors": 0,
+            "utility": 0,
+            "value": 55600
+          },
+          "effective": {
+            "mass": 9,
+            "armor": 11.6736,
+            "speed": 6.143200000000001,
+            "power": 4.388000000000001,
+            "damage": 11,
+            "capacity": 17.7552,
+            "sensors": 0,
+            "utility": 0,
+            "value": 53436.25
+          },
+          "condition": 94,
+          "hullMax": 108,
+          "shieldsMax": 84,
+          "fuelMax": 91,
+          "attackMod": 2,
+          "evasionBonus": 3,
+          "damageFormula": "2d8+1",
+          "value": 53436
+        },
+        "signature": "light_freighter|navy_teal|core_twinboom_09|cockpit_armored_05|wing_outrigger_09|engine_ring_03|weapon_rotary_09|cargo_modular_08|-|3"
+      }
+    },
+    {
+      "label": "persistent Raven rebuilds as valid ShipForge blueprint",
+      "pass": true,
+      "detail": {
+        "core": "core_twinboom_09",
+        "cockpit": "cockpit_armored_05",
+        "wing": "wing_outrigger_09",
+        "engine": "engine_military_06",
+        "weapon": "weapon_rotary_09",
+        "cargo": "cargo_modular_08",
+        "utility": "utility_smuggler_06"
+      }
+    },
+    {
+      "label": "legacy flight stats derive from installed parts",
+      "pass": true,
+      "detail": {
+        "name": "The Raven",
+        "class": "Unique Light Freighter / Fighter Hybrid",
+        "hull": 108,
+        "hullMax": 108,
+        "shields": 84,
+        "shieldsMax": 84,
+        "fuel": 91,
+        "fuelMax": 91,
+        "dogfight": {
+          "attackMod": 2,
+          "evasionBonus": 3,
+          "damage": "2d8+1"
+        },
+        "shipForgeStats": {
+          "raw": {
+            "mass": 9,
+            "armor": 12,
+            "speed": 7,
+            "power": 5,
+            "damage": 11,
+            "capacity": 18,
+            "sensors": 0,
+            "utility": 0,
+            "value": 55600
+          },
+          "effective": {
+            "mass": 9,
+            "armor": 11.6736,
+            "speed": 6.143200000000001,
+            "power": 4.388000000000001,
+            "damage": 11,
+            "capacity": 17.7552,
+            "sensors": 0,
+            "utility": 0,
+            "value": 53436.25
+          },
+          "condition": 94,
+          "hullMax": 108,
+          "shieldsMax": 84,
+          "fuelMax": 91,
+          "attackMod": 2,
+          "evasionBonus": 3,
+          "damageFormula": "2d8+1",
+          "value": 53436
+        }
+      }
+    },
+    {
+      "label": "component condition changes effective ship combat stats",
+      "pass": true,
+      "detail": {
+        "weaponBefore": 10.251999999999999,
+        "weaponAfter": 4.268
+      }
+    },
+    {
+      "label": "component repair restores condition and charges credits",
+      "pass": true,
+      "detail": {
+        "repair": {
+          "ok": true,
+          "message": "Rotary repaired to 100% for 2,455 cr."
+        },
+        "cost": 2455,
+        "credits": 355945
+      }
+    },
+    {
+      "label": "local dealer and salvage inventories exist",
+      "pass": true,
+      "detail": [
+        [
+          "new",
+          9
+        ],
+        [
+          "salvage",
+          9
+        ]
+      ]
+    },
+    {
+      "label": "dealer stock carries real price and component metadata",
+      "pass": true
+    },
+    {
+      "label": "salvage market parts are used rather than pristine",
+      "pass": true,
+      "detail": [
+        40,
+        38,
+        61,
+        65,
+        37,
+        65,
+        60,
+        81,
+        37
+      ]
+    },
+    {
+      "label": "buying a component transfers credits and creates owned inventory",
+      "pass": true,
+      "detail": {
+        "ok": true,
+        "message": "Purchased Skiff (93%).",
+        "instanceId": "cmp-8-4b0c10"
+      }
+    },
+    {
+      "label": "installing replacement moves old component to locker",
+      "pass": true,
+      "detail": {
+        "ok": true,
+        "message": "Installed Ring on The Raven."
+      }
+    },
+    {
+      "label": "required ship systems cannot be removed without replacement",
+      "pass": true
+    },
+    {
+      "label": "optional component can be removed into parts locker",
+      "pass": true,
+      "detail": {
+        "ok": true,
+        "message": "Removed Sensor."
+      }
+    },
+    {
+      "label": "uninstalled component can be sold to dealer",
+      "pass": true,
+      "detail": {
+        "ok": true,
+        "message": "Sold Sensor for 878 cr."
+      }
+    },
+    {
+      "label": "same installation system supports future owned ships",
+      "pass": true,
+      "detail": {
+        "futureInstall": {
+          "ok": true,
+          "message": "Installed Laser Pair on QA Interceptor."
+        },
+        "ship": {
+          "schema": "deadlock.shipforge.persistent-ship.v1",
+          "id": "qa-owned-fighter",
+          "name": "QA Interceptor",
+          "classId": "fighter",
+          "seed": 9917,
+          "palette": "oxide_amber",
+          "markings": 4,
+          "wear": 4,
+          "registry": null,
+          "owner": {
+            "id": "rovan",
+            "name": "Rovan Kes",
+            "kind": "player"
+          },
+          "installations": {
+            "core": "cmp-b-19e759",
+            "cockpit": "cmp-c-1ae75b",
+            "engine": "cmp-d-1be75d",
+            "weapon": "cmp-g-1ee761",
+            "utility": "cmp-f-1de760"
+          },
+          "status": "operational",
+          "hull": 100,
+          "shields": 100,
+          "fuel": 100,
+          "damageLog": [],
+          "createdAt": "2026-10-19T11:03:01.444Z",
+          "lastSeenAt": "2026-10-19T11:03:01.444Z",
+          "persistentKey": null,
+          "stats": {
+            "raw": {
+              "mass": 4,
+              "armor": 4,
+              "speed": 9,
+              "power": 9,
+              "damage": 5,
+              "capacity": 0,
+              "sensors": 2,
+              "utility": 6,
+              "value": 35200
+            },
+            "effective": {
+              "mass": 4,
+              "armor": 4,
+              "speed": 9,
+              "power": 9,
+              "damage": 4.5920000000000005,
+              "capacity": 0,
+              "sensors": 2,
+              "utility": 6,
+              "value": 34876
+            },
+            "condition": 98,
+            "hullMax": 85,
+            "shieldsMax": 97,
+            "fuelMax": 86,
+            "attackMod": 1,
+            "evasionBonus": 8,
+            "damageFormula": "1d6+2",
+            "value": 34876
+          },
+          "signature": "fighter|oxide_amber|core_kite_03|cockpit_canopy_06|-|engine_military_06|weapon_laser_pair_01|-|utility_jammer_07|4"
+        }
+      }
+    },
+    {
+      "label": "owned fleet registry supports multiple player ships",
+      "pass": true,
+      "detail": [
+        "raven",
+        "qa-owned-fighter"
+      ]
+    },
+    {
+      "label": "named NPC keeps same ship configuration between encounters",
+      "pass": true,
+      "detail": {
+        "id": "npc-6810e18f",
+        "sig": "patrol|black_copper|core_twinboom_09|cockpit_arrow_01|wing_interceptor_08|engine_needle_07|weapon_missile_08|-|utility_sensor_01|1"
+      }
+    },
+    {
+      "label": "NPC component damage persists on the ship record",
+      "pass": true,
+      "detail": [
+        {
+          "partId": "cockpit_arrow_01",
+          "slot": "cockpit",
+          "loss": 7,
+          "condition": 71
+        },
+        {
+          "partId": "wing_interceptor_08",
+          "slot": "wing",
+          "loss": 6,
+          "condition": 78
+        }
+      ]
+    },
+    {
+      "label": "recurring encounter NPCs retain the same modular ships",
+      "pass": true,
+      "detail": [
+        "npc-10572f32",
+        "npc-38ebb8e1"
+      ]
+    },
+    {
+      "label": "recurring NPC ship component damage persists between encounters",
+      "pass": true,
+      "detail": {
+        "condition": 83
+      }
+    },
+    {
+      "label": "enemy combat numbers are regenerated from installed ship components",
+      "pass": true,
+      "detail": [
+        {
+          "id": "ra2",
+          "name": "Hunter Interceptor",
+          "threat": 3,
+          "shipForgeId": "npc-10572f32",
+          "shipForgeOwner": "owner-10572f32",
+          "hpMax": 36,
+          "hp": 36,
+          "attackMod": 1,
+          "damage": "1d6+2",
+          "shipForgeStats": {
+            "condition": 83,
+            "attackMod": -1,
+            "evasionBonus": 7,
+            "damageFormula": "1d6+2"
+          }
+        },
+        {
+          "id": "rb2",
+          "name": "Contract Wingman",
+          "threat": 2,
+          "shipForgeId": "npc-38ebb8e1",
+          "shipForgeOwner": "owner-38ebb8e1",
+          "hpMax": 41,
+          "hp": 41,
+          "attackMod": 2,
+          "damage": "1d6+2",
+          "shipForgeStats": {
+            "condition": 91,
+            "attackMod": 1,
+            "evasionBonus": 8,
+            "damageFormula": "1d6+2"
+          }
+        }
+      ]
+    },
+    {
+      "label": "dogfight hostiles bind to modular persistent ships",
+      "pass": true,
+      "detail": [
+        {
+          "id": "e1",
+          "name": "Hunter Interceptor",
+          "hp": 0,
+          "hpMax": 51,
+          "threat": 3,
+          "shipForgeId": "npc-1fa71980",
+          "shipForgeOwner": "owner-1fa71980",
+          "attackMod": 3,
+          "damage": "2d6+1",
+          "shipForgeStats": {
+            "condition": 88,
+            "attackMod": 1,
+            "evasionBonus": 6,
+            "damageFormula": "2d6+1"
+          }
+        },
+        {
+          "id": "e2",
+          "name": "Raider Wingman",
+          "hp": 0,
+          "hpMax": 32,
+          "threat": 2,
+          "shipForgeId": "npc-a01e1c76",
+          "shipForgeOwner": "owner-a01e1c76",
+          "attackMod": 0,
+          "damage": "1d6+2",
+          "shipForgeStats": {
+            "condition": 90,
+            "attackMod": -1,
+            "evasionBonus": 7,
+            "damageFormula": "1d6+2"
+          }
+        }
+      ]
+    },
+    {
+      "label": "defeated modular ships generate recoverable salvage",
+      "pass": true,
+      "detail": [
+        {
+          "id": "salvage-17-30ed00",
+          "instanceId": "cmp-10-1eebdf",
+          "partId": "engine_twin_ion_01",
+          "condition": 30,
+          "sourceShipId": "npc-1fa71980",
+          "sourceName": "Hunter Interceptor",
+          "claimed": true,
+          "createdAt": "2026-10-19T11:03:01.455Z",
+          "claimedAt": "2026-10-19T11:03:01.455Z"
+        },
+        {
+          "id": "salvage-18-35ed07",
+          "instanceId": "cmp-16-b4f386",
+          "partId": "engine_twin_ion_01",
+          "condition": 40,
+          "sourceShipId": "npc-a01e1c76",
+          "sourceName": "Raider Wingman",
+          "claimed": false,
+          "createdAt": "2026-10-19T11:03:01.455Z"
+        }
+      ]
+    },
+    {
+      "label": "salvage removes the actual component from defeated source ship",
+      "pass": true,
+      "detail": {
+        "id": "cmp-10-1eebdf",
+        "partId": "engine_twin_ion_01",
+        "slot": "engine",
+        "condition": 30,
+        "ownerId": "rovan",
+        "installedOn": null,
+        "source": "recovered:npc-1fa71980",
+        "acquiredAt": "2026-10-19T11:03:01.453Z",
+        "paid": 0,
+        "notes": "Recovered from Hunter Interceptor.",
+        "damage": []
+      }
+    },
+    {
+      "label": "claiming salvage transfers actual damaged component to player locker",
+      "pass": true,
+      "detail": {
+        "ok": true,
+        "message": "Recovered Twin Ion at 30% condition.",
+        "instanceId": "cmp-10-1eebdf"
+      }
+    },
+    {
+      "label": "world traffic uses persistent modular ship identities",
+      "pass": true,
+      "detail": [
+        "traffic-a7a47724",
+        "traffic-a8a478b7",
+        "traffic-a9a47a4a",
+        "traffic-aaa47bdd",
+        "traffic-a3a470d8",
+        "traffic-a4a4726b"
+      ]
+    },
+    {
+      "label": "ShipForge world survives campaign JSON roundtrip",
+      "pass": true,
+      "detail": {
+        "raven": "light_freighter|black_copper|core_twinboom_09|cockpit_armored_05|wing_outrigger_09|engine_ring_03|weapon_rotary_09|cargo_modular_08|-|3",
+        "npc": "patrol|black_copper|core_twinboom_09|cockpit_arrow_01|wing_interceptor_08|engine_needle_07|weapon_missile_08|-|utility_sensor_01|1"
+      }
+    },
+    {
+      "label": "persistent traffic survives campaign JSON roundtrip",
+      "pass": true
+    },
+    {
+      "label": "dealer stock survives save/reload instead of rerolling",
+      "pass": true
+    },
+    {
+      "label": "shipyard UI renders real three-quarter vectors",
+      "pass": true,
+      "detail": "<div class=\"sfw-yard\"><section class=\"sfw-hero\"><div class=\"sfw-hero-visual\"><span class=\"shipforge-ship shipforge-25d s"
+    },
+    {
+      "label": "shipyard UI exposes install repair dealer salvage and fleet systems",
+      "pass": true
+    },
+    {
+      "label": "ship paint is persistent gameplay state",
+      "pass": true,
+      "detail": {
+        "ok": true,
+        "message": "The Raven repainted: navy teal."
+      }
+    },
+    {
+      "label": "class/mount compatibility blocks invalid installations",
+      "pass": true,
+      "detail": {
+        "part": "core_skiff_04",
+        "bad": {
+          "ok": false,
+          "message": "Skiff does not fit Fighter mounts."
+        }
+      }
+    },
+    {
+      "label": "dealer inventory can refresh deterministically by market cycle",
+      "pass": true
+    },
+    {
+      "label": "all commerce metadata remains available for gameplay",
+      "pass": true
+    },
+    {
+      "label": "all persistent ship blueprints remain valid after gameplay operations",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "passed": 39,
+  "failed": 0
+}
