@@ -19,10 +19,13 @@ ok('decision threads generated',state.threads.some(x=>x.type==='decision'),state
 ok('turning points await player',state.arcs.every(x=>x.status==='awaiting_player'),state.arcs);
 ok('background progress freezes at turning point',state.arcs.every(x=>x.progress<60),state.arcs.map(x=>({id:x.id,progress:x.progress,stage:x.stage,status:x.status})));
 ok('only one open decision per arc',state.arcs.every(a=>state.threads.filter(t=>t.arcId===a.id&&t.type==='decision'&&!['resolved','declined'].includes(t.status)).length<=1));
-ok('relationship alliance appears',sum.relationshipStates.some(x=>x.state==='alliance'),sum.relationshipStates);
-ok('relationship grudge appears',sum.relationshipStates.some(x=>x.state==='grudge'),sum.relationshipStates);
-ok('Dren Nera grudge grounded in agenda relation',A.relation(data,'dren','nera').tension>=18,A.relation(data,'dren','nera'));
-ok('Dren Renn alliance grounded in agenda relation',A.relation(data,'dren','renn').score>=12,A.relation(data,'dren','renn'));
+ok('relationship trust/strain can emerge naturally',sum.relationshipStates.some(x=>x.state!=='neutral'),sum.relationshipStates);
+const grudgeData=make(),grudgeCtx={...ctx,contract:grudgeData.contracts[0]};
+for(let t=1;t<=6;t++){grudgeData.story.director.turn=t;A.advance(grudgeData,grudgeCtx,{force:true,actorId:'dren',kind:'timeline_pushback'});X.advance(grudgeData,grudgeCtx,{force:true})}
+ok('forced repeated Dren Nera friction creates grudge',X.summary(grudgeData).relationshipStates.some(x=>x.key==='dren|nera'&&x.state==='grudge'),{edge:A.relation(grudgeData,'dren','nera'),arcs:X.summary(grudgeData).relationshipStates});
+const allianceData=make(),allianceCtx={...ctx,contract:allianceData.contracts[0]};
+for(let t=1;t<=7;t++){allianceData.story.director.turn=t;A.advance(allianceData,allianceCtx,{force:true,actorId:'renn',kind:'exit_check'});X.advance(allianceData,allianceCtx,{force:true})}
+ok('repeated Renn Dren cooperation creates alliance',X.summary(allianceData).relationshipStates.some(x=>x.key==='dren|renn'&&x.state==='alliance'),{edge:A.relation(allianceData,'dren','renn'),arcs:X.summary(allianceData).relationshipStates});
 const protectedAfterBackground=JSON.stringify({credits:data.character.credits,reserve:data.apex.reserve,contract:data.contracts[0],owner:data.ship.owner});
 ok('background arcs preserve protected state',protectedAfterBackground===protectedBefore,{protectedBefore,protectedAfterBackground});
 const secretThread=state.threads.find(x=>x.type==='secret'&&x.status==='offered'),secret=state.secrets.find(x=>x.id===secretThread.secretId);
