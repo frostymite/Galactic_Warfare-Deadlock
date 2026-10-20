@@ -2561,8 +2561,9 @@ function localStoryGenerate(action="",choice=null){
  const text=(action||choice?.label||"").trim();
  const roll=s.pendingRoll;
  const preservedChoices=choice?.interruptId?structuredClone(s.choices||[]):null;
+ const turnAction=choice||inferIntent(text||"");
  if(text){
-  const inferred=choice||inferIntent(text);
+  const inferred=turnAction;
   d.lastTopic=inferred.topic||inferred.intent||d.lastTopic;
   if(inferred.npcId)d.lastNpc=inferred.npcId;
  }
@@ -2575,7 +2576,8 @@ function localStoryGenerate(action="",choice=null){
   else d.tension=clamp(d.tension+4,0,100);
  }
  const agendaBeat=advanceNpcAgendas();
- if(agendaBeat){const active=contractById(s.activeContractId)||null;s.choices=window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(active))||s.choices}
+ const missionIntent=["action","investigate","deception","contracts","bounty","wait"].includes(turnAction?.intent||"action");
+ if(agendaBeat&&missionIntent&&!choice?.interruptId){const active=contractById(s.activeContractId)||null;s.choices=window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(active))||s.choices}
  const initiativeTriggered=maybeMaterializeNpcInitiative();
  const eventTriggered=initiativeTriggered?false:maybeTriggerEncounter();
  if(!eventTriggered&&!initiativeTriggered){
