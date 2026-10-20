@@ -1508,7 +1508,7 @@ function startNewStoryScene(){
 }
 function wireStory(){
  if($("#storySend"))$("#storySend").onclick=()=>{const v=$("#storyInput").value.trim();if(v)storySubmit(v,null)};
- if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){DATA.story.objective=contractStageInfo(c).goal;DATA.story.choices=missionChoices(c);storyPush("narration","Narrator",`Deadlock refocuses on the job. ${contractStageInfo(c).goal}`);save();render("Story")}else storySubmit("Continue from the current situation.",null)};
+ if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){const stage=contractStageInfo(c);DATA.story.objective=stage.goal;DATA.story.choices=missionChoices(c);const beat=window.DeadlockStoryDirector?.continueBeat?.(DATA,storyDirectorContext(c,{stage}));storyPush("narration","Narrator",beat||`Deadlock refocuses on the job. ${stage.goal}`);save();render("Story")}else storySubmit("Continue from the current situation.",null)};
  if($("#storyRollBtn"))$("#storyRollBtn").onclick=openStoryRoll;
  $$("[data-storychoice]").forEach(b=>b.onclick=()=>{const c=DATA.story.choices.find(x=>x.id===b.dataset.storychoice);if(c)storySubmit("",c)});
  $$("[data-storyinterrupt]").forEach(b=>b.onclick=()=>{const [iid,cid]=b.dataset.storyinterrupt.split(":");const it=interruptionById(iid);const c=it?.choices?.find(x=>x.id===cid);if(c)storySubmit("",c)});
@@ -2461,7 +2461,8 @@ function reactToPlayerAction(action,choice,roll){
    setActiveContract(contract);
    applyContractRollConsequence(contract,inferred,roll);
    const stage=contractStageInfo(contract);
-   storyPush("narration","Narrator",`Deadlock keeps ${contract.title} pinned to the tactical display. ${stage.title}. ${stage.goal}`);
+   const beat=window.DeadlockStoryDirector?.narrativeBeat?.(DATA,{choice:inferred,roll,contract,stage,target:contract.targetId?targetById(contract.targetId):null,location:s.location});
+   storyPush("narration","Narrator",beat||`Deadlock keeps ${contract.title} pinned to the tactical display. ${stage.title}. ${stage.goal}`);
    setTimeout(()=>storyCinematic("new_intel",`${contract.title} // ${stage.title}`),35);
    s.choices=missionChoices(contract);
    s.objective=stage.goal;
@@ -2470,10 +2471,11 @@ function reactToPlayerAction(action,choice,roll){
  }
 
  const consequence=consequenceFromRoll(roll,inferred);
+ const active=contractById(s.activeContractId)||null;
+ const proceduralBeat=window.DeadlockStoryDirector?.narrativeBeat?.(DATA,{choice:inferred,roll,contract:active,stage:active?contractStageInfo(active):null,target:active?.targetId?targetById(active.targetId):null,location:s.location});
  const opener=pick(DATA.story.offlineTables?.sceneOpeners)||"The situation shifts.";
  const atmosphere=chance(.5)?pick(DATA.story.offlineTables?.atmosphere):"";
- storyPush("narration","Narrator",`${opener} ${atmosphere||""} ${consequence||"Deadlock's move changes the shape of the next decision."}`.replace(/\s+/g," ").trim());
- const active=contractById(s.activeContractId)||null;
+ storyPush("narration","Narrator",proceduralBeat||`${opener} ${atmosphere||""} ${consequence||"Deadlock's move changes the shape of the next decision."}`.replace(/\s+/g," ").trim());
  const procedural=window.DeadlockStoryDirector?.genericChoices?.(DATA,storyDirectorContext(active));
  s.choices=procedural?.length?procedural:[
   {id:uid("choice"),label:"Press the advantage before the situation changes.",intent:"action",contractId:s.activeContractId||null,skill:"Survival",dc:12},
