@@ -1,6 +1,6 @@
 {
   "name": "deadlock-tactical-os",
-  "version": "17.9.0",
+  "version": "17.10.0",
   "private": true,
   "type": "module",
   "scripts": {
