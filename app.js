@@ -1384,6 +1384,7 @@ function pageStory(){
     <div class="card span4">
       ${consequenceActiveThreadHTML()}
       ${(s.interruptions||[]).length?`<h3>Active Interruptions</h3><div class="story-interruptions">${storyInterruptionButtons()}</div>`:""}
+      ${storyWorldActivityHTML()}
       <h3>Situation-Driven Options</h3>
       <div class="small muted mission-choice-guide">These options are rebuilt from the current NPC, location, contract stage, living-world rumors, recent choices, and consequences. Ignore them anytime and type any action.</div>
       <div class="story-choices">${storyChoiceButtons()}</div>
@@ -1508,7 +1509,7 @@ function startNewStoryScene(){
 }
 function wireStory(){
  if($("#storySend"))$("#storySend").onclick=()=>{const v=$("#storyInput").value.trim();if(v)storySubmit(v,null)};
- if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){DATA.story.director.turn=Number(DATA.story.director.turn||0)+1;const stage=contractStageInfo(c);DATA.story.objective=stage.goal;DATA.story.choices=missionChoices(c);const beat=window.DeadlockStoryDirector?.continueBeat?.(DATA,storyDirectorContext(c,{stage}));storyPush("narration","Narrator",beat||`Deadlock refocuses on the job. ${stage.goal}`);maybeMaterializeNpcInitiative();save();render("Story")}else storySubmit("Continue from the current situation.",null)};
+ if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){DATA.story.director.turn=Number(DATA.story.director.turn||0)+1;const stage=contractStageInfo(c);advanceNpcAgendas();DATA.story.objective=stage.goal;DATA.story.choices=missionChoices(c);const beat=window.DeadlockStoryDirector?.continueBeat?.(DATA,storyDirectorContext(c,{stage}));storyPush("narration","Narrator",beat||`Deadlock refocuses on the job. ${stage.goal}`);maybeMaterializeNpcInitiative();save();render("Story")}else storySubmit("Continue from the current situation.",null)};
  if($("#storyRollBtn"))$("#storyRollBtn").onclick=openStoryRoll;
  $$("[data-storychoice]").forEach(b=>b.onclick=()=>{const c=DATA.story.choices.find(x=>x.id===b.dataset.storychoice);if(c)storySubmit("",c)});
  $$("[data-storyinterrupt]").forEach(b=>b.onclick=()=>{const [iid,cid]=b.dataset.storyinterrupt.split(":");const it=interruptionById(iid);const c=it?.choices?.find(x=>x.id===cid);if(c)storySubmit("",c)});
@@ -1594,6 +1595,7 @@ function missionChoiceMeta(choice){
  if(intent==="turnin")return {purpose:"COMPLETE CONTRACT",outcome:"Closes the job and pays the listed gross reward."};
  if(intent==="resolve")return {purpose:"RESOLVE ENCOUNTER",outcome:"Success secures the objective and unlocks turn-in."};
  if(choice?.actionType==="intel_contact")return {purpose:"WORK THE CONTACT",outcome:"Success can improve the relationship and confirm usable intel."};
+ if(String(choice?.actionType||"").startsWith("agenda_"))return {purpose:"WORLD IN MOTION",outcome:"Responds to an NPC's autonomous move without granting them control of Deadlock's resources or contracts."};
  if(intent==="investigate"||choice?.actionType==="contract_review")return {purpose:"GAIN INTEL",outcome:"Success advances the current mission stage."};
  if(intent==="deception")return {purpose:"BAIT / MISDIRECT",outcome:"Higher risk; success can advance the hunt without a direct approach."};
  if(intent==="dialogue")return {purpose:"RELATIONSHIP",outcome:"Changes trust/respect and may open better information later."};
@@ -2277,6 +2279,26 @@ function availableComplications(){
   return true;
  });
 }
+
+function advanceNpcAgendas(opts={}){
+ const c=contractById(DATA.story.activeContractId)||activeContracts?.()[0]||null;
+ const beat=window.DeadlockNpcAgendas?.advance?.(DATA,storyDirectorContext(c,{danger:Number(DATA.story.danger||0)}),opts)||null;
+ if(beat&&Number(beat.attention||0)>=7){
+  const target=beat.targetName?" ↔ "+beat.targetName:"";
+  addNotification("World in motion: "+beat.actorName+target,beat.tone==="friction"?"warn":"info");
+ }
+ return beat;
+}
+function storyWorldActivityHTML(){
+ const A=window.DeadlockNpcAgendas,rows=A?.recent?.(DATA,4)||[];
+ if(!rows.length)return "";
+ const items=rows.map(x=>{
+  const target=x.targetName?" → "+esc(x.targetName):"";
+  const kind=esc(String(x.kind||"activity").replaceAll("_"," ").toUpperCase());
+  return '<article class="story-world-motion-item '+esc(x.tone||"professional")+'"><div class="story-world-motion-meta"><b>'+esc(x.actorName||x.actorId)+target+'</b><span>'+kind+' · TURN '+Number(x.turn||0)+'</span></div><p>'+esc(x.summary||"Background activity continues.")+'</p></article>';
+ }).join("");
+ return '<section class="story-world-motion"><div class="story-world-motion-head"><div><span class="micro">WORLD IN MOTION</span><h3>NPC Agendas</h3></div><span class="pill cyan">AUTONOMOUS // BOUNDED</span></div><div class="story-world-motion-list">'+items+'</div><p class="small muted">NPCs can gather information, cooperate, disagree, and prepare. They cannot spend your credits, accept jobs, launch Apex assets, or finish objectives for you.</p></section>';
+}
 function materializeNpcInitiative(event){
  if(!event)return false;
  const s=DATA.story;
@@ -2552,6 +2574,8 @@ function localStoryGenerate(action="",choice=null){
   if(roll.success)d.tension=clamp(d.tension-4,0,100);
   else d.tension=clamp(d.tension+4,0,100);
  }
+ const agendaBeat=advanceNpcAgendas();
+ if(agendaBeat){const active=contractById(s.activeContractId)||null;s.choices=window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(active))||s.choices}
  const initiativeTriggered=maybeMaterializeNpcInitiative();
  const eventTriggered=initiativeTriggered?false:maybeTriggerEncounter();
  if(!eventTriggered&&!initiativeTriggered){
