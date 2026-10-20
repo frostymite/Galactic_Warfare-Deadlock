@@ -1,6 +1,7 @@
 const fs=require('fs'),vm=require('vm'),path=require('path');
 let checks=0,fail=[];const ok=(name,v)=>{checks++;if(!v)fail.push(name)};
 const box={console};box.window=box;box.globalThis=box;vm.createContext(box);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'../runtime/npc-agendas.js'),'utf8'),box);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../runtime/story-director.js'),'utf8'),box);
 const D=box.DeadlockStoryDirector;
 const data={created:'director-qa',story:{director:{turn:1},location:'Blackglass Station — Hangar',currentNpc:'dren',proceduralLeads:[],consequences:{recent:[{title:'Rival hunter spotted',tone:'danger',contractId:'marr'}]}},livingWorld:{rumors:[
@@ -8,7 +9,7 @@ const data={created:'director-qa',story:{director:{turn:1},location:'Blackglass 
  {id:'r2',summary:'A salvage component carries the wrong manufacturer mark',status:'heard',tick:8,sourcePresetId:'blackglass_hangar',participantIds:['amb-2']}
 ]}};
 const ctx={contract:{id:'marr',title:'Marr Recovery',status:'Active',progress:35,targetId:'marr'},stage:{index:2,key:'trail'},target:{name:'Marr'},currentNpc:{id:'dren',name:'Dren Voss'},currentNpcId:'dren',location:data.story.location,weakestSystem:{id:'engines',name:'Engines',condition:88}};
-ok('engine exposed',!!D);ok('story director schema',D.schema==='deadlock.story-director.v1');ok('story director version',D.version==='1.1.0');
+ok('engine exposed',!!D);ok('story director schema',D.schema==='deadlock.story-director.v1');ok('story director version',D.version==='1.2.0');
 const menus=[],labels=[];
 for(let i=0;i<10;i++){
  data.story.director.turn=i+1;
@@ -61,6 +62,23 @@ const amb=D._test.ambientInitiative(initiativeData,initCtx,initiativeData.story.
 ok('ambient npc can initiate',!!amb&&amb.kind==='ambient'&&amb.speaker==='Veyra');
 const contacts=D._test.contactInitiative(initiativeData,initCtx,initiativeData.story.proceduralDirector,()=>.4);
 ok('contact initiative candidates exist',Array.isArray(contacts)&&contacts.length>0);
+
+
+// v17.11 NPC agenda integration.
+const agendaData={created:'agenda-story-qa',story:{director:{turn:12},danger:78,location:'Blackglass Station — Hangar',interruptions:[],proceduralLeads:[{id:'lead-agenda',summary:'A sealed arrival used a private lane',status:'active',contractId:'marr'}]},livingWorld:{rumors:[{id:'ra',summary:'A broker asked about Deadlock after lights-out',status:'heard',tick:10,participantIds:['amb-a']}]},contracts:[{id:'marr',title:'Marr Recovery',status:'Active',progress:35}]};
+const agendaCtx={contract:agendaData.contracts[0],stage:{index:2,title:'BUILD THE TRAIL'},target:{name:'Marr'},currentNpc:{id:'dren',name:'Dren Voss'},currentNpcId:'dren',location:agendaData.story.location,danger:78,weakestSystem:{id:'engines',name:'Engines',condition:55}};
+for(let t=1;t<=10;t++){agendaData.story.director.turn=t;box.DeadlockNpcAgendas.advance(agendaData,agendaCtx,{force:true})}
+agendaData.story.director.turn=12;
+const agendaChoices=D.missionChoices(agendaData,agendaCtx);
+ok('agenda activity can become mission choice',agendaChoices.some(x=>x.agendaActivityId),agendaChoices);
+const agendaDialogue=D.dialogueChoices(agendaData,{npc:{id:'dren',name:'Dren Voss'},analysis:{topic:'intel',tone:'professional'},contract:agendaCtx.contract,location:agendaCtx.location});
+ok('agenda activity can enter dialogue',agendaDialogue.some(x=>x.actionType==='agenda_discussion'),agendaDialogue);
+agendaData.story.proceduralDirector.initiative.cooldownUntil=0;agendaData.story.proceduralDirector.initiative.recentKinds=[];agendaData.story.proceduralDirector.initiative.recentNpcIds=[];
+const attention=box.DeadlockNpcAgendas.attention(agendaData,7);
+ok('agenda engine exposes high-attention beat',!!attention,attention);
+const agendaInitiative=D.initiative(agendaData,agendaCtx,{force:true});
+ok('story initiative remains compatible with agenda engine',!!agendaInitiative,agendaInitiative);
+ok('story summary includes agenda activity count',D.summary(agendaData).agendaActivities>0,D.summary(agendaData));
 
 const result={checks,passed:checks-fail.length,failed:fail.length,failures:fail,uniqueMissionLabels:new Set(labels).size,uniqueDialogueLabels:new Set(dialogue).size,summary:sum};
 fs.writeFileSync(path.join(__dirname,'story-director-results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));if(fail.length)process.exit(1);
