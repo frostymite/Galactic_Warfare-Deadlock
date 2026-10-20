@@ -7,7 +7,7 @@ global.DeadlockShipForge={trafficPopulation:(data,key,count,classIds)=>{data.shi
 vm.runInThisContext(fs.readFileSync(require('path').join(__dirname,'../runtime/living-world.js'),'utf8'));
 const L=global.DeadlockLivingWorld;
 const campaign={created:'test-campaign',galaxyState:{currentLocationId:'veyra_prime'}};
-ok('engine exposed',!!L);ok('schema set',L.schema==='deadlock.living-world.v1');ok('reactive version',L.version==='1.1.0');
+ok('engine exposed',!!L);ok('schema set',L.schema==='deadlock.living-world.v1');ok('routine version',L.version==='1.2.0');
 const urban={page:'Story',presetId:'urban',preset:{theme:'urban'},loc:{id:'veyra_prime'}};
 const p1=L.ensurePopulation(campaign,urban,9),ids1=p1.npcs.map(x=>x.id);const p2=L.ensurePopulation(campaign,urban,9),ids2=p2.npcs.map(x=>x.id);
 ok('persistent ids',JSON.stringify(ids1)===JSON.stringify(ids2));ok('nine persistent people',ids1.length===9);ok('unique ids',new Set(ids1).size===ids1.length);ok('names generated',p1.npcs.every(n=>typeof n.name==='string'&&n.name.length>=2));ok('roles generated',p1.npcs.every(n=>p1.profile.roles.includes(n.role)));ok('depth valid',p1.npcs.every(n=>['far','mid','near'].includes(n.depth)));ok('behaviors valid',p1.npcs.every(n=>p1.profile.behaviors.includes(n.behavior)));ok('species valid',p1.npcs.every(n=>['humanoid','hooded','lekku','horned','helmeted','droid'].includes(n.species)));
@@ -16,6 +16,37 @@ const portScenes=['landing','market','cantina','tunnels','hideout'];for(const sc
 const t=L.trafficMarkup(campaign,{page:'Story',presetId:'urban',preset:{theme:'urban'},loc:{id:'veyra_prime'}},6);ok('shipforge traffic rendered',(t.match(/lw-ship/g)||[]).length>=6);ok('traffic persisted',Object.keys(campaign.shipForge.traffic).some(k=>k.startsWith('lw|')));ok('flight modes generated',/lw-ship-(cruise|approach|depart|landing)/.test(t));
 const combat=L.trafficMarkup(campaign,{page:'Combat',presetId:'combat',preset:{theme:'combat'},loc:{id:'veyra_prime'}},4);ok('no ambient traffic in combat',combat==='');
 const hq=L.ensurePopulation(campaign,{page:'HQ',presetId:'blackglass_hangar',preset:{theme:'hq',room:'hangar'},loc:{id:'blackglass_station'}},10);ok('hangar populated',hq.npcs.length===10);ok('hangar roles specific',hq.npcs.every(n=>L.profiles.blackglass_hangar.roles.includes(n.role)));
+
+// v17.8 deterministic routines + ambient event simulation.
+const hangarCtx={page:'HQ',presetId:'blackglass_hangar',preset:{theme:'hq',room:'hangar'},loc:{id:'blackglass_station'}};
+const briefingCtx={page:'HQ',presetId:'blackglass_briefing',preset:{theme:'hq',room:'briefing'},loc:{id:'blackglass_station'}};
+L.advanceScene(campaign,hangarCtx);
+const clusterNpcs=L._test.allClusterNpcs(campaign,hangarCtx),clusterIds=clusterNpcs.map(n=>n.id);
+ok('blackglass cluster seeded',clusterNpcs.length>=30);
+ok('all cluster npcs have routines',clusterNpcs.every(n=>Array.isArray(n.routine?.route)&&n.routine.route.length>=1));
+ok('roaming routines exist',clusterNpcs.some(n=>n.routine.route.length>1));
+const firstTick=L.summary(campaign).tick;L.advanceScene(campaign,briefingCtx);const secondTick=L.summary(campaign).tick;
+ok('scene transition advances world tick',secondTick===firstTick+1);
+const sameIds=L._test.allClusterNpcs(campaign,briefingCtx).map(n=>n.id);
+ok('routine simulation preserves identities',clusterIds.every(id=>sameIds.includes(id)));
+let visitorFound=false,shipEventFound=false,eventFound=false,rumorFound=false;
+for(let i=0;i<48;i++){
+ const ctx=i%2?hangarCtx:briefingCtx;L.advanceScene(campaign,ctx);
+ const present=L.presentPopulation(campaign,ctx,6).npcs;
+ if(present.some(n=>n.homePresetId!==ctx.presetId))visitorFound=true;
+ const ev=L.currentEvent(campaign,ctx);
+ if(ev){eventFound=true;if(ev.ship?.shipId)shipEventFound=true;if(ev.rumorId)rumorFound=true}
+}
+ok('cross-room visitor appears',visitorFound);
+ok('ambient event generated',eventFound);
+ok('shipforge-linked event generated',shipEventFound);
+ok('rumor generated from ambient event',rumorFound&&campaign.livingWorld.rumors.length>0);
+ok('ambient events persist by scene',Object.values(campaign.livingWorld.ambientEvents||{}).some(rows=>rows.length>0));
+const routineSummary=L.summary(campaign);
+ok('summary routine count',routineSummary.routineNpcs>=30);
+ok('summary ambient events',routineSummary.ambientEvents>0);
+ok('summary rumors',routineSummary.rumors>0);
+
 const before=L.consumeDirty(campaign),after=L.consumeDirty(campaign);ok('dirty consumed',before===true&&after===false);
 const summary=L.summary(campaign);ok('summary scenes',summary.scenes>=6);ok('summary npc count',summary.npcs>=9);ok('summary interaction count',summary.interactions>=2);ok('summary traffic scenes',summary.trafficScenes>=1);
 // Deterministic persistence stress across many scene keys.
