@@ -138,6 +138,66 @@ function genericChoices(data,ctx={}){
  const out=[];for(const c of rows.filter(Boolean)){if(!st.recentLabels.includes(norm(c.label))&&!st.recentPresented.includes(norm(c.label)))out.push(c);if(out.length>=5)break}
  return rememberPresented(st,(out.length>=4?out:rows.filter(Boolean)).slice(0,5));
 }
+function narrativeBeat(data,ctx={}){
+ const st=ensure(data),c=ctx.choice||{},roll=ctx.roll||null,contract=ctx.contract||{},stage=ctx.stage||{},location=ctx.location||data.story?.location||'the scene',target=ctx.target?.name||contract.title||'the objective',success=roll?!!roll.success:null;
+ const r=rng(`${data.created||'deadlock'}|beat|${data.story?.director?.turn||0}|${signature(c)}|${success}`);
+ let pool=[];
+ if(c.rumorId||c.leadId)pool=success===false?[
+  'The lead does not collapse, but it refuses to verify cleanly. Deadlock marks the contradiction instead of pretending it is certainty.',
+  'The new thread produces more questions than answers. It stays alive, but its confidence drops until another source can support it.',
+  'The trail bends away from the expected answer. That is useful in its own way: one bad assumption is now exposed.'
+ ]:[
+  `The new thread connects to something real. Deadlock does not have the whole answer yet, but the lead now has enough structure to act on.`,
+  `A loose rumor becomes a usable direction. The important change is not certainty—it is that Deadlock now knows what to test next.`,
+  `The report survives the first round of scrutiny. It is no longer background noise; it belongs on the operational board.`
+ ];
+ else if(c.intent==='deception')pool=success===false?[
+  'The false detail goes into the network, but the reaction is muddy. Somebody may have noticed the bait without revealing which side they are on.',
+  'The lie moves, just not cleanly enough to map the network. Deadlock gains pressure instead of clarity.',
+  'The bait draws attention faster than information. The next move will need to account for whoever noticed.'
+ ]:[
+  'The planted detail moves exactly far enough to be useful. Someone reacts, and that reaction gives Deadlock a new edge on the trail.',
+  'The network carries the false detail farther than it should. That tells Deadlock which channel is listening.',
+  'The bait works without becoming the story. A small reaction exposes a larger connection behind it.'
+ ];
+ else if(c.intent==='investigate')pool=success===false?[
+  `The search at ${location} turns up fragments, not a clean answer. Deadlock keeps the useful pieces and discards the temptation to call them proof.`,
+  'The evidence refuses to line up neatly. One assumption is weaker than it looked, and the trail needs a different angle.',
+  'The investigation costs momentum without producing certainty. The failure still narrows what Deadlock should stop trusting.'
+ ]:[
+  `The work at ${location} pays off. Separate details begin pointing in the same direction instead of competing with each other.`,
+  `Deadlock finds the inconsistency that matters. The trail on ${target} gets narrower because one piece finally survives cross-checking.`,
+  'A small detail holds up under scrutiny. It is not dramatic, but it changes which lead deserves the next move.'
+ ];
+ else if(c.intent==='action'||c.intent==='resolve')pool=success===false?[
+  'Deadlock commits to the move, but the scene pushes back. The plan is still alive; the easy version of it is gone.',
+  'The approach breaks at the point where control mattered most. Deadlock keeps the objective, loses some initiative, and has to adapt.',
+  'The move forces a reaction before Deadlock gets the result. The situation is hotter now, but no longer static.'
+ ]:[
+  'Deadlock acts before the situation can settle. The move changes who has initiative and forces the opposition to respond.',
+  'The plan stops being theory. Deadlock takes control of the next beat and the trail has to react around him.',
+  'The approach lands cleanly enough to create momentum. What was a possibility a moment ago is now an operational advantage.'
+ ];
+ else pool=[
+  `The situation at ${location} changes shape. ${stage.title||'The current thread'} remains active, but the next decision is no longer the same one.`,
+  'The scene moves forward instead of resetting. Recent choices, local activity, and unfinished leads all stay in play.',
+  `Deadlock reassesses ${target}. The objective is unchanged; the available ways to reach it are not.`
+ ];
+ let line=pick(pool,r)||`The situation changes around ${target}.`;
+ const key='beat|'+norm(line);if(st.recentContexts.includes(key)&&pool.length>1){const alt=pool.find(x=>!st.recentContexts.includes('beat|'+norm(x)));if(alt)line=alt}
+ st.recentContexts.unshift('beat|'+norm(line));st.recentContexts=[...new Set(st.recentContexts)].slice(0,20);
+ return line;
+}
+function continueBeat(data,ctx={}){
+ const st=ensure(data),contract=ctx.contract||{},stage=ctx.stage||{},rumor=activeRumors(data,1)[0],lead=activeLeads(data,1)[0],r=rng(`${data.created||'deadlock'}|continue|${data.story?.director?.turn||0}|${st.sequence}`);
+ const pool=[
+  lead?`Deadlock brings the newest lead back to the front: ${String(lead.summary).replace(/[.]+$/,'')}. The next move should either strengthen it or kill it.`:null,
+  rumor?`A live rumor is still unresolved: ${String(rumor.summary).replace(/[.]+$/,'')}. It can be worked now or ignored in favor of the main objective.`:null,
+  `${stage.title||'The operation'} is still live. Deadlock changes approach rather than replaying the last move.`,
+  `The board refreshes around ${contract.title||'the current operation'}. Recent choices are removed from the immediate menu and different angles move forward.`
+ ].filter(Boolean);
+ return pick(pool,r);
+}
 function resolveRumor(data,rumorId,result={}){
  const st=ensure(data),rumor=(data.livingWorld?.rumors||[]).find(x=>x.id===rumorId);if(!rumor)return null;
  const success=result.success!==false,existing=data.story.proceduralLeads.find(x=>x.rumorId===rumorId);
@@ -173,5 +233,5 @@ function factOrUpdate(data,npcId,fact,topic='open'){
 }
 function recordReply(data,npcId,line){const st=ensure(data),rows=st.recentReplies[npcId]||(st.recentReplies[npcId]=[]),key=norm(line);rows.unshift(key);st.recentReplies[npcId]=[...new Set(rows)].slice(0,12)}
 function summary(data){const st=ensure(data);return{version:st.version,recentChoices:st.recentChoices.length,recentLabels:st.recentLabels.length,recentPresented:st.recentPresented.length,leads:data.story.proceduralLeads.length,activeRumors:activeRumors(data,99).length,branchMemory:st.branchMemory.length}}
-root.DeadlockStoryDirector={schema:SCHEMA,version:VERSION,ensure,recordChoice,missionChoices,dialogueChoices,genericChoices,resolveRumor,activeRumors,activeLeads,contextLine,factOrUpdate,recordReply,summary,_test:{hash,rng,signature,norm,contextVoice}};
+root.DeadlockStoryDirector={schema:SCHEMA,version:VERSION,ensure,recordChoice,missionChoices,dialogueChoices,genericChoices,narrativeBeat,continueBeat,resolveRumor,activeRumors,activeLeads,contextLine,factOrUpdate,recordReply,summary,_test:{hash,rng,signature,norm,contextVoice}};
 })(typeof window!=='undefined'?window:globalThis);
