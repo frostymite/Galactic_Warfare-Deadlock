@@ -1,6 +1,6 @@
 {
   "name": "deadlock-tactical-os",
-  "version": "17.8.0",
+  "version": "17.9.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,8 @@
     "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug",
     "build:shipforge": "node tools/build-shipforge-data.mjs",
     "test:shipforge": "node qa/shipforge.cjs && node qa/shipforge-world.cjs && node qa/shipforge-integration.cjs && node qa/living-world.cjs",
-    "test:living": "node qa/living-world.cjs"
+    "test:living": "node qa/living-world.cjs",
+    "test:story-director": "node qa/story-director.cjs"
   },
   "dependencies": {
     "@capacitor/android": "8.5.3",
