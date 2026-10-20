@@ -9,6 +9,16 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
 
+## Procedural Story Director — v17.9.0
+
+Phase 3 now replaces the fixed Story choice loop with an offline procedural director. Mission menus are rebuilt from the active contract stage, target, current NPC, location, recent player choices, latest consequences, Raven condition, living-world rumors and promoted leads. Recently shown options are remembered so the next decision does not simply redraw the same four choices.
+
+Dialogue follow-ups are procedural as well. NPC conversations use the existing personality, mood and relationship memory systems, but repeated factual answers are now detected and rotated into a current update instead of repeating the exact same line. Live rumors and procedural leads can enter conversations naturally.
+
+Living-world rumors can be worked directly from Story. A successful investigation promotes the rumor into a persistent procedural lead while preserving its source location, ambient NPC IDs and linked ShipForge ship ID. Failed verification keeps an uncertain lead instead of deleting the thread.
+
+Narration now reacts to the selected approach and outcome. Investigation, deception, field action, rumor work and failed checks produce different evolving story beats rather than repeatedly restating the current objective.
+
 ## NPC Routines + Ambient Events — v17.8.0
 
 Phase 3 now simulates lightweight daily movement instead of leaving ambient NPCs permanently attached to one backdrop. Blackglass crew receive deterministic duty routes through Command, Briefing, Hangar, Quarters and Contracts; Lower Port workers, couriers, security, vendors and salvagers rotate through role-appropriate district spaces. Mechanics visibly switch into service work, security patrols, couriers carry freight, and analysts/brokers gather around briefing and contract areas.
