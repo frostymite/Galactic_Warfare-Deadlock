@@ -120,7 +120,7 @@ function threadPrompt(template,type,stage){
  return template.theme;
 }
 function createThread(data,state,arc,type,stage,turn,extra={}){
- const existing=state.threads.find(x=>x.arcId===arc.id&&x.stage===stage&&x.type===type&&!['resolved','declined'].includes(x.status));if(existing)return existing;
+ const existing=state.threads.find(x=>x.arcId===arc.id&&x.type===type&&(type==='decision'||x.stage===stage)&&!['resolved','declined'].includes(x.status));if(existing)return existing;
  const t=TEMPLATES[arc.templateId],thread={id:nextId(state,'thread'),arcId:arc.id,actorId:arc.actorId,type,stage,status:'offered',attention:type==='decision'?8:type==='favor'?7:type==='secret'?6:5,prompt:threadPrompt(t,type,stage),createdTurn:turn,lastTurn:turn,attempts:0,...extra};
  state.threads.unshift(thread);state.threads=state.threads.slice(0,40);arc.threadIds.push(thread.id);
  if(type==='secret'){
@@ -195,9 +195,10 @@ function advance(data,ctx={},opts={}){
  let stageChange=null;
  if(arc){
   const relevant=agenda&&agenda.actorId===arc.actorId&&TEMPLATES[arc.templateId].triggers.includes(agenda.kind);
-  arc.progress=clamp(arc.progress+(relevant?3:agenda&&agenda.actorId===arc.actorId?1:0),0,100);
+  if(arc.status!=='awaiting_player')arc.progress=clamp(arc.progress+(relevant?3:agenda&&agenda.actorId===arc.actorId?1:0),0,100);
   arc.pressure=clamp(arc.pressure+(agenda?.attention>=7&&agenda.actorId===arc.actorId?2:-1),0,100);
-  arc.lastTurn=turn;arc.lastAgendaId=agenda?.actorId===arc.actorId?agenda.id:arc.lastAgendaId;stageChange=advanceArcStage(data,state,arc,turn);
+  arc.lastTurn=turn;arc.lastAgendaId=agenda?.actorId===arc.actorId?agenda.id:arc.lastAgendaId;
+  if(arc.status!=='awaiting_player')stageChange=advanceArcStage(data,state,arc,turn);
  }
  const relationChanges=evaluateRelationships(data,state,turn);state.lastAdvanceTurn=turn;
  return{turn,arc,stageChange,relationChanges};
@@ -232,7 +233,15 @@ function respond(data,choice={},result={}){
   thread.status=success?'resolved':'active';return{thread,outcome:success?'mediated':'unsettled'};
  }
  if(thread.type==='decision'){
-  if(action==='arc_commit'||success){thread.status='resolved';if(arc){arc.status='resolved';arc.stage=5;arc.stageName='resolved';arc.resolvedTurn=turn;arc.playerResponses++;arc.progress=100}return{thread,arc,outcome:'resolved'}}
+  if(action==='arc_commit'||success){
+   thread.status='resolved';
+   if(arc){
+    arc.status='resolved';arc.stage=5;arc.stageName='resolved';arc.resolvedTurn=turn;arc.playerResponses++;arc.progress=100;
+    for(const other of state.threads)if(other.arcId===arc.id&&other.id!==thread.id&&!['resolved','declined'].includes(other.status))other.status='resolved';
+    for(const favor of state.favors)if(favor.arcId===arc.id&&!['fulfilled','declined'].includes(favor.status)){favor.status='closed';favor.resolvedTurn=turn}
+   }
+   return{thread,arc,outcome:'resolved'}
+  }
   thread.status='active';return{thread,arc,outcome:'deferred'};
  }
  if(success){thread.status='resolved';if(arc){arc.progress=clamp(arc.progress+6,0,100);arc.playerResponses++;advanceArcStage(data,state,arc,turn)}return{thread,arc,outcome:'advanced'}}
@@ -241,7 +250,7 @@ function respond(data,choice={},result={}){
 function arc(data,id){return ensure(data).arcs.find(x=>x.id===id)||null}
 function recentBeats(data,limit=6){return ensure(data).beats.slice(0,Math.max(0,limit))}
 function visibleSecrets(data){return ensure(data).secrets.filter(x=>x.status==='revealed')}
-function unresolvedFavors(data){return ensure(data).favors.filter(x=>!['fulfilled','declined'].includes(x.status))}
+function unresolvedFavors(data){return ensure(data).favors.filter(x=>!['fulfilled','declined','closed'].includes(x.status))}
 function summary(data){
  const s=ensure(data);return{version:s.version,arcs:s.arcs.length,activeArcs:s.arcs.filter(x=>!['resolved','declined'].includes(x.status)).length,resolvedArcs:s.arcs.filter(x=>x.status==='resolved').length,threads:s.threads.length,openThreads:s.threads.filter(x=>!['resolved','declined'].includes(x.status)).length,revealedSecrets:visibleSecrets(data).length,openFavors:unresolvedFavors(data).length,relationshipStates:Object.values(s.relationshipArcs).map(x=>({key:x.key,state:x.state,title:x.title}))};
 }
