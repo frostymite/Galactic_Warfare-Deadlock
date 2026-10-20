@@ -1,4 +1,4 @@
-const CACHE="deadlock-v17-9-procedural-story";
+const CACHE="deadlock-v17-10-npc-initiative";
 const APP_SHELL=[
  "./ship-parts.json", "./ship-component-visuals.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge-visuals.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./runtime/shipforge-world.js", "./runtime/shipforge-world.css", "./runtime/living-world.js", "./runtime/living-world.css", "./runtime/story-director.js", "./runtime/visual-hotfix.css", "./component-library.html", "./component-library.css", "./component-library.js",
  "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.png", "./assets/locations/blackglass/generated/hq.webp", "./assets/locations/blackglass/generated/briefing.webp", "./assets/locations/blackglass/generated/hangar.webp", "./assets/locations/blackglass/generated/quarters.webp", "./assets/locations/blackglass/generated/contracts.webp",
