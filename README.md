@@ -9,6 +9,12 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
 
+## NPC Routines + Ambient Events — v17.8.0
+
+Phase 3 now simulates lightweight daily movement instead of leaving ambient NPCs permanently attached to one backdrop. Blackglass crew receive deterministic duty routes through Command, Briefing, Hangar, Quarters and Contracts; Lower Port workers, couriers, security, vendors and salvagers rotate through role-appropriate district spaces. Mechanics visibly switch into service work, security patrols, couriers carry freight, and analysts/brokers gather around briefing and contract areas.
+
+Scene transitions advance an offline world tick. That tick can generate persistent ambient incidents such as ShipForge-linked arrivals, Raven maintenance cycles, salvage intake, broker disputes, power faults and whispered exchanges. Incidents can create persistent rumor records with involved NPCs and ship IDs so later story/contract systems can consume them without rerolling the event.
+
 ## Reactive Living World — v17.7.0
 
 Phase 3 now moves beyond ambient motion. Background NPCs are persistent interactable identities: tap/click a passerby to get a locally generated, context-aware bark, and the same NPC remembers interaction count, familiarity and recent lines in the campaign save. Blackglass crew use Apex/HQ-aware dialogue while Lower Port populations use district-specific talk pools.
