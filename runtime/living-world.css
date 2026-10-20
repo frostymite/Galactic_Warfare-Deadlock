@@ -21,3 +21,12 @@
 @keyframes lwReactFlinch{0%,100%{transform:none}45%{transform:translateY(4px) scaleY(.88)}}@keyframes lwReactAttend{0%,100%{transform:none}50%{transform:translateY(-2px) rotate(-2deg)}}
 @media(max-width:700px){.lw-bark-panel{font-size:.86rem}.lw-active .lw-npc{min-width:28px;min-height:62px}}
 @media(prefers-reduced-motion:reduce){.lw-bark-panel{transition:none}.lw-react-alert .lw-npc.lw-reacting .lw-rig,.lw-react-attend .lw-npc.lw-reacting .lw-rig{animation:none!important}}
+
+
+/* v17.8 NPC Routines + Ambient Events */
+.lw-event-card{position:absolute;top:clamp(10px,2.5vw,24px);left:50%;z-index:23;width:min(560px,calc(100% - 28px));transform:translateX(-50%);padding:10px 12px;border:1px solid #34545e;border-left:3px solid #6dddeb;border-radius:7px;background:linear-gradient(135deg,#071219ed,#0b161de6);box-shadow:0 10px 28px #0009,0 0 18px #00dfff14;backdrop-filter:blur(8px);pointer-events:none;color:#d8edf1}
+.lw-event-card>div{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.lw-event-card b{color:#91f0ff;letter-spacing:.04em}.lw-event-card p{margin:5px 0 0;font-size:.82rem;line-height:1.35;color:#b9cdd2}.lw-event-ship,.lw-event-rumor{display:inline-flex;padding:2px 6px;border:1px solid #3b6770;border-radius:999px;font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;color:#91cbd3}.lw-event-rumor{border-color:#7b6936;color:#e8d38a}
+.lw-event-service{border-left-color:#64d6b2}.lw-event-arrival{border-left-color:#8ebfff}.lw-event-conversation{border-left-color:#ba8cff}.lw-event-cargo{border-left-color:#d5a667}.lw-event-power{border-left-color:#efce5f}
+.lw-service .lw-rig{filter:brightness(1.08)}.lw-service .lw-arm{animation-duration:1.1s}.lw-patrol .lw-rig{filter:brightness(1.16)}.lw-carry .lw-carry{transform:translateY(1px)}
+@media(max-width:700px){.lw-event-card{top:8px;padding:8px 10px}.lw-event-card p{font-size:.75rem;max-width:44ch}.lw-event-ship,.lw-event-rumor{font-size:.56rem}}
+@media(prefers-reduced-motion:reduce){.lw-event-card{backdrop-filter:none}}
