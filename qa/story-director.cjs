@@ -2,6 +2,7 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 let checks=0,fail=[];const ok=(name,v)=>{checks++;if(!v)fail.push(name)};
 const box={console};box.window=box;box.globalThis=box;vm.createContext(box);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../runtime/npc-agendas.js'),'utf8'),box);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'../runtime/npc-arcs.js'),'utf8'),box);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../runtime/story-director.js'),'utf8'),box);
 const D=box.DeadlockStoryDirector;
 const data={created:'director-qa',story:{director:{turn:1},location:'Blackglass Station — Hangar',currentNpc:'dren',proceduralLeads:[],consequences:{recent:[{title:'Rival hunter spotted',tone:'danger',contractId:'marr'}]}},livingWorld:{rumors:[
@@ -9,7 +10,7 @@ const data={created:'director-qa',story:{director:{turn:1},location:'Blackglass 
  {id:'r2',summary:'A salvage component carries the wrong manufacturer mark',status:'heard',tick:8,sourcePresetId:'blackglass_hangar',participantIds:['amb-2']}
 ]}};
 const ctx={contract:{id:'marr',title:'Marr Recovery',status:'Active',progress:35,targetId:'marr'},stage:{index:2,key:'trail'},target:{name:'Marr'},currentNpc:{id:'dren',name:'Dren Voss'},currentNpcId:'dren',location:data.story.location,weakestSystem:{id:'engines',name:'Engines',condition:88}};
-ok('engine exposed',!!D);ok('story director schema',D.schema==='deadlock.story-director.v1');ok('story director version',D.version==='1.2.0');
+ok('engine exposed',!!D);ok('story director schema',D.schema==='deadlock.story-director.v1');ok('story director version',D.version==='1.3.0');
 const menus=[],labels=[];
 for(let i=0;i<10;i++){
  data.story.director.turn=i+1;
@@ -67,7 +68,7 @@ ok('contact initiative candidates exist',Array.isArray(contacts)&&contacts.lengt
 // v17.11 NPC agenda integration.
 const agendaData={created:'agenda-story-qa',story:{director:{turn:12},danger:78,location:'Blackglass Station — Hangar',interruptions:[],proceduralLeads:[{id:'lead-agenda',summary:'A sealed arrival used a private lane',status:'active',contractId:'marr'}]},livingWorld:{rumors:[{id:'ra',summary:'A broker asked about Deadlock after lights-out',status:'heard',tick:10,participantIds:['amb-a']}]},contracts:[{id:'marr',title:'Marr Recovery',status:'Active',progress:35}]};
 const agendaCtx={contract:agendaData.contracts[0],stage:{index:2,title:'BUILD THE TRAIL'},target:{name:'Marr'},currentNpc:{id:'dren',name:'Dren Voss'},currentNpcId:'dren',location:agendaData.story.location,danger:78,weakestSystem:{id:'engines',name:'Engines',condition:55}};
-for(let t=1;t<=10;t++){agendaData.story.director.turn=t;box.DeadlockNpcAgendas.advance(agendaData,agendaCtx,{force:true})}
+for(let t=1;t<=10;t++){agendaData.story.director.turn=t;box.DeadlockNpcAgendas.advance(agendaData,agendaCtx,{force:true});box.DeadlockNpcArcs.advance(agendaData,agendaCtx,{force:true})}
 agendaData.story.director.turn=12;
 const agendaChoices=D.missionChoices(agendaData,agendaCtx);
 ok('agenda activity can become mission choice',agendaChoices.some(x=>x.agendaActivityId),agendaChoices);
@@ -79,6 +80,25 @@ ok('agenda engine exposes high-attention beat',!!attention,attention);
 const agendaInitiative=D.initiative(agendaData,agendaCtx,{force:true});
 ok('story initiative remains compatible with agenda engine',!!agendaInitiative,agendaInitiative);
 ok('story summary includes agenda activity count',D.summary(agendaData).agendaActivities>0,D.summary(agendaData));
+
+
+// v17.12 long-term NPC arc integration.
+const arcData={created:'arc-story-qa',story:{director:{turn:1},danger:82,location:'Blackglass Station — Hangar',interruptions:[],proceduralLeads:[{id:'lead-arc',summary:'A sealed arrival used a private lane',status:'active',contractId:'marr'}],consequences:{recent:[]}},livingWorld:{rumors:[{id:'rarc',summary:'A crate changed hands after lights-out',status:'heard',tick:8}]},contracts:[{id:'marr',title:'Marr Recovery',status:'Active',progress:35}]};
+const arcCtx={contract:arcData.contracts[0],stage:{index:2,title:'BUILD THE TRAIL'},target:{name:'Marr'},currentNpc:{id:'dren',name:'Dren Voss'},currentNpcId:'dren',location:arcData.story.location,danger:82,weakestSystem:{id:'engines',name:'Engines',condition:52}};
+for(let t=1;t<=80;t++){arcData.story.director.turn=t;box.DeadlockNpcAgendas.advance(arcData,arcCtx,{force:true});box.DeadlockNpcArcs.advance(arcData,arcCtx,{force:true})}
+arcData.story.director.turn=81;
+const arcChoices=D.missionChoices(arcData,arcCtx);
+ok('long-term arc can become mission choice',arcChoices.some(x=>x.arcThreadId),arcChoices);
+const arcDialogue=D.dialogueChoices(arcData,{npc:{id:'dren',name:'Dren Voss'},analysis:{topic:'trust',tone:'professional'},contract:arcCtx.contract,location:arcCtx.location});
+ok('long-term arc can enter dialogue',arcDialogue.some(x=>x.arcThreadId),arcDialogue);
+const arcCandidate=box.DeadlockNpcArcs.candidate(arcData);
+ok('arc engine exposes open thread',!!arcCandidate,arcCandidate);
+arcData.story.proceduralDirector.initiative.cooldownUntil=0;arcData.story.proceduralDirector.initiative.recentKinds=[];arcData.story.proceduralDirector.initiative.recentNpcIds=[];
+const arcContactCandidates=D._test.contactInitiative(arcData,arcCtx,arcData.story.proceduralDirector,()=>.4);
+ok('high-attention arc can feed initiative candidates',arcContactCandidates.some(x=>x.kind==='arc'),arcContactCandidates);
+const arcSummary=D.summary(arcData);
+ok('story summary includes active NPC arcs',arcSummary.activeNpcArcs>0,arcSummary);
+ok('story summary includes open arc threads',arcSummary.openArcThreads>0,arcSummary);
 
 const result={checks,passed:checks-fail.length,failed:fail.length,failures:fail,uniqueMissionLabels:new Set(labels).size,uniqueDialogueLabels:new Set(dialogue).size,summary:sum};
 fs.writeFileSync(path.join(__dirname,'story-director-results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));if(fail.length)process.exit(1);
