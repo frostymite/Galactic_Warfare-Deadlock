@@ -20,3 +20,14 @@ This Phase 3 increment turns the persistent ambient population from scenery into
 The living-world schema remains `deadlock.living-world.v1`. Existing v17.5/v17.6 saves are hydrated in place with defaults for the new NPC memory fields.
 
 No ShipForge component IDs, fleet records, Apex canon, procedural case state, credits, injuries or story history are changed.
+
+## Validation
+
+Branch-level validation completed after source/dist synchronization:
+
+- Living-world deterministic + persistence harness: **156/156 passed**.
+- App/runtime/offline integration checks: **8/8 passed**.
+- Source-to-`dist` parity: **4/4 matched** for app, service worker, living-world runtime and living-world styles.
+- `app.js` and `runtime/living-world.js` parsed successfully after modification.
+
+The repository's Node QA scripts were also extended so the normal local test command covers the new interaction-memory behavior on the next full build run.
