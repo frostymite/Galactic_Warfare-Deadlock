@@ -1384,8 +1384,8 @@ function pageStory(){
     <div class="card span4">
       ${consequenceActiveThreadHTML()}
       ${(s.interruptions||[]).length?`<h3>Active Interruptions</h3><div class="story-interruptions">${storyInterruptionButtons()}</div>`:""}
-      <h3>Choose Your Approach</h3>
-      <div class="small muted mission-choice-guide">Each option tells you what it is trying to accomplish. You can also ignore them and type any action.</div>
+      <h3>Situation-Driven Options</h3>
+      <div class="small muted mission-choice-guide">These options are rebuilt from the current NPC, location, contract stage, living-world rumors, recent choices, and consequences. Ignore them anytime and type any action.</div>
       <div class="story-choices">${storyChoiceButtons()}</div>
       <h3 style="margin-top:18px">Dialogue Focus</h3>
       <select id="storyNpcSelect">
@@ -1467,6 +1467,7 @@ async function aiStoryGenerate(action="",choice=null){
 }
 function storySubmit(action="",choice=null){
  const text=(action||choice?.label||"").trim();
+ window.DeadlockStoryDirector?.recordChoice?.(DATA,choice,text);
  if(text)storyPush("player","Rovan Kes",text);
  if(choice?.skill&&choice?.dc){
   const r=storySkillCheck(choice.skill,choice.dc,choice.label);
@@ -1600,9 +1601,15 @@ function missionChoiceMeta(choice){
  if(intent==="bounty")return {purpose:"NEW WORK",outcome:"Looks for another opportunity instead of advancing this job."};
  return {purpose:"PRESS THE LEAD",outcome:"Success can advance the job; failure can increase danger."};
 }
+function storyDirectorContext(contract=null,extra={}){
+ const s=DATA.story,stage=contract?contractStageInfo(contract):null,target=contract?.targetId?targetById(contract.targetId):null,npc=storyNpc(s.currentNpc),sys=weakestShipSystem?.();
+ return {contract,stage,target,currentNpc:npc,currentNpcId:npc?.id||s.currentNpc||null,location:s.location||'',danger:Number(s.danger||0),turn:Number(s.director?.turn||0),weakestSystem:sys,...extra};
+}
 function missionChoices(contract){
  if(!contract)return [];
  const s=DATA.story,st=contractStageInfo(contract),t=targetById(contract.targetId),name=t?.name||"the objective",cid=contract.id;
+ const procedural=window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(contract,{stage:st,target:t}));
+ if(procedural?.length)return procedural;
  if(contract.status==="Completed")return [
   {id:uid("choice"),label:"Review the next active contract.",intent:"bounty",purpose:"NEXT JOB"},
   {id:uid("choice"),label:"Check The Raven before taking more work.",intent:"ship",actionType:"diagnostic",skill:"Technical",dc:10,purpose:"SHIP PREP"}
@@ -2170,15 +2177,19 @@ function proceduralNpcDialogue(npcId,context="",playerAction="",suppliedAnalysis
  const mood=npcMood(npc);
  let parts=[];
  const lead=npcActLead(npc,analysis);if(lead)parts.push(lead);
- const fact=npcKnowledgeLine(npc,analysis);
+ let fact=npcKnowledgeLine(npc,analysis);
+ fact=window.DeadlockStoryDirector?.factOrUpdate?.(DATA,npc.id,fact,analysis.topic)||fact;
+ const liveContext=window.DeadlockStoryDirector?.contextLine?.(DATA,{npcId:npc.id,analysis,context})||null;
  const tableFallback=tables?(gmFreshPick(tables[mood]||tables.neutral,"line",npc.id)||gmFreshPick(tables.neutral,"line",npc.id)):null;
- if(fact)parts.push(fact);else if(tableFallback)parts.push(tableFallback);
+ if(fact)parts.push(fact);else if(liveContext)parts.push(liveContext);else if(tableFallback)parts.push(tableFallback);
+ if(fact&&liveContext&&!String(fact).includes(String(liveContext)))parts.push(liveContext);
  const memory=npcMemoryCallback(npc,analysis);
  if(memory&&chance(analysis.topic==="trust"||analysis.topic==="marr"?.65:.38))parts.push(memory);
  const follow=npcFollowup(npc,analysis);
  if(follow&&!parts.some(p=>/[?]\s*$/.test(p))&&chance(.72))parts.push(follow);
  let line=parts.filter(Boolean).join(" ").replace(/\s+/g," ").trim();
  if(!line)line=`${npc.name} waits for Deadlock to continue.`;
+ window.DeadlockStoryDirector?.recordReply?.(DATA,npc.id,line);
  const gm=ensureGmState();gm.lastAnalysis=analysis;gm.npcTurns[npc.id]=Number(gm.npcTurns[npc.id]||0)+1;
  gm.recentTopics.unshift(analysis.topic);gm.recentTopics=gm.recentTopics.slice(0,12);
  return line;
@@ -2194,6 +2205,8 @@ function dialogueChoicesForNpc(npc,context="",playerAction="",suppliedAnalysis=n
  const s=DATA.story;
  const analysis=suppliedAnalysis||ensureGmState().lastAnalysis||analyzePlayerSpeech(playerAction||recentPlayerActionText(),context,npc.id);
  const active=contractById(s.activeContractId);
+ const procedural=window.DeadlockStoryDirector?.dialogueChoices?.(DATA,{...storyDirectorContext(active),npc,analysis,topic:analysis.topic});
+ if(procedural?.length)return procedural;
  const topic=analysis.topic;
  let labels;
  if(topic==="marr")labels=[
@@ -2349,6 +2362,14 @@ function reactToPlayerAction(action,choice,roll){
  const inferred={...inferIntent(action||choice?.label||""),...(choice||{})};
  const intent=inferred.intent||"action";
  if(inferred.npcId)s.currentNpc=inferred.npcId;
+ if(inferred.rumorId){
+  const lead=window.DeadlockStoryDirector?.resolveRumor?.(DATA,inferred.rumorId,{success:roll?!!roll.success:true,contractId:inferred.contractId||null});
+  if(lead){
+   const status=lead.status==="active"?"holds together as a usable lead":"does not fully verify yet, but stays on the board as an uncertain lead";
+   storyPush("narration","Narrator",`Deadlock works the local rumor. It ${status}: ${lead.summary}`,{source:"living_world",rumorId:inferred.rumorId,leadId:lead.id});
+   if(lead.status==="active")addConsequence("Rumor promoted to lead",lead.summary,"info",{rumorId:inferred.rumorId,leadId:lead.id,contractId:inferred.contractId||null});
+  }
+ }
  const violent=/\b(open fire|shoot|attack|draw (?:blackwake|luna|sol)|fire (?:blackwake|luna|sol)|go loud|start shooting)\b/i.test(String(action||choice?.label||""));
  if(violent&&!DATA.combat.active){startForcedCombat({source:"player_attack",danger:Math.max(55,Number(s.danger||0)),reason:"Deadlock chose to escalate to live fire.",objective:"Finish the fight or break contact.",returnPage:"Story"});return}
 
@@ -2452,7 +2473,9 @@ function reactToPlayerAction(action,choice,roll){
  const opener=pick(DATA.story.offlineTables?.sceneOpeners)||"The situation shifts.";
  const atmosphere=chance(.5)?pick(DATA.story.offlineTables?.atmosphere):"";
  storyPush("narration","Narrator",`${opener} ${atmosphere||""} ${consequence||"Deadlock's move changes the shape of the next decision."}`.replace(/\s+/g," ").trim());
- s.choices=[
+ const active=contractById(s.activeContractId)||null;
+ const procedural=window.DeadlockStoryDirector?.genericChoices?.(DATA,storyDirectorContext(active));
+ s.choices=procedural?.length?procedural:[
   {id:uid("choice"),label:"Press the advantage before the situation changes.",intent:"action",contractId:s.activeContractId||null,skill:"Survival",dc:12},
   {id:uid("choice"),label:"Stop and gather more information.",intent:"investigate",contractId:s.activeContractId||null,skill:"Investigation",dc:12},
   {id:uid("choice"),label:"Bring a contact into the problem.",intent:"dialogue",npcId:s.currentNpc||"dren",contractId:s.activeContractId||null,skill:"Negotiation",dc:11},
