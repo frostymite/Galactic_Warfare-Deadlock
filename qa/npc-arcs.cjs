@@ -20,11 +20,11 @@ ok('turning points await player',state.arcs.every(x=>x.status==='awaiting_player
 ok('background progress freezes at turning point',state.arcs.every(x=>x.progress<60),state.arcs.map(x=>({id:x.id,progress:x.progress,stage:x.stage,status:x.status})));
 ok('only one open decision per arc',state.arcs.every(a=>state.threads.filter(t=>t.arcId===a.id&&t.type==='decision'&&!['resolved','declined'].includes(t.status)).length<=1));
 ok('relationship trust/strain can emerge naturally',sum.relationshipStates.some(x=>x.state!=='neutral'),sum.relationshipStates);
-const grudgeData=make(),grudgeCtx={...ctx,contract:grudgeData.contracts[0]};
-for(let t=1;t<=6;t++){grudgeData.story.director.turn=t;A.advance(grudgeData,grudgeCtx,{force:true,actorId:'dren',kind:'timeline_pushback'});X.advance(grudgeData,grudgeCtx,{force:true})}
-ok('forced repeated Dren Nera friction creates grudge',X.summary(grudgeData).relationshipStates.some(x=>x.key==='dren|nera'&&x.state==='grudge'),{edge:A.relation(grudgeData,'dren','nera'),arcs:X.summary(grudgeData).relationshipStates});
-const allianceData=make(),allianceCtx={...ctx,contract:allianceData.contracts[0]};
-for(let t=1;t<=7;t++){allianceData.story.director.turn=t;A.advance(allianceData,allianceCtx,{force:true,actorId:'renn',kind:'exit_check'});X.advance(allianceData,allianceCtx,{force:true})}
+const grudgeData=make(),grudgeCtx={...ctx,contract:grudgeData.contracts[0]},grudgeAgenda=A.ensure(grudgeData);
+for(let t=1;t<=6;t++){grudgeData.story.director.turn=t;A._test.applyRelation(grudgeAgenda,'dren','nera','friction',t,'qa-friction-'+t,'Repeated proof-vs-instinct friction.');X.advance(grudgeData,grudgeCtx,{force:true})}
+ok('repeated Dren Nera friction creates grudge',X.summary(grudgeData).relationshipStates.some(x=>x.key==='dren|nera'&&x.state==='grudge'),{edge:A.relation(grudgeData,'dren','nera'),arcs:X.summary(grudgeData).relationshipStates});
+const allianceData=make(),allianceCtx={...ctx,contract:allianceData.contracts[0]},allianceAgenda=A.ensure(allianceData);
+for(let t=1;t<=6;t++){allianceData.story.director.turn=t;A._test.applyRelation(allianceAgenda,'dren','renn','cooperative',t,'qa-coop-'+t,'Repeated field cooperation.');X.advance(allianceData,allianceCtx,{force:true})}
 ok('repeated Renn Dren cooperation creates alliance',X.summary(allianceData).relationshipStates.some(x=>x.key==='dren|renn'&&x.state==='alliance'),{edge:A.relation(allianceData,'dren','renn'),arcs:X.summary(allianceData).relationshipStates});
 const protectedAfterBackground=JSON.stringify({credits:data.character.credits,reserve:data.apex.reserve,contract:data.contracts[0],owner:data.ship.owner});
 ok('background arcs preserve protected state',protectedAfterBackground===protectedBefore,{protectedBefore,protectedAfterBackground});
