@@ -169,7 +169,7 @@ function ambientInitiative(data,ctx,st,r){
  return{kind:'ambient',npcId:null,ambientNpcId:npc.id,speaker:npc.name||'Local worker',urgency:4,danger:1,label:`${npc.name||'A local worker'} approaches Deadlock without being called over.`,summary:`${npc.name||'The local'} has something to say about a report already moving through the area: ${String(rumor.summary).replace(/[.]+$/,'')}.`,topic:'intel',rumorId:rumor.id,contractId:ctx.contract?.id||null,role:npc.role||'local'};
 }
 function memoryInitiative(data,ctx,st,r){
- const turn=Number(data.story?.director?.turn||0),past=st.branchMemory.find(x=>x&&Number(x.turn||0)<=turn-4&&x.text&&!String(x.text).startsWith('Continue'));
+ const turn=Number(data.story?.director?.turn||0),past=st.branchMemory.find(x=>x&&x.type==='action'&&Number(x.turn||0)<=turn-4&&x.text&&!String(x.text).startsWith('Continue'));
  if(!past)return null;
  const npcId=st.initiative.recentNpcIds[0]==='dren'?'jessa':'dren',speaker=npcId==='jessa'?'Jessa':'Dren Voss';
  return{kind:'memory',npcId,speaker,urgency:4,danger:0,label:`${speaker} circles back to something Deadlock did earlier.`,summary:`${speaker} has not forgotten: “${String(past.text).slice(0,135)}” The earlier choice has become relevant again.`,topic:'trust',memoryText:String(past.text),contractId:ctx.contract?.id||null};
