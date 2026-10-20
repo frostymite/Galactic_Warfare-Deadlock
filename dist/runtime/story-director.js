@@ -4,7 +4,7 @@
  */
 (function(root){
 'use strict';
-const VERSION='1.0.0',SCHEMA='deadlock.story-director.v1';
+const VERSION='1.1.0',SCHEMA='deadlock.story-director.v1';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
 function hash(v){let h=2166136261;for(const c of String(v??'')){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function rng(seed){let s=hash(seed)||1;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return(s>>>0)/4294967296}}
@@ -13,8 +13,8 @@ function uid(st,p='storyopt'){st.sequence=Number(st.sequence||0)+1;return p+'-'+
 function ensure(data){
  if(!data?.story)throw new Error('Story state required');
  let st=data.story.proceduralDirector;
- if(!st||st.schema!==SCHEMA)st=data.story.proceduralDirector={schema:SCHEMA,version:VERSION,sequence:0,recentChoices:[],recentLabels:[],recentPresented:[],recentReplies:{},recentContexts:[],branchMemory:[],createdAt:new Date().toISOString()};
- st.version=VERSION;st.recentChoices=Array.isArray(st.recentChoices)?st.recentChoices:[];st.recentLabels=Array.isArray(st.recentLabels)?st.recentLabels:[];st.recentPresented=Array.isArray(st.recentPresented)?st.recentPresented:[];st.recentReplies=st.recentReplies||{};st.recentContexts=Array.isArray(st.recentContexts)?st.recentContexts:[];st.branchMemory=Array.isArray(st.branchMemory)?st.branchMemory:[];st.sequence=Number(st.sequence||0);
+ if(!st||st.schema!==SCHEMA)st=data.story.proceduralDirector={schema:SCHEMA,version:VERSION,sequence:0,recentChoices:[],recentLabels:[],recentPresented:[],recentReplies:{},recentContexts:[],branchMemory:[],initiative:{lastTurn:-99,cooldownUntil:0,recentKinds:[],recentNpcIds:[],history:[]},createdAt:new Date().toISOString()};
+ st.version=VERSION;st.recentChoices=Array.isArray(st.recentChoices)?st.recentChoices:[];st.recentLabels=Array.isArray(st.recentLabels)?st.recentLabels:[];st.recentPresented=Array.isArray(st.recentPresented)?st.recentPresented:[];st.recentReplies=st.recentReplies||{};st.recentContexts=Array.isArray(st.recentContexts)?st.recentContexts:[];st.branchMemory=Array.isArray(st.branchMemory)?st.branchMemory:[];st.initiative=st.initiative||{lastTurn:-99,cooldownUntil:0,recentKinds:[],recentNpcIds:[],history:[]};st.initiative.lastTurn=Number(st.initiative.lastTurn??-99);st.initiative.cooldownUntil=Number(st.initiative.cooldownUntil||0);st.initiative.recentKinds=Array.isArray(st.initiative.recentKinds)?st.initiative.recentKinds:[];st.initiative.recentNpcIds=Array.isArray(st.initiative.recentNpcIds)?st.initiative.recentNpcIds:[];st.initiative.history=Array.isArray(st.initiative.history)?st.initiative.history:[];st.sequence=Number(st.sequence||0);
  data.story.proceduralLeads=Array.isArray(data.story.proceduralLeads)?data.story.proceduralLeads:[];
  return st;
 }
@@ -146,6 +146,72 @@ function genericChoices(data,ctx={}){
  const out=[];for(const c of rows.filter(Boolean)){if(!st.recentLabels.includes(norm(c.label))&&!st.recentPresented.includes(norm(c.label)))out.push(c);if(out.length>=5)break}
  return rememberPresented(st,(out.length>=4?out:rows.filter(Boolean)).slice(0,5));
 }
+function ambientNpcById(data,id){
+ if(!id)return null;
+ for(const pop of Object.values(data.livingWorld?.populations||{})){const n=(pop?.npcs||[]).find(x=>x.id===id);if(n)return n}
+ return null;
+}
+function initiativeChoice(st,c){return{id:uid(st,'initiative-choice'),...c}}
+function contactInitiative(data,ctx,st,r){
+ const contract=ctx.contract||{},lead=activeLeads(data,4)[0],rumor=activeRumors(data,4)[0],weak=ctx.weakestSystem||{},danger=Number(ctx.danger ?? data.story?.danger ?? 0),turn=Number(data.story?.director?.turn||0);
+ const candidates=[];
+ if(Number(weak.condition??100)<82)candidates.push({kind:'crew',npcId:'jessa',speaker:'Jessa',urgency:Number(weak.condition)<60?8:6,danger:Number(weak.condition)<60?10:4,label:`Jessa cuts into the channel: ${weak.name||'one Raven system'} is drifting out of tolerance.`,summary:`${weak.name||'The Raven'} is reading ${Math.round(Number(weak.condition||0))}% condition. Jessa called without waiting for a request.`,topic:'ship',systemId:weak.id||null});
+ if(lead)candidates.push({kind:'intel',npcId:'dren',speaker:'Dren Voss',urgency:6,danger:3,label:'Dren opens a channel before Deadlock can call him.',summary:`Dren has been working the lead independently: ${String(lead.summary).replace(/[.]+$/,'')}.`,topic:'intel',leadId:lead.id,contractId:lead.contractId||contract.id||null});
+ else if(rumor)candidates.push({kind:'intel',npcId:'dren',speaker:'Dren Voss',urgency:5,danger:2,label:'Dren calls with something he heard before Deadlock asks.',summary:`A fresh report crossed Dren's channel: ${String(rumor.summary).replace(/[.]+$/,'')}.`,topic:'intel',rumorId:rumor.id,contractId:contract.id||null});
+ if(contract.id==='kade'||(contract.id&&turn%5===0))candidates.push({kind:'contract',npcId:'nera',speaker:'Nera Kade',urgency:5,danger:2,label:'Nera Kade requests the channel on her own timetable.',summary:`Kade wants a status answer on ${contract.title||'the active contract'} instead of waiting for Deadlock to report in.`,topic:'deal',contractId:contract.id||null});
+ if(danger>=58)candidates.push({kind:'warning',npcId:'renn',speaker:'Renn',urgency:danger>=78?8:6,danger:Math.round(danger/12),label:'Renn breaks radio silence with a warning.',summary:'Renn noticed movement around the operation and decided it was important enough to interrupt.',topic:'danger',contractId:contract.id||null});
+ return candidates.filter(x=>!st.initiative.recentNpcIds.slice(0,2).includes(x.npcId));
+}
+function ambientInitiative(data,ctx,st,r){
+ const rumor=activeRumors(data,5).find(x=>(x.participantIds||[]).length);
+ if(!rumor)return null;
+ const npc=ambientNpcById(data,rumor.participantIds[0]);if(!npc)return null;
+ return{kind:'ambient',npcId:null,ambientNpcId:npc.id,speaker:npc.name||'Local worker',urgency:4,danger:1,label:`${npc.name||'A local worker'} approaches Deadlock without being called over.`,summary:`${npc.name||'The local'} has something to say about a report already moving through the area: ${String(rumor.summary).replace(/[.]+$/,'')}.`,topic:'intel',rumorId:rumor.id,contractId:ctx.contract?.id||null,role:npc.role||'local'};
+}
+function memoryInitiative(data,ctx,st,r){
+ const turn=Number(data.story?.director?.turn||0),past=st.branchMemory.find(x=>x&&x.type==='action'&&Number(x.turn||0)<=turn-4&&x.text&&!String(x.text).startsWith('Continue'));
+ if(!past)return null;
+ const npcId=st.initiative.recentNpcIds[0]==='dren'?'jessa':'dren',speaker=npcId==='jessa'?'Jessa':'Dren Voss';
+ return{kind:'memory',npcId,speaker,urgency:4,danger:0,label:`${speaker} circles back to something Deadlock did earlier.`,summary:`${speaker} has not forgotten: “${String(past.text).slice(0,135)}” The earlier choice has become relevant again.`,topic:'trust',memoryText:String(past.text),contractId:ctx.contract?.id||null};
+}
+function initiativeChoices(st,event,r){
+ const common=[
+  initiativeChoice(st,{label:'Hear them out before changing the plan.',intent:'dialogue',actionType:'initiative_listen',npcId:event.npcId||null,contractId:event.contractId||null,rumorId:event.rumorId||null,leadId:event.leadId||null,skill:'Insight',dc:11,purpose:'LISTEN'}),
+  initiativeChoice(st,{label:'Ask for the one detail that changes the decision.',intent:'dialogue',actionType:'initiative_probe',npcId:event.npcId||null,contractId:event.contractId||null,rumorId:event.rumorId||null,leadId:event.leadId||null,skill:'Negotiation',dc:12,purpose:'PRESS FOR DETAIL'}),
+  initiativeChoice(st,{label:'Verify it independently before acting.',intent:'investigate',actionType:'initiative_verify',contractId:event.contractId||null,rumorId:event.rumorId||null,leadId:event.leadId||null,skill:'Investigation',dc:12,purpose:'VERIFY'}),
+  initiativeChoice(st,{label:'Acknowledge it, but keep the current plan moving.',intent:'action',actionType:'initiative_hold',contractId:event.contractId||null,purpose:'STAY ON PLAN'})
+ ];
+ if(event.kind==='crew'&&event.systemId){
+  common[0]=initiativeChoice(st,{label:`Have Jessa walk Deadlock through the ${event.systemId} fault now.`,intent:'dialogue',actionType:'initiative_system',npcId:'jessa',systemId:event.systemId,skill:'Technical',dc:10,purpose:'DIAGNOSE'});
+  common[2]=initiativeChoice(st,{label:'Authorize an immediate repair before the system worsens.',intent:'ship',actionType:'repair',systemId:event.systemId,skill:'Technical',dc:12,purpose:'REPAIR NOW'});
+ }
+ if(event.kind==='ambient'){
+  common[0]=initiativeChoice(st,{label:`Let ${event.speaker} explain what they saw.`,intent:'investigate',actionType:'ambient_listen',rumorId:event.rumorId||null,skill:'Insight',dc:10,purpose:'HEAR THEM OUT'});
+  common[1]=initiativeChoice(st,{label:'Ask who else knows and where the story started.',intent:'investigate',actionType:'ambient_source',rumorId:event.rumorId||null,skill:'Investigation',dc:12,purpose:'TRACE SOURCE'});
+ }
+ if(event.kind==='memory'){
+  common[0]=initiativeChoice(st,{label:'Ask why that earlier choice matters now.',intent:'dialogue',actionType:'memory_revisit',npcId:event.npcId,contractId:event.contractId||null,skill:'Insight',dc:11,purpose:'REVISIT DECISION'});
+  common[1]=initiativeChoice(st,{label:'Defend the old decision and ask what changed.',intent:'dialogue',actionType:'memory_defend',npcId:event.npcId,contractId:event.contractId||null,skill:'Negotiation',dc:12,purpose:'DEFEND THE CALL'});
+ }
+ return common.slice(0,4);
+}
+function initiative(data,ctx={},opts={}){
+ const st=ensure(data),is=st.initiative,turn=Number(data.story?.director?.turn||0),pending=(data.story?.interruptions||[]).length;
+ if(!opts.force){if(pending>0||turn<Number(is.cooldownUntil||0)||turn===Number(is.lastTurn||-99)||turn<2)return null}
+ const r=rng(`${data.created||'deadlock'}|initiative|${turn}|${ctx.location||data.story?.location||''}|${is.history.length}`);
+ const gate=hash(`${data.created||'deadlock'}|initiative-gate|${turn}|${is.history.length}`)%100;
+ if(!opts.force&&gate>=42)return null;
+ let pool=contactInitiative(data,ctx,st,r);
+ const ambient=ambientInitiative(data,ctx,st,r);if(ambient)pool.push(ambient);
+ const memory=memoryInitiative(data,ctx,st,r);if(memory)pool.push(memory);
+ pool=pool.filter(x=>!is.recentKinds.slice(0,2).includes(x.kind)||pool.length<=2);
+ if(!pool.length)return null;
+ const event=pick(pool,r);event.id=uid(st,'initiative');event.turn=turn;event.createdAt=new Date().toISOString();event.choices=initiativeChoices(st,event,r);
+ is.lastTurn=turn;is.cooldownUntil=turn+2+(hash(event.id+'|cooldown')%3);is.recentKinds.unshift(event.kind);is.recentKinds=is.recentKinds.slice(0,5);if(event.npcId){is.recentNpcIds.unshift(event.npcId);is.recentNpcIds=is.recentNpcIds.slice(0,5)}
+ is.history.unshift({id:event.id,turn,kind:event.kind,npcId:event.npcId||null,ambientNpcId:event.ambientNpcId||null,label:event.label,summary:event.summary});is.history=is.history.slice(0,30);
+ st.branchMemory.unshift({turn,type:'initiative',text:event.summary,id:event.id});st.branchMemory=st.branchMemory.slice(0,24);
+ return event;
+}
 function narrativeBeat(data,ctx={}){
  const st=ensure(data),c=ctx.choice||{},roll=ctx.roll||null,contract=ctx.contract||{},stage=ctx.stage||{},location=ctx.location||data.story?.location||'the scene',target=ctx.target?.name||contract.title||'the objective',success=roll?!!roll.success:null;
  const r=rng(`${data.created||'deadlock'}|beat|${data.story?.director?.turn||0}|${signature(c)}|${success}`);
@@ -240,6 +306,6 @@ function factOrUpdate(data,npcId,fact,topic='open'){
  const r=rng(key+'|'+data.story?.director?.turn+'|'+npcId);return pick(variants[npcId]||["Nothing verified has changed on that point yet. Let's work the newest piece instead."],r);
 }
 function recordReply(data,npcId,line){const st=ensure(data),rows=st.recentReplies[npcId]||(st.recentReplies[npcId]=[]),key=norm(line);rows.unshift(key);st.recentReplies[npcId]=[...new Set(rows)].slice(0,12)}
-function summary(data){const st=ensure(data);return{version:st.version,recentChoices:st.recentChoices.length,recentLabels:st.recentLabels.length,recentPresented:st.recentPresented.length,leads:data.story.proceduralLeads.length,activeRumors:activeRumors(data,99).length,branchMemory:st.branchMemory.length}}
-root.DeadlockStoryDirector={schema:SCHEMA,version:VERSION,ensure,recordChoice,missionChoices,dialogueChoices,genericChoices,narrativeBeat,continueBeat,resolveRumor,activeRumors,activeLeads,contextLine,factOrUpdate,recordReply,summary,_test:{hash,rng,signature,norm,contextVoice}};
+function summary(data){const st=ensure(data);return{version:st.version,recentChoices:st.recentChoices.length,recentLabels:st.recentLabels.length,recentPresented:st.recentPresented.length,leads:data.story.proceduralLeads.length,activeRumors:activeRumors(data,99).length,branchMemory:st.branchMemory.length,initiatives:st.initiative.history.length,initiativeCooldownUntil:st.initiative.cooldownUntil}}
+root.DeadlockStoryDirector={schema:SCHEMA,version:VERSION,ensure,recordChoice,missionChoices,dialogueChoices,genericChoices,narrativeBeat,continueBeat,initiative,resolveRumor,activeRumors,activeLeads,contextLine,factOrUpdate,recordReply,summary,_test:{hash,rng,signature,norm,contextVoice,ambientNpcById,contactInitiative,ambientInitiative,memoryInitiative,initiativeChoices}};
 })(typeof window!=='undefined'?window:globalThis);
