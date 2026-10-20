@@ -9,6 +9,18 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
 
+## Long-Term NPC Arcs — v17.12.0
+
+Phase 3 now supports persistent personal and relationship story arcs that grow out of the existing NPC agenda system instead of spawning as unrelated random quests. Jessa, Dren Voss, Nera Kade and Renn can each develop multi-stage personal threads tied to the work they have actually been doing.
+
+Personal arcs can create optional side objectives, hidden private concerns, favors, and turning-point decisions. Hidden concerns stay hidden until Deadlock successfully uncovers them. Favors remain requests rather than automatic obligations. When an arc reaches its turning point, background progress freezes until Rovan responds; NPCs cannot resolve their own personal story off-screen.
+
+The relationship web now feeds longer-term relationship arcs. Repeated cooperation can become **Working Trust** or a **Working Alliance**; repeated friction can become a **Fault Line** or an **Open Grudge**. These relationship arcs can enter Story choices, dialogue, or NPC Initiative without overwriting either NPC's personal relationship with Rovan.
+
+The Story panel now shows a compact **Personal Arcs** section with active arcs, stages, visible relationship states, revealed secrets and unresolved favors. Secret content is never displayed before it is revealed.
+
+Arc resolution remains bounded: the system cannot spend credits or Apex reserves, alter payouts, accept/finish contracts, change ship ownership, or make command decisions for Deadlock.
+
 ## NPC Agendas + Cross-NPC Reactions — v17.11.0
 
 Phase 3 now gives major NPCs persistent goals that continue moving between direct conversations. Jessa, Dren, Nera Kade and Renn each maintain bounded agenda state with progress, momentum, pressure, recent actions and history.
