@@ -3,7 +3,7 @@ const root=path.resolve(__dirname,'..'),results=[];
 const check=(label,pass,detail='')=>{results.push({label,pass:!!pass,detail});if(!pass)console.error(label,detail)};
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const pkg=JSON.parse(read('package.json')),parts=JSON.parse(read('ship-parts.json'));
-check('v17.6 package version',pkg.version==='17.6.0',pkg.version);
+const [pkgMajor,pkgMinor]=pkg.version.split('.').map(Number);check('v17.6+ package version',pkgMajor>17||(pkgMajor===17&&pkgMinor>=6),pkg.version);
 check('all 64 parts have generated art metadata',parts.parts.length===64&&parts.parts.every(p=>p.art&&p.artType==='generated-raster'),parts.parts.filter(p=>!p.art).map(p=>p.id));
 let missing=[],tiny=[];
 for(const p of parts.parts){const f=path.join(root,p.art);if(!fs.existsSync(f))missing.push(p.art);else if(fs.statSync(f).size<1500)tiny.push(p.art)}
