@@ -48,7 +48,7 @@ function leadChoice(st,lead,contractId=null,r){
 }
 function agendaChoice(st,data,ctx,r){
  const A=root.DeadlockNpcAgendas;if(!A)return null;
- const beat=A.recent(data,4)?.[0];if(!beat||Number(beat.attention||0)<4)return null;
+ const beat=A.recent(data,6)?.find(x=>Number(x.attention||0)>=4);if(!beat)return null;
  const actor=beat.actorName||beat.actorId||'a contact',target=beat.targetName?' and '+beat.targetName:'',cid=beat.contractId||ctx.contract?.id||null;
  const labels=[
   'Follow up on what '+actor+target+' just did: '+String(beat.summary).replace(/[.]+$/,'')+'.',
