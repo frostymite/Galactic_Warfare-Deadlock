@@ -4,7 +4,7 @@
  */
 (function(root){
 'use strict';
-const VERSION='1.2.0',SCHEMA='deadlock.story-director.v1';
+const VERSION='1.3.0',SCHEMA='deadlock.story-director.v1';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
 function hash(v){let h=2166136261;for(const c of String(v??'')){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function rng(seed){let s=hash(seed)||1;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return(s>>>0)/4294967296}}
@@ -45,6 +45,19 @@ function leadChoice(st,lead,contractId=null,r){
  if(!lead)return null;
  const verbs=['Follow the lead','Pressure the lead','Work the new lead before it cools','Test the lead in the field'];
  return choice(st,{label:`${pick(verbs,r)}: ${String(lead.summary||lead.title||'new lead').replace(/[.]+$/,'')}.`,intent:'investigate',actionType:'procedural_lead',leadId:lead.id,contractId:contractId||lead.contractId||null,skill:pick(['Investigation','Survival','Stealth'],r),dc:12,purpose:'FOLLOW PROCEDURAL LEAD',topic:'intel'});
+}
+function arcChoice(st,data,ctx,r){
+ const X=root.DeadlockNpcArcs;if(!X)return null;
+ const thread=X.candidate(data);if(!thread)return null;
+ const arc=thread.arcId?X.arc(data,thread.arcId):null;
+ const actorId=thread.actorId||arc?.actorId||null,actor=root.DeadlockNpcAgendas?.actors?.[actorId]?.name||actorId||'a contact';
+ let label='',actionType='arc_followup',intent='dialogue',skill='Insight',dc=11,topic='trust';
+ if(thread.type==='secret'){label='Ask '+actor+' about what they are keeping off the general board.';actionType='arc_secret_probe';skill='Insight';dc=12}
+ else if(thread.type==='favor'){label='Take on '+actor+'\'s favor: '+String(thread.prompt).replace(/[.]+$/,'')+'.';actionType='arc_favor';skill=actorId==='jessa'?'Technical':actorId==='renn'?'Survival':'Investigation';dc=12;topic='intel'}
+ else if(thread.type==='decision'){label='Face the turning point in '+(arc?.title||actor+'\'s personal arc')+': '+String(thread.prompt).replace(/[.]+$/,'')+'.';actionType='arc_commit';skill='Insight';dc=11}
+ else if(thread.type==='relationship'){const target=root.DeadlockNpcAgendas?.actors?.[thread.targetId]?.name||thread.targetId||'the other contact';label='Step into the '+actor+' / '+target+' relationship thread: '+String(thread.prompt).replace(/[.]+$/,'')+'.';actionType='arc_relationship';skill='Negotiation';dc=thread.attention>=8?13:12;topic='trust'}
+ else {label='Follow the personal thread with '+actor+': '+String(thread.prompt).replace(/[.]+$/,'')+'.';actionType='arc_followup';skill='Insight';dc=11}
+ return choice(st,{label,intent,actionType,npcId:actorId,arcThreadId:thread.id,arcId:arc?.id||null,skill,dc,purpose:'PERSONAL ARC',topic});
 }
 function agendaChoice(st,data,ctx,r){
  const A=root.DeadlockNpcAgendas;if(!A)return null;
@@ -113,9 +126,10 @@ function missionChoices(data,ctx={}){
  if(ctx.contract?.status==='Completed')candidates.push(choice(st,{label:'Review unresolved leads and choose what becomes the next job.',intent:'bounty',actionType:'review_leads',purpose:'NEXT THREAD'}),shipChoice(st,ctx,r));
  else if(Number(ctx.contract?.progress||0)>=100)candidates.push(choice(st,{label:ctx.target?.name?`Deliver ${ctx.target.name} and complete the handoff.`:'Complete the contract handoff and collect the payout.',intent:'turnin',contractId:cid,purpose:'TURN IN'}),contactChoice(st,ctx,r),shipChoice(st,ctx,r));
  else{
-  const rumor=pick(activeRumors(data,4),r),lead=pick(activeLeads(data,4),r),consequence=consequenceChoice(st,data,ctx,r),agenda=agendaChoice(st,data,ctx,r);
+  const rumor=pick(activeRumors(data,4),r),lead=pick(activeLeads(data,4),r),consequence=consequenceChoice(st,data,ctx,r),agenda=agendaChoice(st,data,ctx,r),arc=arcChoice(st,data,ctx,r);
   if(rumor)candidates.push(rumorChoice(st,rumor,cid,r));
   if(lead)candidates.push(leadChoice(st,lead,cid,r));
+  if(arc)candidates.push(arc);
   if(agenda)candidates.push(agenda);
   if(consequence)candidates.push(consequence);
   candidates.push(fieldChoice(st,ctx,r),contactChoice(st,ctx,r),locationChoice(st,ctx,r),shipChoice(st,ctx,r));
@@ -145,6 +159,12 @@ function dialogueChoices(data,ctx={}){
   choice(st,{label:pick(analysis.tone==='hostile'?pools.pressure:pools.strategy,r),intent:'dialogue',npcId:npc.id,contractId:active.id||null,skill:analysis.tone==='hostile'?'Insight':'Negotiation',dc:12,purpose:'TEST THE ANSWER',topic}),
   choice(st,{label:pick(pools.relationship,r),intent:'dialogue',npcId:npc.id,contractId:active.id||null,skill:'Insight',dc:11,purpose:'RELATIONSHIP',topic:'trust'})
  ];
+ const arcThread=root.DeadlockNpcArcs?.candidate?.(data,{actorId:npc.id})||null;
+ if(arcThread){
+  const arc=arcThread.arcId?root.DeadlockNpcArcs.arc(data,arcThread.arcId):null;
+  const arcLabel=arcThread.type==='secret'?'“You’re holding something back from the main board. Tell me why.”':arcThread.type==='favor'?'“You wanted something from me. Say exactly what you need.”':arcThread.type==='decision'?'“We’ve let this build long enough. What decision are you asking me to make?”':'“This has been developing for a while. Tell me where it stands now.”';
+  rows.push(choice(st,{label:arcLabel,intent:'dialogue',actionType:arcThread.type==='secret'?'arc_secret_probe':'arc_followup',arcThreadId:arcThread.id,arcId:arc?.id||null,npcId:npc.id,skill:'Insight',dc:arcThread.type==='secret'?12:11,purpose:'PERSONAL ARC',topic:'trust'}));
+ }
  const agendaBeat=root.DeadlockNpcAgendas?.recent?.(data,5)?.find(x=>x.actorId===npc.id||x.targetId===npc.id);
  if(agendaBeat){const other=agendaBeat.targetName?' and '+agendaBeat.targetName:'';rows.push(choice(st,{label:'“About what happened with '+agendaBeat.actorName+other+'—what\'s your read now?”',intent:'dialogue',actionType:'agenda_discussion',agendaActivityId:agendaBeat.id,npcId:npc.id,contractId:agendaBeat.contractId||active.id||null,skill:'Insight',dc:11+(Number(agendaBeat.attention||0)>=7?1:0),purpose:'WORLD IN MOTION',topic:agendaBeat.tone==='friction'?'trust':'intel'}))}
  else if(rumor)rows.push(choice(st,{label:`“I heard this: ${String(rumor.summary||'a new local rumor').replace(/[.]+$/,'')}. What does that change?”`,intent:'dialogue',actionType:'rumor_discussion',rumorId:rumor.id,npcId:npc.id,contractId:active.id||null,skill:'Insight',dc:12,purpose:'DISCUSS LIVE RUMOR',topic:'intel'}));
@@ -180,6 +200,11 @@ function contactInitiative(data,ctx,st,r){
   const npcId=agenda.actorId||null,speaker=agenda.actorName||'Contact';
   candidates.push({kind:'agenda',npcId,speaker,urgency:Number(agenda.attention||7),danger:agenda.tone==='friction'?4:2,label:speaker+' wants Deadlock\'s attention after an autonomous move.',summary:agenda.summary,topic:agenda.tone==='friction'?'trust':'intel',contractId:agenda.contractId||contract.id||null,leadId:agenda.leadId||null,rumorId:agenda.rumorId||null,agendaActivityId:agenda.id,targetId:agenda.targetId||null});
  }
+ const arcThread=root.DeadlockNpcArcs?.candidate?.(data)||null;
+ if(arcThread&&Number(arcThread.attention||0)>=7){
+  const arc=arcThread.arcId?root.DeadlockNpcArcs.arc(data,arcThread.arcId):null,npcId=arcThread.actorId||arc?.actorId||null,speaker=root.DeadlockNpcAgendas?.actors?.[npcId]?.name||npcId||'Contact';
+  candidates.push({kind:'arc',npcId,speaker,urgency:Number(arcThread.attention||7),danger:0,label:speaker+' has a long-running personal thread that can no longer stay entirely in the background.',summary:arcThread.prompt,topic:'trust',arcThreadId:arcThread.id,arcId:arc?.id||null,targetId:arcThread.targetId||null});
+ }
  return candidates.filter(x=>!st.initiative.recentNpcIds.slice(0,2).includes(x.npcId));
 }
 function ambientInitiative(data,ctx,st,r){
@@ -212,6 +237,12 @@ function initiativeChoices(st,event,r){
  if(event.kind==='agenda'){
   common[0]=initiativeChoice(st,{label:'Ask what they were trying to accomplish without involving Deadlock.',intent:'dialogue',actionType:'agenda_motive',npcId:event.npcId||null,contractId:event.contractId||null,leadId:event.leadId||null,rumorId:event.rumorId||null,agendaActivityId:event.agendaActivityId||null,skill:'Insight',dc:11,purpose:'ASK MOTIVE'});
   common[1]=initiativeChoice(st,{label:event.targetId?'Hear the other NPC before deciding whether to step in.':'Ask what changed enough to make this matter now.',intent:'dialogue',actionType:'agenda_other_side',npcId:event.targetId||event.npcId||null,contractId:event.contractId||null,agendaActivityId:event.agendaActivityId||null,skill:'Negotiation',dc:12,purpose:'HEAR OTHER SIDE'});
+ }
+ if(event.kind==='arc'){
+  common[0]=initiativeChoice(st,{label:'Give them the floor and ask what they need from Deadlock.',intent:'dialogue',actionType:'arc_followup',npcId:event.npcId||null,arcThreadId:event.arcThreadId||null,arcId:event.arcId||null,skill:'Insight',dc:11,purpose:'PERSONAL ARC'});
+  common[1]=initiativeChoice(st,{label:event.targetId?'Hear the other person tied to this arc before deciding.':'Probe the part they have not said aloud yet.',intent:'dialogue',actionType:event.targetId?'arc_relationship':'arc_secret_probe',npcId:event.targetId||event.npcId||null,arcThreadId:event.arcThreadId||null,arcId:event.arcId||null,skill:event.targetId?'Negotiation':'Insight',dc:12,purpose:'PERSONAL ARC'});
+  common[2]=initiativeChoice(st,{label:'Commit to helping with the thread now.',intent:'investigate',actionType:'arc_commit',npcId:event.npcId||null,arcThreadId:event.arcThreadId||null,arcId:event.arcId||null,skill:'Investigation',dc:12,purpose:'PERSONAL ARC'});
+  common[3]=initiativeChoice(st,{label:'Tell them this stays unresolved for now.',intent:'action',actionType:'arc_decline',npcId:event.npcId||null,arcThreadId:event.arcThreadId||null,arcId:event.arcId||null,purpose:'DEFER PERSONAL ARC'});
  }
  if(event.kind==='memory'){
   common[0]=initiativeChoice(st,{label:'Ask why that earlier choice matters now.',intent:'dialogue',actionType:'memory_revisit',npcId:event.npcId,contractId:event.contractId||null,skill:'Insight',dc:11,purpose:'REVISIT DECISION'});
@@ -308,6 +339,10 @@ function contextLine(data,ctx={}){
  let line=null,key=null;
  if(['intel','danger','marr','kade','deal','open'].includes(topic)&&leads.length){const lead=pick(leads,r);key='lead:'+lead.id;line=contextVoice(npcId,`the new lead says ${String(lead.summary).replace(/[.]+$/,'')}`,lead.confidence)}
  else if(['intel','danger','open'].includes(topic)&&rumors.length){const rumor=pick(rumors,r);key='rumor:'+rumor.id;line=contextVoice(npcId,`the local report says ${String(rumor.summary).replace(/[.]+$/,'')}`,35)}
+ else if(['intel','trust','danger','open'].includes(topic)&&root.DeadlockNpcArcs){
+  const thread=root.DeadlockNpcArcs.candidate(data,{actorId:npcId});
+  if(thread){key='arc:'+thread.id;line=contextVoice(npcId,'a longer-running personal thread is still unresolved: '+String(thread.prompt).replace(/[.]+$/,''),55)}
+ }
  else if(['intel','trust','danger','open'].includes(topic)&&root.DeadlockNpcAgendas){
   const rows=root.DeadlockNpcAgendas.recent(data,6),beat=rows.find(x=>x.actorId===npcId||x.targetId===npcId)||rows[0];
   if(beat){key='agenda:'+beat.id;line=contextVoice(npcId,'the latest background move was this: '+String(beat.summary).replace(/[.]+$/,''),45)}
@@ -334,6 +369,6 @@ function factOrUpdate(data,npcId,fact,topic='open'){
  const r=rng(key+'|'+data.story?.director?.turn+'|'+npcId);return pick(variants[npcId]||["Nothing verified has changed on that point yet. Let's work the newest piece instead."],r);
 }
 function recordReply(data,npcId,line){const st=ensure(data),rows=st.recentReplies[npcId]||(st.recentReplies[npcId]=[]),key=norm(line);rows.unshift(key);st.recentReplies[npcId]=[...new Set(rows)].slice(0,12)}
-function summary(data){const st=ensure(data),agendas=root.DeadlockNpcAgendas?.summary?.(data)||null;return{version:st.version,recentChoices:st.recentChoices.length,recentLabels:st.recentLabels.length,recentPresented:st.recentPresented.length,leads:data.story.proceduralLeads.length,activeRumors:activeRumors(data,99).length,branchMemory:st.branchMemory.length,initiatives:st.initiative.history.length,initiativeCooldownUntil:st.initiative.cooldownUntil,agendaActivities:agendas?.activities||0}}
+function summary(data){const st=ensure(data),agendas=root.DeadlockNpcAgendas?.summary?.(data)||null,arcs=root.DeadlockNpcArcs?.summary?.(data)||null;return{version:st.version,recentChoices:st.recentChoices.length,recentLabels:st.recentLabels.length,recentPresented:st.recentPresented.length,leads:data.story.proceduralLeads.length,activeRumors:activeRumors(data,99).length,branchMemory:st.branchMemory.length,initiatives:st.initiative.history.length,initiativeCooldownUntil:st.initiative.cooldownUntil,agendaActivities:agendas?.activities||0,activeNpcArcs:arcs?.activeArcs||0,openArcThreads:arcs?.openThreads||0,revealedNpcSecrets:arcs?.revealedSecrets||0,openNpcFavors:arcs?.openFavors||0}}
 root.DeadlockStoryDirector={schema:SCHEMA,version:VERSION,ensure,recordChoice,missionChoices,dialogueChoices,genericChoices,narrativeBeat,continueBeat,initiative,resolveRumor,activeRumors,activeLeads,contextLine,factOrUpdate,recordReply,summary,_test:{hash,rng,signature,norm,contextVoice,ambientNpcById,contactInitiative,ambientInitiative,memoryInitiative,initiativeChoices}};
 })(typeof window!=='undefined'?window:globalThis);
