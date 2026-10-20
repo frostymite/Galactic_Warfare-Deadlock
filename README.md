@@ -9,6 +9,12 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
 
+## Reactive Living World — v17.7.0
+
+Phase 3 now moves beyond ambient motion. Background NPCs are persistent interactable identities: tap/click a passerby to get a locally generated, context-aware bark, and the same NPC remembers interaction count, familiarity and recent lines in the campaign save. Blackglass crew use Apex/HQ-aware dialogue while Lower Port populations use district-specific talk pools.
+
+Ambient crowds also react visually to combat fire, impacts, flybys and narration without becoming scripted combatants. The feature remains offline-first and engine-neutral; durable NPC memory stays plain JSON while the browser renderer owns animation and presentation.
+
 ## Visual Hotfix + Generated ShipForge — v17.6.0
 
 The Galaxy navigation screen has been stabilized so normal map browsing no longer competes with a second living-scene layer. Blackglass HQ now uses distinct generated environment images for Command, Briefing, Hangar, Quarters and Contracts instead of the shared placeholder-style location art.
