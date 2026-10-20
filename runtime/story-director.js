@@ -46,6 +46,13 @@ function leadChoice(st,lead,contractId=null,r){
  const verbs=['Follow the lead','Pressure the lead','Work the new lead before it cools','Test the lead in the field'];
  return choice(st,{label:`${pick(verbs,r)}: ${String(lead.summary||lead.title||'new lead').replace(/[.]+$/,'')}.`,intent:'investigate',actionType:'procedural_lead',leadId:lead.id,contractId:contractId||lead.contractId||null,skill:pick(['Investigation','Survival','Stealth'],r),dc:12,purpose:'FOLLOW PROCEDURAL LEAD',topic:'intel'});
 }
+function consequenceChoice(st,data,ctx,r){
+ const x=data.story?.consequences?.recent?.[0];if(!x?.title)return null;
+ const title=String(x.title).replace(/[.]+$/,''),tone=String(x.tone||x.kind||'').toLowerCase(),cid=ctx.contract?.id||x.contractId||null;
+ if(/danger|warn|bad|hostile/.test(tone))return choice(st,{label:`Deal with the fallout from ${title} before it becomes the next problem.`,intent:'action',actionType:'consequence_response',contractId:cid,skill:'Survival',dc:12,purpose:'CONTROL THE FALLOUT'});
+ if(/good|success|win/.test(tone))return choice(st,{label:`Exploit the opening created by ${title} before the advantage disappears.`,intent:'action',actionType:'consequence_opportunity',contractId:cid,skill:'Survival',dc:11,purpose:'USE THE OPENING'});
+ return choice(st,{label:`Re-check the current plan against what changed during ${title}.`,intent:'investigate',actionType:'consequence_review',contractId:cid,skill:'Investigation',dc:11,purpose:'ADAPT TO CHANGE'});
+}
 function locationChoice(st,ctx,r){
  const loc=String(ctx.location||'').toLowerCase(),cid=ctx.contract?.id||null;
  if(loc.includes('blackglass'))return choice(st,{label:pick(['Cross-check Blackglass traffic logs for a pattern the field data missed.','Pull Blackglass sensor history and compare it against the current trail.','Have the HQ analysts correlate the newest lead with station traffic records.','Compare hangar arrivals against contract timestamps and known transponder patterns.','Ask Blackglass security to reconstruct who moved through the station around the latest lead.','Use the isolated data vault to compare the current trail against older Apex records.'],r),intent:'investigate',actionType:'location_intel',contractId:cid,skill:'Investigation',dc:12,purpose:'USE BLACKGLASS'});
@@ -94,9 +101,10 @@ function missionChoices(data,ctx={}){
  if(ctx.contract?.status==='Completed')candidates.push(choice(st,{label:'Review unresolved leads and choose what becomes the next job.',intent:'bounty',actionType:'review_leads',purpose:'NEXT THREAD'}),shipChoice(st,ctx,r));
  else if(Number(ctx.contract?.progress||0)>=100)candidates.push(choice(st,{label:ctx.target?.name?`Deliver ${ctx.target.name} and complete the handoff.`:'Complete the contract handoff and collect the payout.',intent:'turnin',contractId:cid,purpose:'TURN IN'}),contactChoice(st,ctx,r),shipChoice(st,ctx,r));
  else{
-  const rumor=pick(activeRumors(data,4),r),lead=pick(activeLeads(data,4),r);
+  const rumor=pick(activeRumors(data,4),r),lead=pick(activeLeads(data,4),r),consequence=consequenceChoice(st,data,ctx,r);
   if(rumor)candidates.push(rumorChoice(st,rumor,cid,r));
   if(lead)candidates.push(leadChoice(st,lead,cid,r));
+  if(consequence)candidates.push(consequence);
   candidates.push(fieldChoice(st,ctx,r),contactChoice(st,ctx,r),locationChoice(st,ctx,r),shipChoice(st,ctx,r));
   if(Number(ctx.stage?.index||1)>=4)candidates.push(fieldChoice(st,{...ctx,turn:turn+7},r));
  }
@@ -134,7 +142,7 @@ function dialogueChoices(data,ctx={}){
 function genericChoices(data,ctx={}){
  const st=ensure(data),r=rng(`${data.created||'deadlock'}|generic|${data.story?.director?.turn||0}|${st.sequence}`),rows=[],rumor=pick(activeRumors(data,4),r),lead=pick(activeLeads(data,4),r);
  if(rumor)rows.push(rumorChoice(st,rumor,ctx.contract?.id||null,r));if(lead)rows.push(leadChoice(st,lead,ctx.contract?.id||null,r));
- rows.push(locationChoice(st,ctx,r),contactChoice(st,ctx,r),fieldChoice(st,ctx,r),shipChoice(st,ctx,r));
+ const consequence=consequenceChoice(st,data,ctx,r);if(consequence)rows.push(consequence);rows.push(locationChoice(st,ctx,r),contactChoice(st,ctx,r),fieldChoice(st,ctx,r),shipChoice(st,ctx,r));
  const out=[];for(const c of rows.filter(Boolean)){if(!st.recentLabels.includes(norm(c.label))&&!st.recentPresented.includes(norm(c.label)))out.push(c);if(out.length>=5)break}
  return rememberPresented(st,(out.length>=4?out:rows.filter(Boolean)).slice(0,5));
 }
