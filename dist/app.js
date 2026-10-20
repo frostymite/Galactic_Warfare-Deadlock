@@ -1261,9 +1261,9 @@ function storyChoiceButtons(){
 }
 function storyInterruptionButtons(){
  return (DATA.story.interruptions||[]).map(it=>{
-  const urgent=(it.urgency||0)>=8;
-  return `<div class="story-interruption ${urgent?"urgent":""}">
-   <div class="story-interrupt-head"><b>${urgent?"URGENT INTERRUPTION":"INTERRUPTION"} // ${esc(it.label)}</b><span class="pill">${Math.round(it.danger||0)} RISK</span></div>
+  const urgent=(it.urgency||0)>=8,initiative=!!it.initiative;
+  return `<div class="story-interruption ${urgent?"urgent":""} ${initiative?"npc-initiative":""}">
+   <div class="story-interrupt-head"><b>${initiative?"NPC INITIATIVE":urgent?"URGENT INTERRUPTION":"INTERRUPTION"} // ${esc(it.label)}</b><span class="pill">${Math.round(it.danger||0)} RISK</span></div>
    <div class="small muted">${esc(it.summary||"A new complication demands attention, but your previous options remain available.")}</div>
    <div class="story-interrupt-actions">${(it.choices||[]).slice(0,4).map((c,i)=>`<button class="story-interrupt-choice" data-storyinterrupt="${it.id}:${c.id}"><span class="story-interrupt-num">${i+1}</span><span>${esc(c.label)}</span>${c.skill?`<span class="story-interrupt-check">${esc(c.skill)}${c.dc!=null?` DC ${c.dc}`:""}</span>`:""}</button>`).join("")}</div>
   </div>`
@@ -1508,7 +1508,7 @@ function startNewStoryScene(){
 }
 function wireStory(){
  if($("#storySend"))$("#storySend").onclick=()=>{const v=$("#storyInput").value.trim();if(v)storySubmit(v,null)};
- if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){const stage=contractStageInfo(c);DATA.story.objective=stage.goal;DATA.story.choices=missionChoices(c);const beat=window.DeadlockStoryDirector?.continueBeat?.(DATA,storyDirectorContext(c,{stage}));storyPush("narration","Narrator",beat||`Deadlock refocuses on the job. ${stage.goal}`);save();render("Story")}else storySubmit("Continue from the current situation.",null)};
+ if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){DATA.story.director.turn=Number(DATA.story.director.turn||0)+1;const stage=contractStageInfo(c);DATA.story.objective=stage.goal;DATA.story.choices=missionChoices(c);const beat=window.DeadlockStoryDirector?.continueBeat?.(DATA,storyDirectorContext(c,{stage}));storyPush("narration","Narrator",beat||`Deadlock refocuses on the job. ${stage.goal}`);maybeMaterializeNpcInitiative();save();render("Story")}else storySubmit("Continue from the current situation.",null)};
  if($("#storyRollBtn"))$("#storyRollBtn").onclick=openStoryRoll;
  $$("[data-storychoice]").forEach(b=>b.onclick=()=>{const c=DATA.story.choices.find(x=>x.id===b.dataset.storychoice);if(c)storySubmit("",c)});
  $$("[data-storyinterrupt]").forEach(b=>b.onclick=()=>{const [iid,cid]=b.dataset.storyinterrupt.split(":");const it=interruptionById(iid);const c=it?.choices?.find(x=>x.id===cid);if(c)storySubmit("",c)});
@@ -1883,6 +1883,15 @@ function applyInterruptionConsequence(choice,roll){
  if(it.eventId==="anonymous_ping"&&roll?.success)addFlag("ANONYMOUS_SIGNAL_HANDLED");
  if(it.eventId==="patrol_scan"&&roll?.success)addFlag("PATROL_SCAN_EVADED");
  if(it.eventId==="false_bounty"&&roll?.success)addFlag("FALSE_BOUNTY_SCREENED");
+
+ if(it.initiative&&choice?.actionType==="repair"&&choice.systemId&&roll){
+  const sys=shipSystemById(choice.systemId);
+  if(sys){const before=Number(sys.condition||0);sys.condition=clamp(before+(success?7:-2),0,100);storyPush("system","The Raven",`${sys.name}: ${before}% → ${sys.condition}% after Jessa's unsolicited maintenance call.`);addConsequence(`${sys.name} initiative repair`,success?"Jessa's warning led to a successful repair.":"The rushed repair did not hold cleanly.",success?"good":"warn",{systemId:sys.id,initiativeId:it.initiativeId});}
+ }
+ if(it.initiative&&choice?.rumorId&&roll){
+  const lead=window.DeadlockStoryDirector?.resolveRumor?.(DATA,choice.rumorId,{success,contractId:choice.contractId||null});
+  if(lead)storyPush("system","Story Engine",success?`NPC initiative promoted a rumor into lead: ${lead.summary}`:`NPC initiative left the rumor uncertain: ${lead.summary}`);
+ }
 
  removeInterruption(id);
  return it;
@@ -2268,6 +2277,31 @@ function availableComplications(){
   return true;
  });
 }
+function materializeNpcInitiative(event){
+ if(!event)return false;
+ const s=DATA.story;
+ if((s.interruptions||[]).length)return false;
+ const iid=uid("interrupt"),eventId=`npc_initiative:${event.kind||"contact"}`;
+ const interruption={
+  id:iid,eventId,initiative:true,initiativeId:event.id,initiativeKind:event.kind||"contact",
+  label:event.label||`${event.speaker||"A contact"} interrupts.`,
+  summary:event.summary||"Someone acts before Deadlock asks.",
+  danger:Number(event.danger||0),urgency:Number(event.urgency||4),speaker:event.speaker||null,
+  ambientNpcId:event.ambientNpcId||null,systemId:event.systemId||null,rumorId:event.rumorId||null,leadId:event.leadId||null,
+  choices:(event.choices||[]).slice(0,4).map(c=>({...c,id:c.id||uid("ichoice"),interruptId:iid,eventId,initiativeId:event.id,initiativeKind:event.kind||"contact"}))
+ };
+ s.interruptions=s.interruptions||[];s.interruptions.push(interruption);s.interruptions=s.interruptions.slice(-2);
+ if(event.npcId){s.currentNpc=event.npcId;storyPush("dialogue",event.speaker||storyNpc(event.npcId)?.name||"Contact",event.summary,{eventId,initiativeId:event.id});}
+ else storyPush("narration",event.speaker||"Local Contact",event.summary,{eventId,initiativeId:event.id,ambientNpcId:event.ambientNpcId||null});
+ addNotification(`NPC initiative: ${event.speaker||event.kind||"new contact"}`,Number(event.urgency||0)>=8?"warn":"info");
+ setTimeout(()=>storyCinematic("new_intel",`${event.speaker||"CONTACT"} // INITIATIVE`),35);
+ return true;
+}
+function maybeMaterializeNpcInitiative(opts={}){
+ const c=contractById(DATA.story.activeContractId)||activeContracts?.()[0]||null;
+ const event=window.DeadlockStoryDirector?.initiative?.(DATA,storyDirectorContext(c,{danger:Number(DATA.story.danger||0)}),opts);
+ return materializeNpcInitiative(event);
+}
 function materializeComplication(event){
  const s=DATA.story,d=s.director;
  d.lastEventId=event.id;d.generatedCanonCount++;
@@ -2518,8 +2552,9 @@ function localStoryGenerate(action="",choice=null){
   if(roll.success)d.tension=clamp(d.tension-4,0,100);
   else d.tension=clamp(d.tension+4,0,100);
  }
- const eventTriggered=maybeTriggerEncounter();
- if(!eventTriggered){
+ const initiativeTriggered=maybeMaterializeNpcInitiative();
+ const eventTriggered=initiativeTriggered?false:maybeTriggerEncounter();
+ if(!eventTriggered&&!initiativeTriggered){
   if(chance(.32)){
    const atm=pick(s.offlineTables?.atmosphere);
    if(atm)storyPush("narration","Narrator",atm);
