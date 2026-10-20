@@ -51,3 +51,12 @@ This release does not automatically create a paid contract from a rumor yet. It 
 - Existing v17.5–v17.7 saves hydrate new fields in place.
 - No Apex canon, credits, injuries, ShipForge component IDs, fleet ownership, active cases or story history are replaced.
 - Browser presentation remains separate from plain JSON state for the planned native/Godot migration.
+
+## Validation
+
+Branch validation after source/dist synchronization:
+
+- Routine/event simulation harness: **34/34 passed** through 120 world ticks.
+- Source-to-`dist` parity: **4/4 matched** for app, service worker, living-world runtime and living-world styles.
+- Version/offline/QA wiring: **3/3 passed**.
+- Verified cross-room visitors, service/patrol/talk routine states, persistent NPC IDs, Lower Port routines, ShipForge-linked events, durable rumors and interaction memory.
