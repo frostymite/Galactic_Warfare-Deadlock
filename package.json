@@ -1,6 +1,6 @@
 {
   "name": "deadlock-tactical-os",
-  "version": "17.11.0",
+  "version": "17.12.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,8 @@
     "test:shipforge": "node qa/shipforge.cjs && node qa/shipforge-world.cjs && node qa/shipforge-integration.cjs && node qa/living-world.cjs",
     "test:living": "node qa/living-world.cjs",
     "test:story-director": "node qa/story-director.cjs",
-    "test:npc-agendas": "node qa/npc-agendas.cjs"
+    "test:npc-agendas": "node qa/npc-agendas.cjs",
+    "test:npc-arcs": "node qa/npc-arcs.cjs"
   },
   "dependencies": {
     "@capacitor/android": "8.5.3",
