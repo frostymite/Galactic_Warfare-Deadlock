@@ -2658,7 +2658,7 @@ function enhanceLivingScene(page){
  if(page==="Story")content.querySelector(".story-topbar")?.after(wrap);
  else {if(page==="HQ")content.querySelector(".hq-shell")?.classList.add("scene-enhanced");const root=content.firstElementChild; if(root)root.insertBefore(wrap,root.firstChild); else content.prepend(wrap)}
  const liveScene=wrap.querySelector("[data-living-scene]");startSceneRuntime(liveScene);
- window.DeadlockLivingWorld?.mount?.(liveScene,DATA,ctx);if(window.DeadlockLivingWorld?.consumeDirty?.(DATA))save();
+ window.DeadlockLivingWorld?.mount?.(liveScene,DATA,ctx);liveScene?.addEventListener('deadlock:living-world-dirty',()=>{if(window.DeadlockLivingWorld?.consumeDirty?.(DATA))save()});if(window.DeadlockLivingWorld?.consumeDirty?.(DATA))save();
  if(DATA.settings.worldFx!==false&&DATA.settings.animations!==false&&!matchMedia('(prefers-reduced-motion: reduce)').matches)window.DeadlockWorldFX?.attach?.(liveScene,ctx.preset);else window.DeadlockWorldFX?.detach?.();
  if(DATA.settings.actorRigs!==false)window.DeadlockActors?.sync?.();
  const recent=[...(DATA.story?.history||[])].reverse().find(h=>h.type==="dialogue");
@@ -2683,5 +2683,5 @@ function sceneActionFx(type,detail=""){
  const s=document.querySelector("[data-living-scene]");if(!s)return;
  const cls={"player-shot":"scene-fx-player-shot","enemy-shot":"scene-fx-enemy-shot","hit":"scene-fx-hit","ship-fire":"scene-fx-ship-fire","ship-hit":"scene-fx-ship-hit","enemy-flyby":"scene-fx-flyby","narration":"scene-fx-narration"}[type]||"scene-fx-beat";
  s.classList.remove(cls);void s.offsetWidth;s.classList.add(cls);setTimeout(()=>s.classList.remove(cls),type.includes("hit")?700:480);
- window.DeadlockCinematics?.action?.(type,{detail});window.DeadlockEngagement?.feedback(type);if(type==="hit")window.DeadlockActors?.react?.("rovan","hit");if(type==="player-shot"||type==="enemy-shot")window.DeadlockWorldFX?.burst?.("sparks",type==="player-shot"?.62:.38,.47);
+ window.DeadlockLivingWorld?.react?.(type,{detail});window.DeadlockCinematics?.action?.(type,{detail});window.DeadlockEngagement?.feedback(type);if(type==="hit")window.DeadlockActors?.react?.("rovan","hit");if(type==="player-shot"||type==="enemy-shot")window.DeadlockWorldFX?.burst?.("sparks",type==="player-shot"?.62:.38,.47);
 }
