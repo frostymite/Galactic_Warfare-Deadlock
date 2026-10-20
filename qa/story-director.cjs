@@ -8,7 +8,7 @@ const data={created:'director-qa',story:{director:{turn:1},location:'Blackglass 
  {id:'r2',summary:'A salvage component carries the wrong manufacturer mark',status:'heard',tick:8,sourcePresetId:'blackglass_hangar',participantIds:['amb-2']}
 ]}};
 const ctx={contract:{id:'marr',title:'Marr Recovery',status:'Active',progress:35,targetId:'marr'},stage:{index:2,key:'trail'},target:{name:'Marr'},currentNpc:{id:'dren',name:'Dren Voss'},currentNpcId:'dren',location:data.story.location,weakestSystem:{id:'engines',name:'Engines',condition:88}};
-ok('engine exposed',!!D);ok('story director schema',D.schema==='deadlock.story-director.v1');ok('story director version',D.version==='1.0.0');
+ok('engine exposed',!!D);ok('story director schema',D.schema==='deadlock.story-director.v1');ok('story director version',D.version==='1.1.0');
 const menus=[],labels=[];
 for(let i=0;i<10;i++){
  data.story.director.turn=i+1;
@@ -41,5 +41,26 @@ const again=D.resolveRumor(data,'r1',{success:true,contractId:'marr'});ok('rumor
 ok('promoted rumor no longer raw rumor',!D.activeRumors(data,10).some(x=>x.id==='r1'));
 const generic=D.genericChoices(data,ctx);ok('generic menu contextual',generic.length>=4&&generic.some(x=>x.leadId||x.rumorId||x.actionType==='location_intel'));
 const sum=D.summary(data);ok('summary remembers shown options',sum.recentPresented>0);ok('summary remembers player branches',sum.branchMemory>0);ok('summary counts procedural leads',sum.leads===1);
+
+// v17.10 unsolicited NPC initiative.
+const initiativeData={created:'initiative-qa',story:{director:{turn:4},location:'Blackglass Station — Hangar',interruptions:[],proceduralLeads:[{id:'lead-init',summary:'A sealed arrival used a private clearance lane',status:'active',confidence:55,contractId:'marr'}],proceduralDirector:data.story.proceduralDirector},livingWorld:{rumors:[{id:'ri',summary:'A mechanic saw an unmarked crate moved after lights-out',status:'heard',tick:12,participantIds:['amb-init']}],populations:{hangar:{npcs:[{id:'amb-init',name:'Veyra',role:'mechanic'}]}}}};
+const initCtx={contract:{id:'marr',title:'Marr Recovery'},location:initiativeData.story.location,danger:64,weakestSystem:{id:'engines',name:'Engines',condition:69}};
+const forced=D.initiative(initiativeData,initCtx,{force:true});
+ok('initiative generated',!!forced);
+ok('initiative has four responses',forced?.choices?.length===4);
+ok('initiative source identified',!!forced?.speaker&&!!forced?.kind);
+ok('initiative history persisted',D.summary(initiativeData).initiatives>=1);
+const blocked=D.initiative(initiativeData,initCtx);
+ok('initiative cooldown prevents immediate repeat',blocked===null);
+initiativeData.story.interruptions=[{id:'existing'}];initiativeData.story.director.turn=20;initiativeData.story.proceduralDirector.initiative.cooldownUntil=0;
+ok('pending interruption blocks initiative',D.initiative(initiativeData,initCtx)===null);
+initiativeData.story.interruptions=[];initiativeData.story.proceduralDirector.branchMemory.unshift({turn:10,type:'action',text:'Deadlock chose the maintenance tunnels instead of the public route.'});initiativeData.story.director.turn=20;
+const mem=D._test.memoryInitiative(initiativeData,initCtx,initiativeData.story.proceduralDirector,()=>.4);
+ok('old player choice can resurface',!!mem&&mem.kind==='memory'&&/maintenance tunnels/.test(mem.summary));
+const amb=D._test.ambientInitiative(initiativeData,initCtx,initiativeData.story.proceduralDirector,()=>.4);
+ok('ambient npc can initiate',!!amb&&amb.kind==='ambient'&&amb.speaker==='Veyra');
+const contacts=D._test.contactInitiative(initiativeData,initCtx,initiativeData.story.proceduralDirector,()=>.4);
+ok('contact initiative candidates exist',Array.isArray(contacts)&&contacts.length>0);
+
 const result={checks,passed:checks-fail.length,failed:fail.length,failures:fail,uniqueMissionLabels:new Set(labels).size,uniqueDialogueLabels:new Set(dialogue).size,summary:sum};
 fs.writeFileSync(path.join(__dirname,'story-director-results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));if(fail.length)process.exit(1);
