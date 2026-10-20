@@ -30,7 +30,7 @@ function recordChoice(data,choice=null,action=''){
  return st;
 }
 function activeRumors(data,limit=5){
- const rows=(data.livingWorld?.rumors||[]).filter(r=>r&&r.status!=='dismissed'&&r.status!=='resolved');
+ const rows=(data.livingWorld?.rumors||[]).filter(r=>r&&['heard','investigating','uncertain'].includes(r.status||'heard'));
  return rows.slice().sort((a,b)=>Number(b.tick||0)-Number(a.tick||0)).slice(0,limit);
 }
 function activeLeads(data,limit=5){return (data.story?.proceduralLeads||[]).filter(x=>x.status!=='resolved'&&x.status!=='dismissed').slice(-limit).reverse()}
