@@ -4,7 +4,7 @@
  */
 (function(root){
 'use strict';
-const VERSION='1.1.0',SCHEMA='deadlock.story-director.v1';
+const VERSION='1.2.0',SCHEMA='deadlock.story-director.v1';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
 function hash(v){let h=2166136261;for(const c of String(v??'')){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function rng(seed){let s=hash(seed)||1;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return(s>>>0)/4294967296}}
@@ -45,6 +45,18 @@ function leadChoice(st,lead,contractId=null,r){
  if(!lead)return null;
  const verbs=['Follow the lead','Pressure the lead','Work the new lead before it cools','Test the lead in the field'];
  return choice(st,{label:`${pick(verbs,r)}: ${String(lead.summary||lead.title||'new lead').replace(/[.]+$/,'')}.`,intent:'investigate',actionType:'procedural_lead',leadId:lead.id,contractId:contractId||lead.contractId||null,skill:pick(['Investigation','Survival','Stealth'],r),dc:12,purpose:'FOLLOW PROCEDURAL LEAD',topic:'intel'});
+}
+function agendaChoice(st,data,ctx,r){
+ const A=root.DeadlockNpcAgendas;if(!A)return null;
+ const beat=A.recent(data,6)?.find(x=>Number(x.attention||0)>=4);if(!beat)return null;
+ const actor=beat.actorName||beat.actorId||'a contact',target=beat.targetName?' and '+beat.targetName:'',cid=beat.contractId||ctx.contract?.id||null;
+ const labels=[
+  'Follow up on what '+actor+target+' just did: '+String(beat.summary).replace(/[.]+$/,'')+'.',
+  'Ask '+actor+' what changed after their latest move.',
+  beat.targetName?'Get '+beat.targetName+'\'s version of the exchange with '+actor+'.':'Work out whether '+actor+'\'s latest move changes the operation.'
+ ];
+ const useTarget=beat.targetId&&hash(beat.id+'|target')%2===0;
+ return choice(st,{label:pick(labels,r),intent:useTarget||beat.actorId?'dialogue':'investigate',actionType:'agenda_followup',npcId:useTarget?beat.targetId:beat.actorId||null,contractId:cid,leadId:beat.leadId||null,rumorId:beat.rumorId||null,agendaActivityId:beat.id,skill:useTarget||beat.actorId?'Insight':'Investigation',dc:11+(Number(beat.attention||0)>=7?1:0),purpose:'WORLD IN MOTION',topic:beat.tone==='friction'?'trust':'intel'});
 }
 function consequenceChoice(st,data,ctx,r){
  const x=data.story?.consequences?.recent?.[0];if(!x?.title)return null;
@@ -101,9 +113,10 @@ function missionChoices(data,ctx={}){
  if(ctx.contract?.status==='Completed')candidates.push(choice(st,{label:'Review unresolved leads and choose what becomes the next job.',intent:'bounty',actionType:'review_leads',purpose:'NEXT THREAD'}),shipChoice(st,ctx,r));
  else if(Number(ctx.contract?.progress||0)>=100)candidates.push(choice(st,{label:ctx.target?.name?`Deliver ${ctx.target.name} and complete the handoff.`:'Complete the contract handoff and collect the payout.',intent:'turnin',contractId:cid,purpose:'TURN IN'}),contactChoice(st,ctx,r),shipChoice(st,ctx,r));
  else{
-  const rumor=pick(activeRumors(data,4),r),lead=pick(activeLeads(data,4),r),consequence=consequenceChoice(st,data,ctx,r);
+  const rumor=pick(activeRumors(data,4),r),lead=pick(activeLeads(data,4),r),consequence=consequenceChoice(st,data,ctx,r),agenda=agendaChoice(st,data,ctx,r);
   if(rumor)candidates.push(rumorChoice(st,rumor,cid,r));
   if(lead)candidates.push(leadChoice(st,lead,cid,r));
+  if(agenda)candidates.push(agenda);
   if(consequence)candidates.push(consequence);
   candidates.push(fieldChoice(st,ctx,r),contactChoice(st,ctx,r),locationChoice(st,ctx,r),shipChoice(st,ctx,r));
   if(Number(ctx.stage?.index||1)>=4)candidates.push(fieldChoice(st,{...ctx,turn:turn+7},r));
@@ -132,7 +145,9 @@ function dialogueChoices(data,ctx={}){
   choice(st,{label:pick(analysis.tone==='hostile'?pools.pressure:pools.strategy,r),intent:'dialogue',npcId:npc.id,contractId:active.id||null,skill:analysis.tone==='hostile'?'Insight':'Negotiation',dc:12,purpose:'TEST THE ANSWER',topic}),
   choice(st,{label:pick(pools.relationship,r),intent:'dialogue',npcId:npc.id,contractId:active.id||null,skill:'Insight',dc:11,purpose:'RELATIONSHIP',topic:'trust'})
  ];
- if(rumor)rows.push(choice(st,{label:`“I heard this: ${String(rumor.summary||'a new local rumor').replace(/[.]+$/,'')}. What does that change?”`,intent:'dialogue',actionType:'rumor_discussion',rumorId:rumor.id,npcId:npc.id,contractId:active.id||null,skill:'Insight',dc:12,purpose:'DISCUSS LIVE RUMOR',topic:'intel'}));
+ const agendaBeat=root.DeadlockNpcAgendas?.recent?.(data,5)?.find(x=>x.actorId===npc.id||x.targetId===npc.id);
+ if(agendaBeat){const other=agendaBeat.targetName?' and '+agendaBeat.targetName:'';rows.push(choice(st,{label:'“About what happened with '+agendaBeat.actorName+other+'—what\'s your read now?”',intent:'dialogue',actionType:'agenda_discussion',agendaActivityId:agendaBeat.id,npcId:npc.id,contractId:agendaBeat.contractId||active.id||null,skill:'Insight',dc:11+(Number(agendaBeat.attention||0)>=7?1:0),purpose:'WORLD IN MOTION',topic:agendaBeat.tone==='friction'?'trust':'intel'}))}
+ else if(rumor)rows.push(choice(st,{label:`“I heard this: ${String(rumor.summary||'a new local rumor').replace(/[.]+$/,'')}. What does that change?”`,intent:'dialogue',actionType:'rumor_discussion',rumorId:rumor.id,npcId:npc.id,contractId:active.id||null,skill:'Insight',dc:12,purpose:'DISCUSS LIVE RUMOR',topic:'intel'}));
  else if(lead)rows.push(choice(st,{label:`“We picked up a lead: ${String(lead.summary||lead.title).replace(/[.]+$/,'')}. What am I missing?”`,intent:'dialogue',actionType:'lead_discussion',leadId:lead.id,npcId:npc.id,contractId:active.id||null,skill:'Insight',dc:12,purpose:'TEST A LEAD',topic:'intel'}));
  rows.push(choice(st,{label:pick(pools.exit,r),intent:'action',actionType:'leave_dialogue',contractId:active.id||null,purpose:'ACT ON IT'}));
  const out=[];for(const c of rows){const sig=signature(c);if(!st.recentChoices.includes(sig)&&!st.recentLabels.includes(norm(c.label))&&!st.recentPresented.includes(norm(c.label)))out.push(c);if(out.length>=5)break}
@@ -160,6 +175,11 @@ function contactInitiative(data,ctx,st,r){
  else if(rumor)candidates.push({kind:'intel',npcId:'dren',speaker:'Dren Voss',urgency:5,danger:2,label:'Dren calls with something he heard before Deadlock asks.',summary:`A fresh report crossed Dren's channel: ${String(rumor.summary).replace(/[.]+$/,'')}.`,topic:'intel',rumorId:rumor.id,contractId:contract.id||null});
  if(contract.id==='kade'||(contract.id&&turn%5===0))candidates.push({kind:'contract',npcId:'nera',speaker:'Nera Kade',urgency:5,danger:2,label:'Nera Kade requests the channel on her own timetable.',summary:`Kade wants a status answer on ${contract.title||'the active contract'} instead of waiting for Deadlock to report in.`,topic:'deal',contractId:contract.id||null});
  if(danger>=58)candidates.push({kind:'warning',npcId:'renn',speaker:'Renn',urgency:danger>=78?8:6,danger:Math.round(danger/12),label:'Renn breaks radio silence with a warning.',summary:'Renn noticed movement around the operation and decided it was important enough to interrupt.',topic:'danger',contractId:contract.id||null});
+ const agenda=root.DeadlockNpcAgendas?.attention?.(data,7);
+ if(agenda&&agenda.turn>=turn-3){
+  const npcId=agenda.actorId||null,speaker=agenda.actorName||'Contact';
+  candidates.push({kind:'agenda',npcId,speaker,urgency:Number(agenda.attention||7),danger:agenda.tone==='friction'?4:2,label:speaker+' wants Deadlock\'s attention after an autonomous move.',summary:agenda.summary,topic:agenda.tone==='friction'?'trust':'intel',contractId:agenda.contractId||contract.id||null,leadId:agenda.leadId||null,rumorId:agenda.rumorId||null,agendaActivityId:agenda.id,targetId:agenda.targetId||null});
+ }
  return candidates.filter(x=>!st.initiative.recentNpcIds.slice(0,2).includes(x.npcId));
 }
 function ambientInitiative(data,ctx,st,r){
@@ -188,6 +208,10 @@ function initiativeChoices(st,event,r){
  if(event.kind==='ambient'){
   common[0]=initiativeChoice(st,{label:`Let ${event.speaker} explain what they saw.`,intent:'investigate',actionType:'ambient_listen',rumorId:event.rumorId||null,skill:'Insight',dc:10,purpose:'HEAR THEM OUT'});
   common[1]=initiativeChoice(st,{label:'Ask who else knows and where the story started.',intent:'investigate',actionType:'ambient_source',rumorId:event.rumorId||null,skill:'Investigation',dc:12,purpose:'TRACE SOURCE'});
+ }
+ if(event.kind==='agenda'){
+  common[0]=initiativeChoice(st,{label:'Ask what they were trying to accomplish without involving Deadlock.',intent:'dialogue',actionType:'agenda_motive',npcId:event.npcId||null,contractId:event.contractId||null,leadId:event.leadId||null,rumorId:event.rumorId||null,agendaActivityId:event.agendaActivityId||null,skill:'Insight',dc:11,purpose:'ASK MOTIVE'});
+  common[1]=initiativeChoice(st,{label:event.targetId?'Hear the other NPC before deciding whether to step in.':'Ask what changed enough to make this matter now.',intent:'dialogue',actionType:'agenda_other_side',npcId:event.targetId||event.npcId||null,contractId:event.contractId||null,agendaActivityId:event.agendaActivityId||null,skill:'Negotiation',dc:12,purpose:'HEAR OTHER SIDE'});
  }
  if(event.kind==='memory'){
   common[0]=initiativeChoice(st,{label:'Ask why that earlier choice matters now.',intent:'dialogue',actionType:'memory_revisit',npcId:event.npcId,contractId:event.contractId||null,skill:'Insight',dc:11,purpose:'REVISIT DECISION'});
@@ -284,6 +308,10 @@ function contextLine(data,ctx={}){
  let line=null,key=null;
  if(['intel','danger','marr','kade','deal','open'].includes(topic)&&leads.length){const lead=pick(leads,r);key='lead:'+lead.id;line=contextVoice(npcId,`the new lead says ${String(lead.summary).replace(/[.]+$/,'')}`,lead.confidence)}
  else if(['intel','danger','open'].includes(topic)&&rumors.length){const rumor=pick(rumors,r);key='rumor:'+rumor.id;line=contextVoice(npcId,`the local report says ${String(rumor.summary).replace(/[.]+$/,'')}`,35)}
+ else if(['intel','trust','danger','open'].includes(topic)&&root.DeadlockNpcAgendas){
+  const rows=root.DeadlockNpcAgendas.recent(data,6),beat=rows.find(x=>x.actorId===npcId||x.targetId===npcId)||rows[0];
+  if(beat){key='agenda:'+beat.id;line=contextVoice(npcId,'the latest background move was this: '+String(beat.summary).replace(/[.]+$/,''),45)}
+ }
  if(!line||st.recentContexts.includes(npcId+'|'+key))return null;st.recentContexts.unshift(npcId+'|'+key);st.recentContexts=st.recentContexts.slice(0,16);return line;
 }
 function contextVoice(npcId,subject,confidence){
@@ -306,6 +334,6 @@ function factOrUpdate(data,npcId,fact,topic='open'){
  const r=rng(key+'|'+data.story?.director?.turn+'|'+npcId);return pick(variants[npcId]||["Nothing verified has changed on that point yet. Let's work the newest piece instead."],r);
 }
 function recordReply(data,npcId,line){const st=ensure(data),rows=st.recentReplies[npcId]||(st.recentReplies[npcId]=[]),key=norm(line);rows.unshift(key);st.recentReplies[npcId]=[...new Set(rows)].slice(0,12)}
-function summary(data){const st=ensure(data);return{version:st.version,recentChoices:st.recentChoices.length,recentLabels:st.recentLabels.length,recentPresented:st.recentPresented.length,leads:data.story.proceduralLeads.length,activeRumors:activeRumors(data,99).length,branchMemory:st.branchMemory.length,initiatives:st.initiative.history.length,initiativeCooldownUntil:st.initiative.cooldownUntil}}
+function summary(data){const st=ensure(data),agendas=root.DeadlockNpcAgendas?.summary?.(data)||null;return{version:st.version,recentChoices:st.recentChoices.length,recentLabels:st.recentLabels.length,recentPresented:st.recentPresented.length,leads:data.story.proceduralLeads.length,activeRumors:activeRumors(data,99).length,branchMemory:st.branchMemory.length,initiatives:st.initiative.history.length,initiativeCooldownUntil:st.initiative.cooldownUntil,agendaActivities:agendas?.activities||0}}
 root.DeadlockStoryDirector={schema:SCHEMA,version:VERSION,ensure,recordChoice,missionChoices,dialogueChoices,genericChoices,narrativeBeat,continueBeat,initiative,resolveRumor,activeRumors,activeLeads,contextLine,factOrUpdate,recordReply,summary,_test:{hash,rng,signature,norm,contextVoice,ambientNpcById,contactInitiative,ambientInitiative,memoryInitiative,initiativeChoices}};
 })(typeof window!=='undefined'?window:globalThis);
