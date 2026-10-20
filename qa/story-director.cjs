@@ -3,7 +3,7 @@ let checks=0,fail=[];const ok=(name,v)=>{checks++;if(!v)fail.push(name)};
 const box={console};box.window=box;box.globalThis=box;vm.createContext(box);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'../runtime/story-director.js'),'utf8'),box);
 const D=box.DeadlockStoryDirector;
-const data={created:'director-qa',story:{director:{turn:1},location:'Blackglass Station — Hangar',currentNpc:'dren',proceduralLeads:[]},livingWorld:{rumors:[
+const data={created:'director-qa',story:{director:{turn:1},location:'Blackglass Station — Hangar',currentNpc:'dren',proceduralLeads:[],consequences:{recent:[{title:'Rival hunter spotted',tone:'danger',contractId:'marr'}]}},livingWorld:{rumors:[
  {id:'r1',summary:'A sealed arrival requested private handling',status:'heard',tick:9,sourcePresetId:'blackglass_hangar',shipId:'ship-a',participantIds:['amb-1']},
  {id:'r2',summary:'A salvage component carries the wrong manufacturer mark',status:'heard',tick:8,sourcePresetId:'blackglass_hangar',participantIds:['amb-2']}
 ]}};
@@ -19,6 +19,7 @@ for(let i=0;i<10;i++){
  D.recordChoice(data,choices[0],choices[0].label);
 }
 ok('mission options rotate broadly',new Set(labels).size>=20);
+ok('recent consequence enters menu',labels.some(x=>x.includes('Rival hunter spotted')));
 for(let i=1;i<menus.length;i++)ok('adjacent mission menu changes '+i,menus[i].filter(x=>menus[i-1].includes(x)).length<=2);
 ok('living rumor appears as story option',labels.some(x=>/arrival|manufacturer|rumor|report/i.test(x)));
 const dialogue=[];
@@ -28,6 +29,10 @@ for(let i=0;i<8;i++){
  ok('dialogue menu size '+i,rows.length>=4&&rows.length<=5);dialogue.push(...rows.map(x=>x.label));D.recordChoice(data,rows[0],rows[0].label);
 }
 ok('dialogue options rotate',new Set(dialogue).size>=14);
+const beatGood=D.narrativeBeat(data,{choice:{intent:'investigate',actionType:'crosscheck'},roll:{success:true},contract:ctx.contract,stage:ctx.stage,target:ctx.target,location:data.story.location});
+const beatBad=D.narrativeBeat(data,{choice:{intent:'deception',actionType:'bait_network'},roll:{success:false},contract:ctx.contract,stage:ctx.stage,target:ctx.target,location:data.story.location});
+ok('procedural narration generated',beatGood.length>30&&beatBad.length>30&&beatGood!==beatBad);
+ok('procedural continue beat generated',D.continueBeat(data,ctx).length>25);
 const first=D.factOrUpdate(data,'dren',"Marr's trail is still too wide.",'marr'),second=D.factOrUpdate(data,'dren',"Marr's trail is still too wide.",'marr');
 ok('first verified fact preserved',first==="Marr's trail is still too wide.");ok('repeat factual reply changes',second!==first);
 const lead=D.resolveRumor(data,'r1',{success:true,contractId:'marr'});
