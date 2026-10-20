@@ -9,6 +9,18 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
 
+## NPC Initiative — v17.10.0
+
+Phase 3 now lets characters act without waiting for Deadlock to click a dialogue option. The Story Director can generate unsolicited, persistent initiative beats from established contacts, Blackglass crew conditions, ambient living-world NPCs, and older player decisions.
+
+Examples include Jessa interrupting over a deteriorating Raven system, Dren calling because he independently worked a lead, Renn warning about rising operational pressure, Nera requesting a contract status update, or an ambient mechanic approaching Deadlock because they were involved in a live rumor.
+
+NPC initiative uses the existing Story interruption layer rather than a separate minigame. Each initiative offers up to four contextual responses, preserves the current mission menu underneath it, and can feed rumor verification, relationship dialogue, investigation, or ship repair.
+
+Initiative is intentionally throttled. It cannot spawn while another interruption is already pending, cannot fire twice on the same story turn, and receives a deterministic multi-turn cooldown after firing. Recent initiative kinds and contacts are also remembered to reduce repetitive interruptions.
+
+Older player decisions can return later through NPC memory initiative. Only recorded player actions qualify, so system-generated events do not pretend to be choices Deadlock made.
+
 ## Procedural Story Director — v17.9.0
 
 Phase 3 now replaces the fixed Story choice loop with an offline procedural director. Mission menus are rebuilt from the active contract stage, target, current NPC, location, recent player choices, latest consequences, Raven condition, living-world rumors and promoted leads. Recently shown options are remembered so the next decision does not simply redraw the same four choices.
