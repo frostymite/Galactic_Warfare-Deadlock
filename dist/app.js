@@ -1385,6 +1385,7 @@ function pageStory(){
       ${consequenceActiveThreadHTML()}
       ${(s.interruptions||[]).length?`<h3>Active Interruptions</h3><div class="story-interruptions">${storyInterruptionButtons()}</div>`:""}
       ${storyWorldActivityHTML()}
+      ${storyNpcArcHTML()}
       <h3>Situation-Driven Options</h3>
       <div class="small muted mission-choice-guide">These options are rebuilt from the current NPC, location, contract stage, living-world rumors, recent choices, and consequences. Ignore them anytime and type any action.</div>
       <div class="story-choices">${storyChoiceButtons()}</div>
@@ -1509,7 +1510,7 @@ function startNewStoryScene(){
 }
 function wireStory(){
  if($("#storySend"))$("#storySend").onclick=()=>{const v=$("#storyInput").value.trim();if(v)storySubmit(v,null)};
- if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){DATA.story.director.turn=Number(DATA.story.director.turn||0)+1;const stage=contractStageInfo(c);advanceNpcAgendas();DATA.story.objective=stage.goal;DATA.story.choices=missionChoices(c);const beat=window.DeadlockStoryDirector?.continueBeat?.(DATA,storyDirectorContext(c,{stage}));storyPush("narration","Narrator",beat||`Deadlock refocuses on the job. ${stage.goal}`);maybeMaterializeNpcInitiative();save();render("Story")}else storySubmit("Continue from the current situation.",null)};
+ if($("#storyContinue"))$("#storyContinue").onclick=()=>{const c=contractById(DATA.story.activeContractId);if(c){DATA.story.director.turn=Number(DATA.story.director.turn||0)+1;const stage=contractStageInfo(c);advanceNpcAgendas();advanceNpcArcs();DATA.story.objective=stage.goal;DATA.story.choices=missionChoices(c);const beat=window.DeadlockStoryDirector?.continueBeat?.(DATA,storyDirectorContext(c,{stage}));storyPush("narration","Narrator",beat||`Deadlock refocuses on the job. ${stage.goal}`);maybeMaterializeNpcInitiative();save();render("Story")}else storySubmit("Continue from the current situation.",null)};
  if($("#storyRollBtn"))$("#storyRollBtn").onclick=openStoryRoll;
  $$("[data-storychoice]").forEach(b=>b.onclick=()=>{const c=DATA.story.choices.find(x=>x.id===b.dataset.storychoice);if(c)storySubmit("",c)});
  $$("[data-storyinterrupt]").forEach(b=>b.onclick=()=>{const [iid,cid]=b.dataset.storyinterrupt.split(":");const it=interruptionById(iid);const c=it?.choices?.find(x=>x.id===cid);if(c)storySubmit("",c)});
@@ -1596,6 +1597,7 @@ function missionChoiceMeta(choice){
  if(intent==="resolve")return {purpose:"RESOLVE ENCOUNTER",outcome:"Success secures the objective and unlocks turn-in."};
  if(choice?.actionType==="intel_contact")return {purpose:"WORK THE CONTACT",outcome:"Success can improve the relationship and confirm usable intel."};
  if(String(choice?.actionType||"").startsWith("agenda_"))return {purpose:"WORLD IN MOTION",outcome:"Responds to an NPC's autonomous move without granting them control of Deadlock's resources or contracts."};
+ if(String(choice?.actionType||"").startsWith("arc_"))return {purpose:"PERSONAL ARC",outcome:"Advances or defers a persistent character/relationship thread. It cannot spend credits, change payouts, or finish campaign objectives."};
  if(intent==="investigate"||choice?.actionType==="contract_review")return {purpose:"GAIN INTEL",outcome:"Success advances the current mission stage."};
  if(intent==="deception")return {purpose:"BAIT / MISDIRECT",outcome:"Higher risk; success can advance the hunt without a direct approach."};
  if(intent==="dialogue")return {purpose:"RELATIONSHIP",outcome:"Changes trust/respect and may open better information later."};
@@ -2289,6 +2291,26 @@ function advanceNpcAgendas(opts={}){
  }
  return beat;
 }
+function advanceNpcArcs(opts={}){
+ const c=contractById(DATA.story.activeContractId)||activeContracts?.()[0]||null;
+ const tick=window.DeadlockNpcArcs?.advance?.(DATA,storyDirectorContext(c,{danger:Number(DATA.story.danger||0)}),opts)||null;
+ const beat=tick?.stageChange?.beat||tick?.relationChanges?.[0]?.beat||null;
+ if(beat&&Number(beat.attention||0)>=7)addNotification("Personal arc: "+String(beat.summary||"A long-running NPC thread changed."),"info");
+ return tick;
+}
+function storyNpcArcHTML(){
+ const X=window.DeadlockNpcArcs;if(!X)return "";
+ const state=X.ensure(DATA),active=state.arcs.filter(x=>!["resolved","declined"].includes(x.status)).slice(-4).reverse();
+ const rel=Object.values(state.relationshipArcs||{}).filter(x=>x.state&&x.state!=="neutral").slice(0,4);
+ const secrets=X.visibleSecrets(DATA).slice(-2).reverse(),favors=X.unresolvedFavors(DATA).slice(-2).reverse();
+ if(!active.length&&!rel.length&&!secrets.length&&!favors.length)return "";
+ const actorName=id=>window.DeadlockNpcAgendas?.actors?.[id]?.name||id||"Contact";
+ const arcs=active.map(a=>'<article class="story-arc-item"><div class="story-arc-title"><b>'+esc(a.title)+'</b><span>'+esc(actorName(a.actorId))+'</span></div><div class="story-arc-stage">'+esc(String(a.stageName||"seed").replaceAll("_"," ").toUpperCase())+' · '+Math.round(Number(a.progress||0))+'%</div><p>'+esc(a.theme||"A personal thread is developing.")+'</p></article>').join("");
+ const relations=rel.length?'<div class="story-arc-relations">'+rel.map(x=>'<span class="story-arc-relation '+esc(x.state)+'">'+esc(x.title)+'</span>').join("")+'</div>':"";
+ const revealed=secrets.length?'<div class="small story-arc-note"><b>REVEALED</b> '+secrets.map(x=>esc(x.reveal)).join(" · ")+'</div>':"";
+ const openFavors=favors.length?'<div class="small story-arc-note"><b>OPEN FAVORS</b> '+favors.map(x=>esc(actorName(x.actorId))+": "+esc(x.request)).join(" · ")+'</div>':"";
+ return '<section class="story-arcs"><div class="story-world-motion-head"><div><span class="micro">LONG-TERM CHARACTER STATE</span><h3>Personal Arcs</h3></div><span class="pill">PERSISTENT</span></div><div class="story-arc-list">'+arcs+'</div>'+relations+revealed+openFavors+'<p class="small muted">Secrets remain hidden until uncovered. Arc decisions cannot spend credits, alter payouts, or resolve campaign objectives.</p></section>';
+}
 function storyWorldActivityHTML(){
  const A=window.DeadlockNpcAgendas,rows=A?.recent?.(DATA,4)||[];
  if(!rows.length)return "";
@@ -2424,6 +2446,17 @@ function reactToPlayerAction(action,choice,roll){
    const status=lead.status==="active"?"holds together as a usable lead":"does not fully verify yet, but stays on the board as an uncertain lead";
    storyPush("narration","Narrator",`Deadlock works the local rumor. It ${status}: ${lead.summary}`,{source:"living_world",rumorId:inferred.rumorId,leadId:lead.id});
    if(lead.status==="active")addConsequence("Rumor promoted to lead",lead.summary,"info",{rumorId:inferred.rumorId,leadId:lead.id,contractId:inferred.contractId||null});
+  }
+ }
+ if(inferred.arcThreadId){
+  const arcResult=window.DeadlockNpcArcs?.respond?.(DATA,inferred,{success:roll?!!roll.success:inferred.actionType!=="arc_decline"});
+  if(arcResult){
+   const outcome=String(arcResult.outcome||"advanced").replaceAll("_"," ");
+   const thread=arcResult.thread,arc=arcResult.arc;
+   storyPush("narration","Narrator","The personal thread "+outcome+": "+String(thread?.prompt||arc?.title||"the NPC arc"),{source:"npc_arc",arcId:arc?.id||null,threadId:thread?.id||null});
+   if(arcResult.secret?.status==="revealed")storyPush("dialogue",storyNpc(arcResult.secret.actorId)?.name||window.DeadlockNpcAgendas?.actors?.[arcResult.secret.actorId]?.name||"Contact",arcResult.secret.reveal,{source:"npc_arc_secret",arcId:arc?.id||null});
+   if(arcResult.favor?.status==="fulfilled")addConsequence("Favor fulfilled",arcResult.favor.request,"good",{arcId:arc?.id||null,threadId:thread?.id||null});
+   else addConsequence("Personal thread "+outcome,String(thread?.prompt||arc?.title||"NPC arc"),outcome==="declined"?"warn":"info",{arcId:arc?.id||null,threadId:thread?.id||null});
   }
  }
  const violent=/\b(open fire|shoot|attack|draw (?:blackwake|luna|sol)|fire (?:blackwake|luna|sol)|go loud|start shooting)\b/i.test(String(action||choice?.label||""));
@@ -2576,8 +2609,10 @@ function localStoryGenerate(action="",choice=null){
   else d.tension=clamp(d.tension+4,0,100);
  }
  const agendaBeat=advanceNpcAgendas();
+ const arcTick=advanceNpcArcs();
  const missionIntent=["action","investigate","deception","contracts","bounty","wait"].includes(turnAction?.intent||"action");
- if(agendaBeat&&missionIntent&&!choice?.interruptId){const active=contractById(s.activeContractId)||null;s.choices=window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(active))||s.choices}
+ const worldChanged=!!agendaBeat||!!arcTick?.stageChange||!!arcTick?.relationChanges?.length;
+ if(worldChanged&&missionIntent&&!choice?.interruptId){const active=contractById(s.activeContractId)||null;s.choices=window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(active))||s.choices}
  const initiativeTriggered=maybeMaterializeNpcInitiative();
  const eventTriggered=initiativeTriggered?false:maybeTriggerEncounter();
  if(!eventTriggered&&!initiativeTriggered){
