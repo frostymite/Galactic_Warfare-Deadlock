@@ -9,6 +9,18 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
 
+## NPC Agendas + Cross-NPC Reactions — v17.11.0
+
+Phase 3 now gives major NPCs persistent goals that continue moving between direct conversations. Jessa, Dren, Nera Kade and Renn each maintain bounded agenda state with progress, momentum, pressure, recent actions and history.
+
+NPCs can now interact with each other instead of routing every development through Deadlock. Dren can ask Renn to verify escape geometry, Jessa can challenge Dren's raw intel, Nera can pressure Dren for verifiable progress, Renn can warn Dren about bad routes, and Jessa/Nera can scrutinize whether a lead actually changes operational leverage.
+
+A persistent NPC relationship web records cooperation and friction between the major contacts. These relationships are separate from Rovan's personal trust scores: Dren and Nera can irritate each other without silently changing how either character feels about Deadlock.
+
+The Story page includes a **World in Motion** feed showing recent autonomous activity. Meaningful agenda beats can also enter normal procedural Story choices, dialogue, or escalate into NPC Initiative when they are important enough.
+
+Autonomy remains deliberately bounded. NPC agendas cannot spend Rovan's credits, spend the Apex reserve, accept or complete contracts, launch Apex fighters, change ship ownership, collect rewards, or make command decisions for Rovan.
+
 ## NPC Initiative — v17.10.0
 
 Phase 3 now lets characters act without waiting for Deadlock to click a dialogue option. The Story Director can generate unsolicited, persistent initiative beats from established contacts, Blackglass crew conditions, ambient living-world NPCs, and older player decisions.
