@@ -1,6 +1,6 @@
 # Deadlock v17.13.0 — Live Modular Raven Renderer
 
-This patch begins the Raven visual-production phase by removing the normal hero-view dependency on the old static Raven cutout.
+This patch completes the first Raven anchor-production pass: the normal hero view now uses a detailed transparent Raven anchor, split into seven named modular zones, while installed ShipForge parts remain authoritative and render as live refit overlays when they differ from the anchor loadout.
 
 ## Problem fixed
 
@@ -23,7 +23,7 @@ Added:
 - `runtime/raven-visual.css`
 - `qa/raven-visual.cjs`
 
-Normal Raven presentation now asks `DeadlockRavenVisual` for the current visual.
+Normal Raven presentation now asks `DeadlockRavenVisual` for the current visual. The canonical current loadout is represented by `assets/ships/raven/generated/raven_anchor_v17_13.svg`, a transparent 1536×1024 anchor with seven explicit groups: core, cockpit, wing, engine, weapon, cargo, and utility.
 
 The renderer reads:
 
@@ -31,7 +31,7 @@ The renderer reads:
 - `DeadlockShipForge.blueprint(DATA, ship)`
 - installed component instance condition
 
-It then uses the existing ShipForge generated-art renderer to assemble the actual current component set.
+It uses the realistic anchor as the stable 70/30 ship identity, then uses ShipForge's generated component renderer only for slots whose installed part differs from the anchor baseline. This preserves the Raven's recognizable flagship silhouette while making purchases and refits visibly alter the matching zone.
 
 ## Upgrade-visible Raven
 
@@ -116,7 +116,7 @@ ShipForge's existing install precache already discovers both `visual` and genera
 
 ## Validation
 
-- live Raven integration: **34 / 34 passed**
+- realistic-anchor + refit integration: **50 / 50 passed**
 - visual-zone specification coverage: **115 / 115 passed**
 - source JavaScript syntax checks passed
 - engine swap visibly changes rendered part ID
@@ -134,3 +134,23 @@ The next fidelity stage remains the dedicated Raven-specific realistic layer set
 - `raven-visual-zones.json`
 
 Those assets will replace the generalized generated-component assembly zone by zone while preserving exactly the same ShipForge IDs and save data.
+
+
+## Anchor production assets
+
+Added:
+- `assets/ships/raven/generated/raven_anchor_v17_13.svg`
+- `assets/ships/raven/generated/raven_current_loadout_zones.json`
+
+The anchor is transparent/composite-ready and contains seven separately identified visual groups:
+- `zone-core`
+- `zone-cockpit`
+- `zone-wing`
+- `zone-engine`
+- `zone-weapon`
+- `zone-cargo`
+- `zone-utility`
+
+The zone manifest binds those groups to the canonical installed part IDs and to normalized refit-overlay positions.
+
+The image-generation concept pass established the dark, battle-worn, obsidian/gunmetal + electric-cyan design language; the runtime anchor translates that look into a modular browser-safe asset that can remain upgrade-reactive offline.
