@@ -14,7 +14,8 @@
     "test:living": "node qa/living-world.cjs",
     "test:story-director": "node qa/story-director.cjs",
     "test:npc-agendas": "node qa/npc-agendas.cjs",
-    "test:npc-arcs": "node qa/npc-arcs.cjs"
+    "test:npc-arcs": "node qa/npc-arcs.cjs",
+    "test:raven-visual-spec": "node qa/raven-visual-spec.cjs"
   },
   "dependencies": {
     "@capacitor/android": "8.5.3",
