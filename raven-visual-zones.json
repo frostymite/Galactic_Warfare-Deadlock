@@ -1,0 +1,948 @@
+{
+  "schema": "deadlock.raven.visual-zones.v1",
+  "version": "1.0.0",
+  "status": "production-spec",
+  "ship": {
+    "id": "raven",
+    "name": "The Raven",
+    "classId": "light_freighter",
+    "registry": "RVN-DL-01",
+    "palette": "black_copper",
+    "role": "primary player flagship / modular pursuit freighter-gunship"
+  },
+  "design": {
+    "identityRule": "70/30",
+    "stableIdentity": [
+      "predatory wedge-forward silhouette",
+      "broad armored central fuselage",
+      "protected forward cockpit cluster",
+      "heavy rear engine mass",
+      "obsidian/gunmetal body family",
+      "electric-cyan system/emissive signature",
+      "used-universe field-maintained finish"
+    ],
+    "materialLanguage": [
+      "matte/satin dark metal",
+      "blackened steel",
+      "heat-discolored engine metal",
+      "layered repair plates",
+      "service seams and latches",
+      "subtle mismatched replacement panels"
+    ],
+    "prohibited": [
+      "generic component art pasted unmodified onto hull",
+      "full random ship regeneration after component swap",
+      "clean showroom finish",
+      "cartoon geometry",
+      "major canon/ownership changes from visual resolver"
+    ]
+  },
+  "currentLoadout": {
+    "core": "core_twinboom_09",
+    "cockpit": "cockpit_armored_05",
+    "wing": "wing_outrigger_09",
+    "engine": "engine_military_06",
+    "weapon": "weapon_rotary_09",
+    "cargo": "cargo_modular_08",
+    "utility": "utility_smuggler_06"
+  },
+  "views": {
+    "hero_3q": {
+      "master": [
+        1536,
+        1024
+      ],
+      "transparent": true,
+      "priority": 1,
+      "purpose": [
+        "Ship page hero",
+        "Blackglass hangar close view",
+        "upgrade confirmation",
+        "story ship callouts"
+      ],
+      "requiredForRenderer": true
+    },
+    "side": {
+      "master": [
+        1536,
+        1024
+      ],
+      "transparent": true,
+      "priority": 2,
+      "purpose": [
+        "Shipyard comparison",
+        "weapon/cargo profile",
+        "upgrade inspection"
+      ],
+      "requiredForRenderer": false
+    },
+    "top": {
+      "master": [
+        1536,
+        1024
+      ],
+      "transparent": true,
+      "priority": 2,
+      "purpose": [
+        "tactical view",
+        "hardpoint layout",
+        "navigation/system display"
+      ],
+      "requiredForRenderer": false
+    },
+    "rear": {
+      "master": [
+        1536,
+        1024
+      ],
+      "transparent": true,
+      "priority": 3,
+      "purpose": [
+        "engine inspection",
+        "damage/boost state"
+      ],
+      "requiredForRenderer": false
+    },
+    "hangar": {
+      "master": [
+        1536,
+        1024
+      ],
+      "transparent": false,
+      "priority": 2,
+      "purpose": [
+        "Blackglass presentation",
+        "docked showcase"
+      ],
+      "requiredForRenderer": false
+    }
+  },
+  "zones": {
+    "core_frame": {
+      "slot": "core",
+      "identityCritical": true,
+      "identityRetention": 0.85,
+      "change": "central hull ribs, boom geometry, plating density; never replace entire Raven silhouette",
+      "heroAnchor": {
+        "x": 0.27,
+        "y": 0.24,
+        "w": 0.49,
+        "h": 0.48
+      }
+    },
+    "cockpit": {
+      "slot": "cockpit",
+      "identityCritical": true,
+      "identityRetention": 0.78,
+      "change": "canopy armor, glazing, nose command module, sensor glazing",
+      "heroAnchor": {
+        "x": 0.62,
+        "y": 0.27,
+        "w": 0.24,
+        "h": 0.25
+      }
+    },
+    "wing_structure": {
+      "slot": "wing",
+      "identityCritical": true,
+      "identityRetention": 0.68,
+      "change": "outriggers, stub/cargo/gull geometry, lateral pylons and maneuver surfaces",
+      "heroAnchor": {
+        "x": 0.2,
+        "y": 0.31,
+        "w": 0.55,
+        "h": 0.38
+      }
+    },
+    "engine_block": {
+      "slot": "engine",
+      "identityCritical": false,
+      "identityRetention": 0.45,
+      "change": "nozzles, shrouds, cooling fins, vectoring hardware, boost pods, emissive intensity",
+      "heroAnchor": {
+        "x": 0.08,
+        "y": 0.3,
+        "w": 0.3,
+        "h": 0.35
+      }
+    },
+    "weapon_mounts": {
+      "slot": "weapon",
+      "identityCritical": false,
+      "identityRetention": 0.3,
+      "change": "chin/dorsal/point-defense/ion/missile/rotary geometry and barrels",
+      "heroAnchor": {
+        "x": 0.45,
+        "y": 0.17,
+        "w": 0.35,
+        "h": 0.31
+      }
+    },
+    "cargo_module": {
+      "slot": "cargo",
+      "identityCritical": false,
+      "identityRetention": 0.42,
+      "change": "sidepods, belly pods, clamps, saddle, secure modular containers",
+      "heroAnchor": {
+        "x": 0.3,
+        "y": 0.48,
+        "w": 0.43,
+        "h": 0.27
+      }
+    },
+    "utility_module": {
+      "slot": "utility",
+      "identityCritical": false,
+      "identityRetention": 0.35,
+      "change": "dorsal electronics, armor overlays, tow/tractor gear, concealed bay, service hardware",
+      "heroAnchor": {
+        "x": 0.34,
+        "y": 0.19,
+        "w": 0.45,
+        "h": 0.44
+      }
+    },
+    "paint_markings": {
+      "source": "ship.palette + ship.markings",
+      "change": "hull paint, trim, Apex/registry markings; never changes geometry"
+    },
+    "local_damage": {
+      "source": "component instance condition",
+      "change": "zone-local scorching, dents, missing panels, flicker/venting without changing installed part identity"
+    },
+    "emissive": {
+      "source": "engine/utility/weapon state",
+      "change": "cyan engine, sensor, cockpit and weapon-ready lighting"
+    }
+  },
+  "utilitySubzoneRules": {
+    "dorsal_electronics": [
+      "sensor",
+      "comms",
+      "radar",
+      "jammer"
+    ],
+    "armor_overlay": [
+      "armor"
+    ],
+    "ventral_aft": [
+      "tow",
+      "tractor"
+    ],
+    "ventral_concealed": [
+      "smuggler"
+    ],
+    "flank_service": [
+      "repair"
+    ]
+  },
+  "compositeOrder": [
+    "wing_structure",
+    "cargo_module",
+    "core_frame",
+    "engine_block",
+    "cockpit",
+    "weapon_mounts",
+    "utility_module",
+    "paint_markings",
+    "local_damage",
+    "emissive"
+  ],
+  "damageThresholds": [
+    {
+      "min": 85,
+      "max": 100,
+      "state": "operational"
+    },
+    {
+      "min": 65,
+      "max": 84,
+      "state": "worn"
+    },
+    {
+      "min": 40,
+      "max": 64,
+      "state": "damaged"
+    },
+    {
+      "min": 1,
+      "max": 39,
+      "state": "critical"
+    },
+    {
+      "min": 0,
+      "max": 0,
+      "state": "destroyed"
+    }
+  ],
+  "resolver": {
+    "sourceOfTruth": "DeadlockShipForge.blueprint(DATA,'raven') + DATA.shipForge.components installation condition",
+    "rule": "Installed ShipForge part IDs select Raven-specific zone layers. No separate visual upgrade inventory.",
+    "pseudocode": [
+      "ship = DeadlockShipForge.shipRecord(DATA,'raven')",
+      "blueprint = DeadlockShipForge.blueprint(DATA,ship)",
+      "for each installed slot -> partId -> partMap[partId] -> view layer",
+      "apply palette/markings mask",
+      "apply condition-local damage overlay by installed component instance",
+      "compose in view.compositeOrder",
+      "fallback to legacy Raven image only if a required hero layer is unavailable"
+    ]
+  },
+  "legacyAssetsToReplace": [
+    "assets/ships/raven_cutout_v15.svg",
+    "assets/ships/raven_vector_v15.svg",
+    "assets/ships/raven_flight.svg",
+    "assets/ships/raven_landed.svg",
+    "assets/ships/raven_orbit.svg",
+    "assets/ships/raven_schematic.svg",
+    "assets/raven.jpg",
+    "assets/raven_dedicated.jpg"
+  ],
+  "runtimeTargets": {
+    "currentStaticFunction": "app.js::ravenVisual(state)",
+    "futureModule": "runtime/raven-visual.js",
+    "primaryIntegration": [
+      "Ship page hero",
+      "Blackglass hangar Raven hotspot/presentation",
+      "Flight/Orbit hero callouts",
+      "Dogfight Raven presentation",
+      "cinematic ship shots"
+    ],
+    "preserve": [
+      "DeadlockShipForge persistence/economy",
+      "component installation IDs",
+      "existing derived stats",
+      "save-game schema"
+    ]
+  },
+  "coverage": {
+    "hero_3q": {
+      "requiredAllCompatibleParts": true,
+      "partCount": 36,
+      "rendererGate": "do not enable realistic hero resolver until every compatible light_freighter part has a Raven hero layer or an explicitly approved Raven-specific fallback"
+    },
+    "secondaryViews": {
+      "policy": "ship identity/current-loadout first; expand per-part coverage after hero_3q is complete"
+    }
+  },
+  "partMap": {
+    "core_skiff_04": {
+      "slot": "core",
+      "zone": "core_frame",
+      "subzone": null,
+      "name": "Skiff",
+      "design": "skiff",
+      "family": "veyra",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "utility"
+      ],
+      "genericPreview": "assets/ships/generated/core/core_skiff_04.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/core_frame/core_skiff_04.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/core_frame/core_skiff_04.mask.webp",
+      "coverage": "required"
+    },
+    "core_hauler_05": {
+      "slot": "core",
+      "zone": "core_frame",
+      "subzone": null,
+      "name": "Hauler",
+      "design": "hauler",
+      "family": "outerrim",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "cargo",
+        "rugged"
+      ],
+      "genericPreview": "assets/ships/generated/core/core_hauler_05.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/core_frame/core_hauler_05.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/core_frame/core_hauler_05.mask.webp",
+      "coverage": "required"
+    },
+    "core_twinboom_09": {
+      "slot": "core",
+      "zone": "core_frame",
+      "subzone": null,
+      "name": "Twinboom",
+      "design": "twinboom",
+      "family": "sable",
+      "tier": 4,
+      "rarity": "uncommon",
+      "tags": [
+        "military",
+        "redundant"
+      ],
+      "genericPreview": "assets/ships/generated/core/core_twinboom_09.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/core_frame/core_twinboom_09.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/core_frame/core_twinboom_09.mask.webp",
+      "coverage": "required"
+    },
+    "cockpit_offset_03": {
+      "slot": "cockpit",
+      "zone": "cockpit",
+      "subzone": null,
+      "name": "Offset",
+      "design": "offset",
+      "family": "veyra",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "freight"
+      ],
+      "genericPreview": "assets/ships/generated/cockpit/cockpit_offset_03.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/cockpit/cockpit_offset_03.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/cockpit/cockpit_offset_03.mask.webp",
+      "coverage": "required"
+    },
+    "cockpit_armored_05": {
+      "slot": "cockpit",
+      "zone": "cockpit",
+      "subzone": null,
+      "name": "Armored",
+      "design": "armored",
+      "family": "sable",
+      "tier": 4,
+      "rarity": "uncommon",
+      "tags": [
+        "military",
+        "armored"
+      ],
+      "genericPreview": "assets/ships/generated/cockpit/cockpit_armored_05.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/cockpit/cockpit_armored_05.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/cockpit/cockpit_armored_05.mask.webp",
+      "coverage": "required"
+    },
+    "cockpit_split_07": {
+      "slot": "cockpit",
+      "zone": "cockpit",
+      "subzone": null,
+      "name": "Split",
+      "design": "split",
+      "family": "meridian",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "redundant"
+      ],
+      "genericPreview": "assets/ships/generated/cockpit/cockpit_split_07.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/cockpit/cockpit_split_07.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/cockpit/cockpit_split_07.mask.webp",
+      "coverage": "required"
+    },
+    "wing_stub_03": {
+      "slot": "wing",
+      "zone": "wing_structure",
+      "subzone": null,
+      "name": "Stub",
+      "design": "stub",
+      "family": "veyra",
+      "tier": 1,
+      "rarity": "common",
+      "tags": [
+        "compact"
+      ],
+      "genericPreview": "assets/ships/generated/wing/wing_stub_03.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/wing_structure/wing_stub_03.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/wing_structure/wing_stub_03.mask.webp",
+      "coverage": "required"
+    },
+    "wing_cargo_05": {
+      "slot": "wing",
+      "zone": "wing_structure",
+      "subzone": null,
+      "name": "Cargo",
+      "design": "cargo",
+      "family": "outerrim",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "cargo"
+      ],
+      "genericPreview": "assets/ships/generated/wing/wing_cargo_05.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/wing_structure/wing_cargo_05.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/wing_structure/wing_cargo_05.mask.webp",
+      "coverage": "required"
+    },
+    "wing_gull_07": {
+      "slot": "wing",
+      "zone": "wing_structure",
+      "subzone": null,
+      "name": "Gull",
+      "design": "gull",
+      "family": "meridian",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "landing"
+      ],
+      "genericPreview": "assets/ships/generated/wing/wing_gull_07.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/wing_structure/wing_gull_07.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/wing_structure/wing_gull_07.mask.webp",
+      "coverage": "required"
+    },
+    "wing_outrigger_09": {
+      "slot": "wing",
+      "zone": "wing_structure",
+      "subzone": null,
+      "name": "Outrigger",
+      "design": "outrigger",
+      "family": "veyra",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "utility"
+      ],
+      "genericPreview": "assets/ships/generated/wing/wing_outrigger_09.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/wing_structure/wing_outrigger_09.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/wing_structure/wing_outrigger_09.mask.webp",
+      "coverage": "required"
+    },
+    "engine_twin_ion_01": {
+      "slot": "engine",
+      "zone": "engine_block",
+      "subzone": null,
+      "name": "Twin Ion",
+      "design": "twin_ion",
+      "family": "meridian",
+      "tier": 1,
+      "rarity": "common",
+      "tags": [
+        "ion"
+      ],
+      "genericPreview": "assets/ships/generated/engine/engine_twin_ion_01.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/engine_block/engine_twin_ion_01.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/engine_block/engine_twin_ion_01.mask.webp",
+      "coverage": "required"
+    },
+    "engine_ring_03": {
+      "slot": "engine",
+      "zone": "engine_block",
+      "subzone": null,
+      "name": "Ring",
+      "design": "ring",
+      "family": "meridian",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "efficient"
+      ],
+      "genericPreview": "assets/ships/generated/engine/engine_ring_03.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/engine_block/engine_ring_03.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/engine_block/engine_ring_03.mask.webp",
+      "coverage": "required"
+    },
+    "engine_heavy_04": {
+      "slot": "engine",
+      "zone": "engine_block",
+      "subzone": null,
+      "name": "Heavy",
+      "design": "heavy",
+      "family": "outerrim",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "heavy"
+      ],
+      "genericPreview": "assets/ships/generated/engine/engine_heavy_04.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/engine_block/engine_heavy_04.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/engine_block/engine_heavy_04.mask.webp",
+      "coverage": "required"
+    },
+    "engine_military_06": {
+      "slot": "engine",
+      "zone": "engine_block",
+      "subzone": null,
+      "name": "Military",
+      "design": "military",
+      "family": "sable",
+      "tier": 4,
+      "rarity": "uncommon",
+      "tags": [
+        "military"
+      ],
+      "genericPreview": "assets/ships/generated/engine/engine_military_06.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/engine_block/engine_military_06.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/engine_block/engine_military_06.mask.webp",
+      "coverage": "required"
+    },
+    "engine_slab_08": {
+      "slot": "engine",
+      "zone": "engine_block",
+      "subzone": null,
+      "name": "Slab",
+      "design": "slab",
+      "family": "outerrim",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "torque"
+      ],
+      "genericPreview": "assets/ships/generated/engine/engine_slab_08.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/engine_block/engine_slab_08.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/engine_block/engine_slab_08.mask.webp",
+      "coverage": "required"
+    },
+    "engine_trident_09": {
+      "slot": "engine",
+      "zone": "engine_block",
+      "subzone": null,
+      "name": "Trident",
+      "design": "trident",
+      "family": "sable",
+      "tier": 4,
+      "rarity": "uncommon",
+      "tags": [
+        "responsive"
+      ],
+      "genericPreview": "assets/ships/generated/engine/engine_trident_09.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/engine_block/engine_trident_09.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/engine_block/engine_trident_09.mask.webp",
+      "coverage": "required"
+    },
+    "weapon_chin_02": {
+      "slot": "weapon",
+      "zone": "weapon_mounts",
+      "subzone": null,
+      "name": "Chin",
+      "design": "chin",
+      "family": "sable",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "laser"
+      ],
+      "genericPreview": "assets/ships/generated/weapon/weapon_chin_02.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_chin_02.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_chin_02.mask.webp",
+      "coverage": "required"
+    },
+    "weapon_dorsal_03": {
+      "slot": "weapon",
+      "zone": "weapon_mounts",
+      "subzone": null,
+      "name": "Dorsal",
+      "design": "dorsal",
+      "family": "meridian",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "turret"
+      ],
+      "genericPreview": "assets/ships/generated/weapon/weapon_dorsal_03.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_dorsal_03.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_dorsal_03.mask.webp",
+      "coverage": "required"
+    },
+    "weapon_defense_04": {
+      "slot": "weapon",
+      "zone": "weapon_mounts",
+      "subzone": null,
+      "name": "Defense",
+      "design": "defense",
+      "family": "meridian",
+      "tier": 1,
+      "rarity": "common",
+      "tags": [
+        "point-defense"
+      ],
+      "genericPreview": "assets/ships/generated/weapon/weapon_defense_04.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_defense_04.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_defense_04.mask.webp",
+      "coverage": "required"
+    },
+    "weapon_ion_07": {
+      "slot": "weapon",
+      "zone": "weapon_mounts",
+      "subzone": null,
+      "name": "Ion",
+      "design": "ion",
+      "family": "sable",
+      "tier": 4,
+      "rarity": "uncommon",
+      "tags": [
+        "ion",
+        "disable"
+      ],
+      "genericPreview": "assets/ships/generated/weapon/weapon_ion_07.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_ion_07.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_ion_07.mask.webp",
+      "coverage": "required"
+    },
+    "weapon_missile_08": {
+      "slot": "weapon",
+      "zone": "weapon_mounts",
+      "subzone": null,
+      "name": "Missile",
+      "design": "missile",
+      "family": "sable",
+      "tier": 4,
+      "rarity": "uncommon",
+      "tags": [
+        "missile"
+      ],
+      "genericPreview": "assets/ships/generated/weapon/weapon_missile_08.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_missile_08.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_missile_08.mask.webp",
+      "coverage": "required"
+    },
+    "weapon_rotary_09": {
+      "slot": "weapon",
+      "zone": "weapon_mounts",
+      "subzone": null,
+      "name": "Rotary",
+      "design": "rotary",
+      "family": "apex",
+      "tier": 5,
+      "rarity": "uncommon",
+      "tags": [
+        "rotary",
+        "suppressive"
+      ],
+      "genericPreview": "assets/ships/generated/weapon/weapon_rotary_09.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_rotary_09.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/weapon_mounts/weapon_rotary_09.mask.webp",
+      "coverage": "required"
+    },
+    "cargo_sidepods_01": {
+      "slot": "cargo",
+      "zone": "cargo_module",
+      "subzone": null,
+      "name": "Sidepods",
+      "design": "sidepods",
+      "family": "veyra",
+      "tier": 1,
+      "rarity": "common",
+      "tags": [
+        "cargo"
+      ],
+      "genericPreview": "assets/ships/generated/cargo/cargo_sidepods_01.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_sidepods_01.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_sidepods_01.mask.webp",
+      "coverage": "required"
+    },
+    "cargo_belly_02": {
+      "slot": "cargo",
+      "zone": "cargo_module",
+      "subzone": null,
+      "name": "Belly",
+      "design": "belly",
+      "family": "outerrim",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "cargo"
+      ],
+      "genericPreview": "assets/ships/generated/cargo/cargo_belly_02.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_belly_02.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_belly_02.mask.webp",
+      "coverage": "required"
+    },
+    "cargo_clamps_05": {
+      "slot": "cargo",
+      "zone": "cargo_module",
+      "subzone": null,
+      "name": "Clamps",
+      "design": "clamps",
+      "family": "veyra",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "external"
+      ],
+      "genericPreview": "assets/ships/generated/cargo/cargo_clamps_05.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_clamps_05.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_clamps_05.mask.webp",
+      "coverage": "required"
+    },
+    "cargo_saddle_07": {
+      "slot": "cargo",
+      "zone": "cargo_module",
+      "subzone": null,
+      "name": "Saddle",
+      "design": "saddle",
+      "family": "meridian",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "modular"
+      ],
+      "genericPreview": "assets/ships/generated/cargo/cargo_saddle_07.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_saddle_07.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_saddle_07.mask.webp",
+      "coverage": "required"
+    },
+    "cargo_modular_08": {
+      "slot": "cargo",
+      "zone": "cargo_module",
+      "subzone": null,
+      "name": "Modular",
+      "design": "modular",
+      "family": "apex",
+      "tier": 5,
+      "rarity": "uncommon",
+      "tags": [
+        "modular",
+        "secure"
+      ],
+      "genericPreview": "assets/ships/generated/cargo/cargo_modular_08.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_modular_08.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/cargo_module/cargo_modular_08.mask.webp",
+      "coverage": "required"
+    },
+    "utility_sensor_01": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "dorsal_electronics",
+      "name": "Sensor",
+      "design": "sensor",
+      "family": "meridian",
+      "tier": 1,
+      "rarity": "common",
+      "tags": [
+        "sensor"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_sensor_01.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_sensor_01.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_sensor_01.mask.webp",
+      "coverage": "required"
+    },
+    "utility_comms_02": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "dorsal_electronics",
+      "name": "Comms",
+      "design": "comms",
+      "family": "veyra",
+      "tier": 1,
+      "rarity": "common",
+      "tags": [
+        "comms"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_comms_02.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_comms_02.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_comms_02.mask.webp",
+      "coverage": "required"
+    },
+    "utility_radar_03": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "dorsal_electronics",
+      "name": "Radar",
+      "design": "radar",
+      "family": "sable",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "radar"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_radar_03.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_radar_03.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_radar_03.mask.webp",
+      "coverage": "required"
+    },
+    "utility_armor_04": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "armor_overlay",
+      "name": "Armor",
+      "design": "armor",
+      "family": "outerrim",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "armor"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_armor_04.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_armor_04.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_armor_04.mask.webp",
+      "coverage": "required"
+    },
+    "utility_tow_05": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "ventral_aft",
+      "name": "Tow",
+      "design": "tow",
+      "family": "veyra",
+      "tier": 2,
+      "rarity": "common",
+      "tags": [
+        "tow"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_tow_05.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_tow_05.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_tow_05.mask.webp",
+      "coverage": "required"
+    },
+    "utility_smuggler_06": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "ventral_concealed",
+      "name": "Smuggler",
+      "design": "smuggler",
+      "family": "apex",
+      "tier": 4,
+      "rarity": "uncommon",
+      "tags": [
+        "concealed"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_smuggler_06.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_smuggler_06.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_smuggler_06.mask.webp",
+      "coverage": "required"
+    },
+    "utility_jammer_07": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "dorsal_electronics",
+      "name": "Jammer",
+      "design": "jammer",
+      "family": "sable",
+      "tier": 4,
+      "rarity": "uncommon",
+      "tags": [
+        "electronic-warfare"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_jammer_07.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_jammer_07.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_jammer_07.mask.webp",
+      "coverage": "required"
+    },
+    "utility_repair_08": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "flank_service",
+      "name": "Repair",
+      "design": "repair",
+      "family": "meridian",
+      "tier": 3,
+      "rarity": "common",
+      "tags": [
+        "repair"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_repair_08.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_repair_08.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_repair_08.mask.webp",
+      "coverage": "required"
+    },
+    "utility_tractor_09": {
+      "slot": "utility",
+      "zone": "utility_module",
+      "subzone": "ventral_aft",
+      "name": "Tractor",
+      "design": "tractor",
+      "family": "apex",
+      "tier": 5,
+      "rarity": "uncommon",
+      "tags": [
+        "tractor"
+      ],
+      "genericPreview": "assets/ships/generated/utility/utility_tractor_09.webp",
+      "ravenHeroLayer": "assets/ships/raven/modular/hero_3q/utility_module/utility_tractor_09.webp",
+      "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_tractor_09.mask.webp",
+      "coverage": "required"
+    }
+  }
+}
