@@ -11,9 +11,9 @@ V16 progress, injuries, personal credits and generated cases are preserved. The 
 
 ## Raven Modular Visual Foundation — v17.13
 
-The Raven now uses its **actual persistent ShipForge build** for normal hero presentation instead of always showing the static `raven_cutout_v15.svg`.
+The Raven now uses a **detailed transparent anchor with live ShipForge refit zones** for normal hero presentation instead of always showing the static `raven_cutout_v15.svg`.
 
-`runtime/raven-visual.js` reads the live Raven record and blueprint from `DeadlockShipForge`, then assembles the same generated component artwork used by ShipForge. Buying and installing a compatible component therefore changes the visible Raven immediately on the Ship page, Galaxy transit view, and Dogfight HUD. Paint changes also follow the live ShipForge palette.
+`runtime/raven-visual.js` reads the live Raven record and blueprint from `DeadlockShipForge`. The canonical loadout renders through the new transparent Raven anchor; when an installed core, cockpit, wing, engine, weapon, cargo, or utility part differs from the anchor, the new ShipForge component is rendered into that specific refit zone. Buying/installing hardware therefore changes the Raven without replacing its core identity.
 
 The dedicated holographic schematic remains separate, and the old Raven cutout remains a safe visual fallback if ShipForge is unavailable.
 
@@ -22,7 +22,7 @@ This is the first runtime proof of the modular Raven architecture. The longer-te
 The live renderer also derives a coarse operational / worn / damaged / critical visual treatment from the existing installed component condition rather than duplicating damage state.
 
 Validation:
-- Raven live-render integration harness: **34 / 34 passed**
+- Raven realistic-anchor/refit integration harness: **50 / 50 passed**
 - Raven visual-zone coverage validator: **115 / 115 passed**
 - verified baseline Raven loadout,
 - verified a Military → Trident engine swap changes both signature and visible generated component,
