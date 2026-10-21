@@ -1,7 +1,7 @@
 {
   "schema": "deadlock.raven.visual-zones.v1",
   "version": "1.0.0",
-  "status": "production-spec",
+  "status": "runtime-proof-active",
   "ship": {
     "id": "raven",
     "name": "The Raven",
@@ -313,7 +313,11 @@
       "component installation IDs",
       "existing derived stats",
       "save-game schema"
-    ]
+    ],
+    "currentModule": "runtime/raven-visual.js",
+    "currentRenderer": "live ShipForge generated-art assembly",
+    "staticFallback": "assets/ships/raven_cutout_v15.svg",
+    "behavior": "Normal Raven hero views now render the actual installed ShipForge blueprint. Schematic remains dedicated schematic art."
   },
   "coverage": {
     "hero_3q": {
@@ -944,5 +948,11 @@
       "ravenHeroMask": "assets/ships/raven/modular/hero_3q/utility_module/utility_tractor_09.mask.webp",
       "coverage": "required"
     }
+  },
+  "productionStage": {
+    "id": "phase-b-anchor-runtime-proof",
+    "complete": true,
+    "note": "The live renderer now proves installed parts visibly change the Raven using the existing generated component-art library. Dedicated Raven-specific realistic zone layers remain the next fidelity pass.",
+    "qa": "qa/raven-visual.cjs"
   }
 }
