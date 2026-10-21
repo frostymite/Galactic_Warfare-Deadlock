@@ -1,4 +1,4 @@
-/* Deadlock v17.13 — live modular Raven presentation. */
+/* Deadlock v17.13 — realistic Raven anchor + live ShipForge refit overlays. */
 .raven-dynamic{
  display:block;position:relative;width:100%;min-height:190px;overflow:hidden;
  border:1px solid #176276;border-radius:8px;
@@ -7,6 +7,23 @@
   linear-gradient(145deg,#071119,#020609);
  isolation:isolate;
 }
+.raven-anchor-art{
+ position:absolute;inset:1.5%;width:97%;height:97%;object-fit:contain;z-index:1;
+ filter:drop-shadow(-16px 22px 18px #000d) drop-shadow(0 0 14px #42e7ff24) saturate(.96) contrast(1.05);
+ transform:translateZ(0);
+}
+.raven-refit-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.raven-refit-zone{
+ position:absolute;left:var(--rz-x);top:var(--rz-y);width:var(--rz-w);height:var(--rz-h);
+ display:block;overflow:visible;transform:translateZ(0);
+ filter:drop-shadow(0 8px 8px #000a) drop-shadow(0 0 8px #42e7ff50);
+}
+.raven-refit-zone .shipforge-svg{width:100%;height:100%;transform:none!important;overflow:visible}
+.raven-refit-engine{mix-blend-mode:screen}
+.raven-refit-weapon{filter:drop-shadow(0 6px 8px #000b) drop-shadow(0 0 9px #ffb34a44)}
+.raven-refit-cockpit{filter:drop-shadow(0 6px 8px #000b) drop-shadow(0 0 8px #4feaff55)}
+.raven-refit-damaged{opacity:.88;filter:saturate(.72) brightness(.83) contrast(1.1)}
+.raven-refit-critical{opacity:.78;filter:saturate(.52) brightness(.68) contrast(1.18)}
 .raven-dynamic-stage{position:absolute;inset:0;display:block;z-index:1}
 .raven-dynamic .shipforge-ship{width:100%;height:100%;padding:2%;filter:drop-shadow(-10px 13px 12px #000c) drop-shadow(0 0 10px #42e7ff38)}
 .raven-dynamic .shipforge-svg{width:100%;height:100%;transform:scale(1.08);transform-origin:50% 52%}
@@ -20,14 +37,22 @@
  position:absolute;left:5%;right:5%;bottom:8%;height:10%;z-index:0;pointer-events:none;
  background:radial-gradient(ellipse,#42e7ff20,transparent 65%);filter:blur(12px);
 }
-.raven-condition-worn .shipforge-svg{filter:saturate(.92) brightness(.96)}
-.raven-condition-damaged .shipforge-svg{filter:saturate(.78) brightness(.86) contrast(1.12)}
-.raven-condition-critical .shipforge-svg{filter:saturate(.62) brightness(.72) contrast(1.2)}
+.raven-condition-worn .raven-anchor-art{filter:drop-shadow(-16px 22px 18px #000d) saturate(.9) brightness(.96)}
+.raven-condition-damaged .raven-anchor-art{filter:drop-shadow(-16px 22px 18px #000d) saturate(.74) brightness(.84) contrast(1.12)}
+.raven-condition-critical .raven-anchor-art{filter:drop-shadow(-16px 22px 18px #000d) saturate(.56) brightness(.69) contrast(1.2)}
 .raven-condition-critical:after,.raven-condition-damaged:after{
- content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+ content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
  background:linear-gradient(128deg,transparent 0 46%,#ff704412 49%,transparent 53%),
             radial-gradient(circle at 68% 52%,#ff5a321c,transparent 12%);
  mix-blend-mode:screen;
+}
+.raven-anchor-live[data-raven-refits="0"]:after{
+ content:"CURRENT LOADOUT";position:absolute;z-index:5;right:10px;bottom:8px;
+ font-size:8px;letter-spacing:1.5px;color:#83c8d4;background:#031016b8;border:1px solid #19586a;border-radius:4px;padding:4px 6px;
+}
+.raven-anchor-live:not([data-raven-refits="0"]):after{
+ content:"LIVE REFIT";position:absolute;z-index:5;right:10px;bottom:8px;
+ font-size:8px;letter-spacing:1.5px;color:#dfffff;background:#06202abf;border:1px solid #31cde8;border-radius:4px;padding:4px 6px;box-shadow:0 0 12px #00e9ff33;
 }
 .ship-layout>.raven-dynamic{min-height:260px;align-self:stretch}
 .raven-hero-frame>.raven-dynamic{
@@ -36,21 +61,18 @@
   radial-gradient(ellipse at 51% 55%,#13333f 0%,#071218 47%,#020609 78%),
   linear-gradient(145deg,#071119,#020609);
 }
-.raven-hero-frame>.raven-dynamic .shipforge-ship{padding:3% 4% 9%}
-.raven-hero-frame>.raven-dynamic .shipforge-svg{transform:scale(1.18)}
+.raven-hero-frame>.raven-dynamic .raven-anchor-art{inset:0;width:100%;height:100%;padding:2% 2% 7%}
 .transit-raven>.raven-dynamic{min-height:210px;height:210px;border:0;background:transparent;overflow:visible}
 .transit-raven>.raven-dynamic:before,.transit-raven>.raven-dynamic .raven-dynamic-glow{display:none}
-.transit-raven>.raven-dynamic .shipforge-ship{padding:0;filter:drop-shadow(0 0 20px #42e7ff55)}
-.transit-raven>.raven-dynamic .shipforge-svg{transform:scale(1.12)}
-body[data-graphics="performance"] .raven-dynamic .shipforge-svg{animation:none!important;filter:none}
+.transit-raven>.raven-dynamic .raven-anchor-art{inset:0;width:100%;height:100%;filter:drop-shadow(0 0 20px #42e7ff55)}
+.transit-raven>.raven-dynamic:after{display:none}
+body[data-graphics="performance"] .raven-anchor-art,body[data-graphics="performance"] .raven-refit-zone{filter:none!important}
 @media(max-width:700px){
  .raven-dynamic{min-height:180px}
  .ship-layout>.raven-dynamic{min-height:210px}
  .raven-hero-frame>.raven-dynamic{min-height:245px}
  .transit-raven>.raven-dynamic{min-height:160px;height:160px}
- .raven-dynamic .shipforge-svg{transform:scale(1.04)}
- .raven-hero-frame>.raven-dynamic .shipforge-svg{transform:scale(1.12)}
 }
 @media(prefers-reduced-motion:reduce){
- .raven-dynamic .shipforge-svg,.raven-dynamic .sf-generated-art{animation:none!important}
+ .raven-dynamic .shipforge-svg,.raven-dynamic .sf-generated-art,.raven-anchor-art{animation:none!important}
 }
