@@ -1,0 +1,86 @@
+{
+  "schema": "deadlock.raven.current-loadout-zones.v1",
+  "version": "1.0.0",
+  "anchor": "assets/ships/raven/generated/raven_anchor_v17_13.svg",
+  "viewBox": [
+    0,
+    0,
+    1536,
+    1024
+  ],
+  "baseLoadout": {
+    "core": "core_twinboom_09",
+    "cockpit": "cockpit_armored_05",
+    "wing": "wing_outrigger_09",
+    "engine": "engine_military_06",
+    "weapon": "weapon_rotary_09",
+    "cargo": "cargo_modular_08",
+    "utility": "utility_smuggler_06"
+  },
+  "zones": {
+    "engine": {
+      "groupId": "zone-engine",
+      "x": 0.05,
+      "y": 0.31,
+      "w": 0.29,
+      "h": 0.39,
+      "anchor": "rear-left"
+    },
+    "wing": {
+      "groupId": "zone-wing",
+      "x": 0.12,
+      "y": 0.18,
+      "w": 0.45,
+      "h": 0.63,
+      "anchor": "lateral"
+    },
+    "core": {
+      "groupId": "zone-core",
+      "x": 0.24,
+      "y": 0.24,
+      "w": 0.48,
+      "h": 0.49,
+      "anchor": "center"
+    },
+    "cargo": {
+      "groupId": "zone-cargo",
+      "x": 0.26,
+      "y": 0.49,
+      "w": 0.28,
+      "h": 0.23,
+      "anchor": "lower-center"
+    },
+    "utility": {
+      "groupId": "zone-utility",
+      "x": 0.4,
+      "y": 0.12,
+      "w": 0.19,
+      "h": 0.2,
+      "anchor": "dorsal-center"
+    },
+    "cockpit": {
+      "groupId": "zone-cockpit",
+      "x": 0.57,
+      "y": 0.31,
+      "w": 0.34,
+      "h": 0.39,
+      "anchor": "forward-right"
+    },
+    "weapon": {
+      "groupId": "zone-weapon",
+      "x": 0.08,
+      "y": 0.23,
+      "w": 0.83,
+      "h": 0.49,
+      "anchor": "dual-hardpoint"
+    }
+  },
+  "overlayRules": {
+    "mode": "anchor-plus-refit-overlay",
+    "baseline": "anchor art represents the canonical current loadout",
+    "changedPart": "render the newly installed ShipForge component in the matching zone above the anchor",
+    "samePart": "no overlay is required because the baseline anchor already represents that hardware",
+    "fallback": "if anchor art cannot load, use the existing full ShipForge assembled renderer",
+    "sourceOfTruth": "DeadlockShipForge.blueprint(DATA,'raven')"
+  }
+}
