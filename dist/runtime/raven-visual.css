@@ -15,13 +15,22 @@
 .raven-refit-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
 .raven-refit-zone{
  position:absolute;left:var(--rz-x);top:var(--rz-y);width:var(--rz-w);height:var(--rz-h);
- display:block;overflow:visible;transform:translateZ(0);
- filter:drop-shadow(0 8px 8px #000a) drop-shadow(0 0 8px #42e7ff50);
+ display:block;overflow:visible;transform:translateZ(0);isolation:isolate;
+ filter:drop-shadow(0 9px 9px #000c) drop-shadow(0 0 7px #42e7ff28);
+ mix-blend-mode:normal;
 }
-.raven-refit-zone .shipforge-svg{width:100%;height:100%;transform:none!important;overflow:visible}
-.raven-refit-engine{mix-blend-mode:screen}
-.raven-refit-weapon{filter:drop-shadow(0 6px 8px #000b) drop-shadow(0 0 9px #ffb34a44)}
-.raven-refit-cockpit{filter:drop-shadow(0 6px 8px #000b) drop-shadow(0 0 8px #4feaff55)}
+.raven-refit-zone:before{
+ content:"";position:absolute;inset:-4%;z-index:-1;border-radius:28%;
+ background:radial-gradient(ellipse at 50% 52%,#071015f2 0 47%,#071015cc 62%,transparent 79%);
+ filter:blur(2px);
+}
+.raven-refit-native{display:block;width:100%;height:100%;overflow:visible;shape-rendering:geometricPrecision}
+.raven-refit-native .raven-refit-detail{mix-blend-mode:screen}
+.raven-refit-engine{filter:drop-shadow(0 8px 9px #000d) drop-shadow(0 0 8px #31dff037)}
+.raven-refit-weapon{filter:drop-shadow(0 6px 8px #000c) drop-shadow(0 0 7px #b78d623b)}
+.raven-refit-cockpit{filter:drop-shadow(0 6px 8px #000c) drop-shadow(0 0 7px #4feaff33)}
+.raven-refit-core,.raven-refit-wing,.raven-refit-cargo,.raven-refit-utility{filter:drop-shadow(0 7px 8px #000c)}
+.raven-refit-core:before,.raven-refit-wing:before{inset:-2%;background:radial-gradient(ellipse at 50% 50%,#080f13f5 0 52%,#080f13c8 67%,transparent 82%)}
 .raven-refit-damaged{opacity:.88;filter:saturate(.72) brightness(.83) contrast(1.1)}
 .raven-refit-critical{opacity:.78;filter:saturate(.52) brightness(.68) contrast(1.18)}
 .raven-dynamic-stage{position:absolute;inset:0;display:block;z-index:1}
@@ -74,5 +83,5 @@ body[data-graphics="performance"] .raven-anchor-art,body[data-graphics="performa
  .transit-raven>.raven-dynamic{min-height:160px;height:160px}
 }
 @media(prefers-reduced-motion:reduce){
- .raven-dynamic .shipforge-svg,.raven-dynamic .sf-generated-art,.raven-anchor-art{animation:none!important}
+ .raven-dynamic .shipforge-svg,.raven-dynamic .sf-generated-art,.raven-anchor-art,.raven-refit-native{animation:none!important}
 }
