@@ -7,7 +7,7 @@ for(const file of ['shipforge-catalog.js','shipforge-visuals.js','shipforge.js',
 const F=box.ShipForge,W=box.DeadlockShipForge,R=box.DeadlockRavenVisual;
 ok('ShipForge loaded',!!F);ok('ShipForge world loaded',!!W);ok('Raven visual loaded',!!R);ok('Raven visual version',R.version==='1.0.0',R.version);
 const data={character:{name:'Rovan Kes',credits:1000000},ship:{hull:100,hullMax:100,shields:100,shieldsMax:100,fuel:100,fuelMax:100,dogfight:{}},galaxyState:{currentLocationId:'blackglass_station'}};
-W.ensure(data);
+const st=W.ensure(data);
 const baseline=R.partState(data);
 ok('Raven state resolves',!!baseline,baseline);
 ok('Raven is active persistent ship',baseline.shipId==='raven',baseline.shipId);
@@ -20,7 +20,7 @@ for(const id of Object.values(expected))ok('baseline visual contains '+id,html.i
 ok('condition metadata present',/data-raven-condition="\d+"/.test(html),html.slice(0,300));
 ok('schematic-independent renderer accepts landed state',R.render(data,'landed','The Raven in hangar').includes('raven-state-landed'));
 const beforeSig=baseline.signature;
-const inst=W.createInstance(data,'engine_trident_09',{ownerId:'rovan',source:'qa'});
+const inst=W.createInstance(st,'engine_trident_09',{ownerId:'rovan',source:'qa'});
 const install=W.install(data,'raven',inst.id);
 ok('engine install succeeds',install.ok,install);
 const upgraded=R.partState(data),upgradedHtml=R.render(data,'flight','The Raven');
