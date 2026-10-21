@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1024" role="img" aria-label="The Raven, realistic modular pursuit freighter">
+<defs>
+ <linearGradient id="hull" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#40474b"/><stop offset=".3" stop-color="#171d20"/><stop offset=".72" stop-color="#0a0f12"/><stop offset="1" stop-color="#242b2f"/></linearGradient>
+ <linearGradient id="edge" x1="0" x2="1"><stop stop-color="#697379"/><stop offset=".4" stop-color="#23292d"/><stop offset="1" stop-color="#080b0d"/></linearGradient>
+ <linearGradient id="glass" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#0a3444"/><stop offset=".45" stop-color="#06151d"/><stop offset="1" stop-color="#020507"/></linearGradient>
+ <radialGradient id="engine"><stop stop-color="#e8ffff"/><stop offset=".25" stop-color="#7df6ff"/><stop offset=".58" stop-color="#00bfe9"/><stop offset="1" stop-color="#00445e"/></radialGradient>
+ <filter id="shadow"><feDropShadow dx="-15" dy="24" stdDeviation="18" flood-color="#000" flood-opacity=".78"/></filter>
+ <filter id="cyan"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="metal"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="17" result="n"/><feColorMatrix in="n" values=".15 0 0 0 .18 0 .15 0 0 .18 0 0 .15 0 .18 0 0 0 .35 0" result="t"/><feBlend in="SourceGraphic" in2="t" mode="overlay"/></filter>
+</defs>
+<g id="raven" filter="url(#shadow)">
+ <!-- ENGINE -->
+ <g id="zone-engine">
+  <path d="M130 411 L258 344 L420 365 L482 453 L442 615 L276 662 L132 592 Z" fill="url(#hull)" stroke="#68757b" stroke-width="6"/>
+  <path d="M144 438 L255 386 L368 401 L405 460 L380 572 L264 611 L154 568 Z" fill="#10171b" stroke="#333d42" stroke-width="5"/>
+  <ellipse cx="166" cy="489" rx="72" ry="96" fill="#071117" stroke="#53636a" stroke-width="9"/>
+  <ellipse cx="166" cy="489" rx="51" ry="72" fill="url(#engine)" filter="url(#cyan)"/>
+  <ellipse cx="166" cy="489" rx="25" ry="49" fill="#dfffff"/>
+  <path d="M211 405 L241 369 M205 570 L244 615 M330 388 L356 348 M344 592 L370 625" stroke="#796044" stroke-width="8" opacity=".75"/>
+  <path d="M255 413 H389 M246 449 H402 M239 526 H390 M232 562 H374" stroke="#526068" stroke-width="4" opacity=".65"/>
+ </g>
+ <!-- WINGS / OUTRIGGERS -->
+ <g id="zone-wing" fill="url(#hull)" stroke="#5c696f" stroke-width="6">
+  <path d="M270 326 L542 278 L655 323 L573 419 L351 442 L235 395 Z"/>
+  <path d="M281 606 L575 592 L681 649 L564 729 L318 704 L224 652 Z"/>
+  <path d="M460 287 L570 190 L744 185 L692 282 Z"/>
+  <path d="M545 719 L664 807 L843 785 L758 698 Z"/>
+ </g>
+ <!-- CORE -->
+ <g id="zone-core">
+  <path d="M389 368 L565 269 L899 261 L1088 379 L1042 626 L826 724 L516 662 L412 554 Z" fill="url(#hull)" stroke="#6a7479" stroke-width="7" filter="url(#metal)"/>
+  <path d="M526 349 L643 305 L863 309 L973 377 L947 454 L601 456 Z" fill="#171e22" stroke="#515e64" stroke-width="5"/>
+  <path d="M507 475 L957 474 L928 608 L793 665 L568 621 Z" fill="#0e1519" stroke="#3f4d53" stroke-width="5"/>
+  <path d="M626 305 L649 455 M745 286 L755 461 M858 312 L852 464 M593 476 L603 619 M718 475 L718 650 M844 475 L826 648" stroke="#68747a" stroke-width="4" opacity=".65"/>
+  <path d="M492 432 L543 421 L553 458 L501 466 Z M928 416 L974 429 L963 467 L916 454 Z M570 587 L622 595 L618 625 L564 615 Z" fill="#00d9ff" opacity=".8" filter="url(#cyan)"/>
+ </g>
+ <!-- CARGO -->
+ <g id="zone-cargo">
+  <path d="M464 532 L604 516 L651 622 L601 691 L449 658 L421 588 Z" fill="#11181c" stroke="#735b3b" stroke-width="6"/>
+  <path d="M623 553 L765 547 L807 655 L754 709 L627 677 Z" fill="#11181c" stroke="#735b3b" stroke-width="6"/>
+  <path d="M475 556 H598 M455 592 H620 M648 576 H764 M641 615 H783" stroke="#434c50" stroke-width="4"/>
+  <rect x="527" y="619" width="55" height="11" rx="4" fill="#00d7ff" opacity=".75"/>
+ </g>
+ <!-- UTILITY -->
+ <g id="zone-utility">
+  <path d="M637 262 L692 174 L790 158 L855 218 L839 298 Z" fill="url(#edge)" stroke="#69757a" stroke-width="5"/>
+  <rect x="704" y="185" width="74" height="53" rx="8" fill="#0b1216" stroke="#38464d" stroke-width="5"/>
+  <path d="M741 180 V125 M710 168 L686 119 M781 169 L810 121" stroke="#89979e" stroke-width="7"/>
+  <circle cx="742" cy="208" r="14" fill="#66f5ff" filter="url(#cyan)"/>
+  <path d="M803 239 L842 205 L874 238 L840 273 Z" fill="#141b1f" stroke="#5a666b" stroke-width="4"/>
+ </g>
+ <!-- COCKPIT -->
+ <g id="zone-cockpit">
+  <path d="M904 337 L1082 356 L1368 535 L1332 676 L1120 703 L944 617 L888 471 Z" fill="url(#hull)" stroke="#727d82" stroke-width="8" filter="url(#metal)"/>
+  <path d="M1068 390 L1173 427 L1316 530 L1296 587 L1150 565 L1024 490 Z" fill="url(#glass)" stroke="#7f8b91" stroke-width="6"/>
+  <path d="M1129 420 L1117 537 M1190 445 L1174 555 M1250 480 L1231 568" stroke="#63737b" stroke-width="5"/>
+  <path d="M999 521 L1114 580 L1091 646 L973 593 Z" fill="#151c20" stroke="#4d595f" stroke-width="5"/>
+  <path d="M1180 622 H1292 L1282 645 H1172 Z" fill="#00d9ff" opacity=".78" filter="url(#cyan)"/>
+ </g>
+ <!-- WEAPONS -->
+ <g id="zone-weapon" fill="url(#edge)" stroke="#6e777b" stroke-width="5">
+  <path d="M265 603 L377 585 L430 627 L406 684 L299 700 L243 657 Z"/>
+  <g transform="translate(253 635)">
+   <rect x="-96" y="-24" width="130" height="48" rx="18"/>
+   <rect x="-155" y="-17" width="76" height="9" rx="4"/><rect x="-155" y="-3" width="82" height="9" rx="4"/><rect x="-155" y="11" width="70" height="9" rx="4"/>
+  </g>
+  <path d="M902 287 L1010 275 L1091 322 L1069 370 L956 368 L891 333 Z"/>
+  <g transform="translate(1037 324)">
+   <rect x="0" y="-19" width="102" height="38" rx="15"/>
+   <rect x="88" y="-13" width="126" height="8" rx="4"/><rect x="88" y="1" width="138" height="8" rx="4"/>
+  </g>
+ </g>
+ <!-- underside / service details -->
+ <path d="M508 690 L849 727 L812 768 L526 746 Z" fill="#080d10" stroke="#39464c" stroke-width="5"/>
+ <g fill="#00d7ff" opacity=".72" filter="url(#cyan)">
+  <rect x="404" y="477" width="18" height="67" rx="8"/><rect x="861" y="498" width="17" height="70" rx="8"/><rect x="1015" y="650" width="44" height="10" rx="5"/>
+ </g>
+ <!-- panel seams -->
+ <g stroke="#8a7356" stroke-width="3" opacity=".5" fill="none">
+  <path d="M458 383 L548 330 L591 369 L527 420 Z"/><path d="M659 330 L739 314 L780 365 L698 393 Z"/><path d="M811 327 L878 343 L918 390 L845 404 Z"/>
+  <path d="M979 383 L1050 400 L1080 435 L1010 451 Z"/><path d="M1033 581 L1101 613 L1084 657 L1012 622 Z"/>
+ </g>
+ <!-- battle wear -->
+ <g stroke="#b68755" stroke-width="3" opacity=".35">
+  <path d="M571 380 l58 -18 M647 510 l74 -12 M826 569 l49 -21 M1007 542 l72 20 M355 407 l52 -9 M276 520 l69 -14"/>
+ </g>
+</g>
+</svg>
