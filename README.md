@@ -9,25 +9,21 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
 
-## Raven Modular Visual Foundation — v17.13
+## Raven Modular Visual Foundation — v17.13.1
 
-The Raven now uses a **detailed transparent anchor with live ShipForge refit zones** for normal hero presentation instead of always showing the static `raven_cutout_v15.svg`.
+The Raven now uses a **detailed transparent anchor with Raven-native refit geometry** for normal hero presentation instead of either the old static cutout or generic ShipForge component cards.
 
-`runtime/raven-visual.js` reads the live Raven record and blueprint from `DeadlockShipForge`. The canonical loadout renders through the new transparent Raven anchor; when an installed core, cockpit, wing, engine, weapon, cargo, or utility part differs from the anchor, the new ShipForge component is rendered into that specific refit zone. Buying/installing hardware therefore changes the Raven without replacing its core identity.
+`runtime/raven-visual.js` still reads the live Raven record and blueprint from `DeadlockShipForge`, so installed ShipForge IDs remain the only source of truth. When a core, cockpit, wing, engine, weapon, cargo, or utility component differs from the anchor loadout, that slot is redrawn as integrated Raven hardware using the same dark hull, metal edging, wear, cyan emissive language, and condition state as the anchor.
 
-The dedicated holographic schematic remains separate, and the old Raven cutout remains a safe visual fallback if ShipForge is unavailable.
+Generic `ShipForge.renderPartSVG()` output is no longer used for Raven refits. The old static Raven cutout remains only as a degraded fallback, while the dedicated holographic schematic remains intentionally separate.
 
-This is the first runtime proof of the modular Raven architecture. The longer-term high-fidelity target remains the developer specification in `RAVEN_MODULAR_VISUAL_SPEC_V17_13.md` and machine map in `raven-visual-zones.json`: dedicated Raven-specific realistic layers for all 36 current light-freighter-compatible parts.
-
-The live renderer also derives a coarse operational / worn / damaged / critical visual treatment from the existing installed component condition rather than duplicating damage state.
+The hotfix covers all **29 alternate compatible refits** across the seven Raven slots. Each alternate part was installed in isolation and verified to produce Raven-native markup with no `shipforge-component` or `sf-generated-art` fallback.
 
 Validation:
-- Raven realistic-anchor/refit integration harness: **50 / 50 passed**
+- representative engine / weapon / utility refit harness: **16 / 16 passed**
+- exhaustive alternate-refit coverage: **116 / 116 passed**
 - Raven visual-zone coverage validator: **115 / 115 passed**
-- verified baseline Raven loadout,
-- verified a Military → Trident engine swap changes both signature and visible generated component,
-- verified repaint state,
-- verified offline runtime/CSS cache wiring.
+- verified v17.13.1 offline cache wiring and static fallback preservation.
 
 
 ## Long-Term NPC Arcs — v17.12.0
