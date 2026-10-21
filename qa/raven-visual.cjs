@@ -61,6 +61,19 @@ const utilityHtml=R.render(data,'flight','The Raven');
 ok('utility refit uses Raven-native geometry',utilityHtml.includes('data-raven-part="utility_radar_03"')&&utilityHtml.includes('raven-native-utility'));
 ok('utility refit exposes radar design',utilityHtml.includes('data-raven-design="radar"'));
 ok('utility refit avoids generic ShipForge art',!utilityHtml.includes('shipforge-component')&&!utilityHtml.includes('sf-generated-art'));
+// Exhaustive coverage: every non-baseline light-freighter part must render natively.
+const alternatives=F.catalog.parts.filter(p=>(p.compatible.includes('light_freighter')||p.compatible.includes('universal'))&&R.baseLoadout[p.slot]&&R.baseLoadout[p.slot]!==p.id);
+for(const p of alternatives){
+ const d={character:{name:'Rovan Kes',credits:1000000},ship:{hull:100,hullMax:100,shields:100,shieldsMax:100,fuel:100,fuelMax:100,dogfight:{}},galaxyState:{currentLocationId:'blackglass_station'}};
+ const state=W.ensure(d),instance=W.createInstance(state,p.id,{ownerId:'rovan',source:'qa-exhaustive'}),result=W.install(d,'raven',instance.id);
+ ok('exhaustive install '+p.id,result.ok,result);
+ const rendered=R.render(d,'flight','The Raven');
+ ok('exhaustive native '+p.id,rendered.includes('data-raven-part="'+p.id+'"')&&rendered.includes('raven-native-'+p.slot),rendered.slice(0,1000));
+ ok('exhaustive no generic '+p.id,!rendered.includes('shipforge-component')&&!rendered.includes('sf-generated-art'),p.id);
+ ok('exhaustive design '+p.id,rendered.includes('data-raven-design="'+p.design+'"'),{id:p.id,design:p.design});
+}
+ok('all 29 alternate compatible parts covered',alternatives.length===29,alternatives.map(p=>p.id));
+
 const paint=W.setPalette(data,'raven','slate_cyan');ok('paint succeeds',paint.ok,paint);
 ok('paint updates visual state',R.partState(data).palette==='slate_cyan',R.partState(data));
 ok('palette exposed in render',R.render(data,'flight','The Raven').includes('data-raven-palette="slate_cyan"'));
