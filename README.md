@@ -11,15 +11,24 @@ V16 progress, injuries, personal credits and generated cases are preserved. The 
 
 ## Raven Modular Visual Foundation — v17.13
 
-The next visual phase replaces the Raven's static hero-art path with a realistic modular presentation driven directly by its existing ShipForge installation state.
+The Raven now uses its **actual persistent ShipForge build** for normal hero presentation instead of always showing the static `raven_cutout_v15.svg`.
 
-The developer specification is in `RAVEN_MODULAR_VISUAL_SPEC_V17_13.md`. The machine-readable mapping is `raven-visual-zones.json`.
+`runtime/raven-visual.js` reads the live Raven record and blueprint from `DeadlockShipForge`, then assembles the same generated component artwork used by ShipForge. Buying and installing a compatible component therefore changes the visible Raven immediately on the Ship page, Galaxy transit view, and Dogfight HUD. Paint changes also follow the live ShipForge palette.
 
-The Raven remains a persistent `light_freighter`; buying/installing a ShipForge component remains the only source of upgrade truth. The visual system maps each installed part ID to a Raven-specific exterior zone rather than pasting generic component art or regenerating the ship into a different craft.
+The dedicated holographic schematic remains separate, and the old Raven cutout remains a safe visual fallback if ShipForge is unavailable.
 
-The current catalog contains 36 light-freighter-compatible parts requiring Raven hero coverage: 3 core, 3 cockpit, 4 wing, 6 engine, 6 weapon, 5 cargo, and 9 utility variants. A coverage validator is available with `npm run test:raven-visual-spec`.
+This is the first runtime proof of the modular Raven architecture. The longer-term high-fidelity target remains the developer specification in `RAVEN_MODULAR_VISUAL_SPEC_V17_13.md` and machine map in `raven-visual-zones.json`: dedicated Raven-specific realistic layers for all 36 current light-freighter-compatible parts.
 
-The existing `raven_cutout_v15.svg` and related Raven SVGs remain fallbacks until the realistic 3/4 hero set has complete approved coverage.
+The live renderer also derives a coarse operational / worn / damaged / critical visual treatment from the existing installed component condition rather than duplicating damage state.
+
+Validation:
+- Raven live-render integration harness: **34 / 34 passed**
+- Raven visual-zone coverage validator: **115 / 115 passed**
+- verified baseline Raven loadout,
+- verified a Military → Trident engine swap changes both signature and visible generated component,
+- verified repaint state,
+- verified offline runtime/CSS cache wiring.
+
 
 ## Long-Term NPC Arcs — v17.12.0
 
