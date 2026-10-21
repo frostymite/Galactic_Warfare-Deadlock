@@ -5,7 +5,7 @@ for(const file of ['shipforge-catalog.js','shipforge-visuals.js','shipforge.js',
  vm.runInContext(fs.readFileSync(path.join(__dirname,'../runtime',file),'utf8'),box,{filename:file});
 }
 const F=box.ShipForge,W=box.DeadlockShipForge,R=box.DeadlockRavenVisual;
-ok('ShipForge loaded',!!F);ok('ShipForge world loaded',!!W);ok('Raven visual loaded',!!R);ok('Raven visual version',R.version==='1.1.0',R.version);
+ok('ShipForge loaded',!!F);ok('ShipForge world loaded',!!W);ok('Raven visual loaded',!!R);ok('Raven visual version',R.version==='1.2.0',R.version);
 const anchorPath=path.join(__dirname,'../assets/ships/raven/generated/raven_anchor_v17_13.svg');
 const zonesPath=path.join(__dirname,'../assets/ships/raven/generated/raven_current_loadout_zones.json');
 ok('realistic Raven anchor exists',fs.existsSync(anchorPath),anchorPath);
@@ -25,7 +25,7 @@ for(const [slot,id] of Object.entries(expected)){
  ok('base map '+slot,R.baseLoadout[slot]===id,{expected:id,actual:R.baseLoadout[slot]});
 }
 const html=R.render(data,'flight','The Raven');
-ok('anchor renderer returns markup',typeof html==='string'&&html.includes('data-raven-renderer="anchor-plus-shipforge-refit"'));
+ok('anchor renderer returns markup',typeof html==='string'&&html.includes('data-raven-renderer="anchor-plus-native-refit"'));
 ok('anchor path used',html.includes('raven_anchor_v17_13.svg'));
 ok('baseline has zero refits',html.includes('data-raven-refits="0"'),html.slice(0,500));
 ok('condition metadata present',/data-raven-condition="\d+"/.test(html),html.slice(0,500));
@@ -41,7 +41,26 @@ ok('one changed slot recorded',upgraded.changed.length===1&&upgraded.changed[0].
 ok('upgraded renderer flags refit',upgradedHtml.includes('data-raven-refits="1"'));
 ok('upgraded renderer contains new engine',upgradedHtml.includes('engine_trident_09'));
 ok('upgraded engine placed in engine zone',upgradedHtml.includes('raven-refit-engine'));
-ok('upgraded renderer uses ShipForge component SVG',upgradedHtml.includes('shipforge-component'));
+ok('upgraded renderer uses Raven-native refit',upgradedHtml.includes('data-raven-refit="native"'));
+ok('upgraded engine uses native refit SVG',upgradedHtml.includes('raven-refit-native')&&upgradedHtml.includes('raven-native-engine'));
+ok('upgraded engine does not embed generic ShipForge component card',!upgradedHtml.includes('shipforge-component')&&!upgradedHtml.includes('sf-generated-art'),upgradedHtml.slice(0,1200));
+ok('native renderer records refit source',upgraded.refitRenderer==='raven-native',upgraded);
+
+const weaponInst=W.createInstance(st,'weapon_missile_08',{ownerId:'rovan',source:'qa'});
+const weaponInstall=W.install(data,'raven',weaponInst.id);
+ok('weapon install succeeds',weaponInstall.ok,weaponInstall);
+const weaponHtml=R.render(data,'flight','The Raven');
+ok('weapon refit uses Raven-native geometry',weaponHtml.includes('data-raven-part="weapon_missile_08"')&&weaponHtml.includes('raven-native-weapon'));
+ok('weapon refit exposes missile design',weaponHtml.includes('data-raven-design="missile"'));
+ok('weapon refit avoids generic ShipForge art',!weaponHtml.includes('shipforge-component')&&!weaponHtml.includes('sf-generated-art'));
+
+const utilityInst=W.createInstance(st,'utility_radar_03',{ownerId:'rovan',source:'qa'});
+const utilityInstall=W.install(data,'raven',utilityInst.id);
+ok('utility install succeeds',utilityInstall.ok,utilityInstall);
+const utilityHtml=R.render(data,'flight','The Raven');
+ok('utility refit uses Raven-native geometry',utilityHtml.includes('data-raven-part="utility_radar_03"')&&utilityHtml.includes('raven-native-utility'));
+ok('utility refit exposes radar design',utilityHtml.includes('data-raven-design="radar"'));
+ok('utility refit avoids generic ShipForge art',!utilityHtml.includes('shipforge-component')&&!utilityHtml.includes('sf-generated-art'));
 const paint=W.setPalette(data,'raven','slate_cyan');ok('paint succeeds',paint.ok,paint);
 ok('paint updates visual state',R.partState(data).palette==='slate_cyan',R.partState(data));
 ok('palette exposed in render',R.render(data,'flight','The Raven').includes('data-raven-palette="slate_cyan"'));
@@ -59,7 +78,7 @@ ok('Raven runtime cached offline',sw.includes('./runtime/raven-visual.js'));
 ok('Raven CSS cached offline',sw.includes('./runtime/raven-visual.css'));
 ok('anchor art cached offline',sw.includes('./assets/ships/raven/generated/raven_anchor_v17_13.svg'));
 ok('zone manifest cached offline',sw.includes('./assets/ships/raven/generated/raven_current_loadout_zones.json'));
-ok('v17.13 cache active',sw.includes('deadlock-v17-13-raven-live-shipforge'));
+ok('v17.13.1 cache active',sw.includes('deadlock-v17-13-1-raven-native-refits'));
 const result={checks,passed:checks-fail.length,failed:fail.length,failures:fail,baseline,upgraded};
 fs.writeFileSync(path.join(__dirname,'raven-visual-results.json'),JSON.stringify(result,null,2));
 console.log(JSON.stringify(result,null,2));if(fail.length)process.exit(1);
