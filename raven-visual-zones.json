@@ -1,7 +1,7 @@
 {
   "schema": "deadlock.raven.visual-zones.v1",
   "version": "1.0.0",
-  "status": "runtime-proof-active",
+  "status": "native-refit-runtime-active",
   "ship": {
     "id": "raven",
     "name": "The Raven",
@@ -315,9 +315,9 @@
       "save-game schema"
     ],
     "currentModule": "runtime/raven-visual.js",
-    "currentRenderer": "live ShipForge generated-art assembly",
+    "currentRenderer": "realistic anchor + Raven-native integrated refit SVG",
     "staticFallback": "assets/ships/raven_cutout_v15.svg",
-    "behavior": "Normal Raven hero views now render the actual installed ShipForge blueprint. Schematic remains dedicated schematic art."
+    "behavior": "Normal Raven hero views use the detailed anchor; changed installed parts render as Raven-native slot geometry keyed by the live ShipForge part ID."
   },
   "coverage": {
     "hero_3q": {
@@ -950,9 +950,11 @@
     }
   },
   "productionStage": {
-    "id": "phase-b-anchor-runtime-proof",
+    "id": "v17.13.1-native-refit-hotfix",
     "complete": true,
-    "note": "The live renderer now proves installed parts visibly change the Raven using the existing generated component-art library. Dedicated Raven-specific realistic zone layers remain the next fidelity pass.",
+    "note": "Every non-baseline light-freighter-compatible part now renders as Raven-native integrated geometry. Generic ShipForge part-card art is no longer used for Raven refits.",
+    "representativeQa": "16/16",
+    "exhaustiveQa": "116/116",
     "qa": "qa/raven-visual.cjs"
   }
 }
