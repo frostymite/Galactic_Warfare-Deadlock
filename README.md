@@ -9,6 +9,18 @@ By default, new Lower Port jobs are personal. Choose **Represent Apex on future 
 V16 progress, injuries, personal credits and generated cases are preserved. The Apex reserve initializes once at 1,420,000 credits; new campaigns use 358,400 personal credits. Historical purchases and the heist are not charged or paid again. Your existing campaign, First Flight tutorial and Raven Flight Deck remain available.
 
 
+## Raven Modular Visual Foundation — v17.13
+
+The next visual phase replaces the Raven's static hero-art path with a realistic modular presentation driven directly by its existing ShipForge installation state.
+
+The developer specification is in `RAVEN_MODULAR_VISUAL_SPEC_V17_13.md`. The machine-readable mapping is `raven-visual-zones.json`.
+
+The Raven remains a persistent `light_freighter`; buying/installing a ShipForge component remains the only source of upgrade truth. The visual system maps each installed part ID to a Raven-specific exterior zone rather than pasting generic component art or regenerating the ship into a different craft.
+
+The current catalog contains 36 light-freighter-compatible parts requiring Raven hero coverage: 3 core, 3 cockpit, 4 wing, 6 engine, 6 weapon, 5 cargo, and 9 utility variants. A coverage validator is available with `npm run test:raven-visual-spec`.
+
+The existing `raven_cutout_v15.svg` and related Raven SVGs remain fallbacks until the realistic 3/4 hero set has complete approved coverage.
+
 ## Long-Term NPC Arcs — v17.12.0
 
 Phase 3 now supports persistent personal and relationship story arcs that grow out of the existing NPC agenda system instead of spawning as unrelated random quests. Jessa, Dren Voss, Nera Kade and Renn can each develop multi-stage personal threads tied to the work they have actually been doing.
