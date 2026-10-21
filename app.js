@@ -42,7 +42,11 @@ function characterVisual(id,state="neutral",alt=""){
  const e=assetEntry("characters",id)||{};return imgTag(e[state]||e.neutral||e.fallback,alt||id,e.fallback||null,"character-visual");
 }
 function ravenVisual(state="flight",alt="The Raven"){
- if(state!=="schematic")return imgTag("assets/ships/raven_cutout_v15.svg",alt,null,"raven-visual");
+ if(state!=="schematic"){
+  const live=window.DeadlockRavenVisual?.render?.(DATA,state,alt);
+  if(live)return live;
+  return imgTag("assets/ships/raven_cutout_v15.svg",alt,null,"raven-visual");
+ }
  const e=assetEntry("ships","raven")||{};return imgTag(e[state]||e.flight||e.fallback,alt,e.fallback||null,"raven-visual");
 }
 function validCampaignSave(value){return !!value&&typeof value==="object"&&!Array.isArray(value)&&!!value.character&&Number.isFinite(value.character.health)&&Number.isFinite(value.character.credits)&&!!value.ship&&Number.isFinite(value.ship.hull)&&!!value.combat&&Array.isArray(value.combat.participants)&&["weapons","contracts","targets","contacts","inventory","gear","identities","factions","journal","locations"].every(k=>Array.isArray(value[k]));}
