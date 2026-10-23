@@ -48,12 +48,22 @@ function renderSVG(ship,opts={}){
  const order=['wing','cargo','core','engine','cockpit','weapon','utility'];
  const opacity={wing:.98,cargo:.99,core:1,engine:1,cockpit:1,weapon:1,utility:1};
  const fallback={wing:[10,12,160,66],cargo:[40,28,104,42],core:[30,20,120,54],engine:[8,29,64,34],cockpit:[105,26,62,34],weapon:[80,15,72,32],utility:[60,12,64,28]};
- const layers=order.map(slot=>{const id=ship.parts?.[slot],p=id&&part(id);if(!p)return'';const vis=p.render?.visual||{},b=vis.box||fallback[slot],crop=vis.crop||[0,0,1,1],x=b[0]-180*crop[0]*(b[2]/(180*crop[2])),y=b[1]-88*crop[1]*(b[3]/(88*crop[3])),w=b[2]/crop[2],h=b[3]/crop[3];return '<g class="sf-part-raster sf-slot-'+slot+'" data-part-id="'+esc(id)+'" data-sf-slot="'+slot+'" opacity="'+opacity[slot]+'"><svg x="'+b[0]+'" y="'+b[1]+'" width="'+b[2]+'" height="'+b[3]+'" viewBox="'+b[0]+' '+b[1]+' '+b[2]+' '+b[3]+'" overflow="hidden"><image class="sf-raster-art" href="'+esc(asset(p))+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" preserveAspectRatio="none"/></svg></g>';}).join('');
- return '<svg class="shipforge-svg sf-raster-assembly sf-anchor-v1" viewBox="0 0 180 88" role="img" aria-label="'+esc(label)+'" preserveAspectRatio="xMidYMid meet" data-render-engine="raster-v5.3" data-visual-standard="shipforge-hardpoint-v2">'+defs(uid)+'<g class="sf-assembled-hull" filter="url(#'+uid+'shadow)">'+layers+'</g></svg>';
+ const corePart=part(ship.parts?.core),coreVis=corePart?.render?.visual||{},coreBox=coreVis.box||fallback.core,coreAnchor=coreVis.anchor||[.5,.5];
+ const coreOrigin=[coreBox[0],coreBox[1]];
+ const layers=order.map(slot=>{
+  const id=ship.parts?.[slot],p=id&&part(id);if(!p)return'';
+  const vis=p.render?.visual||{},base=vis.box||fallback[slot],anchor=vis.anchor||[.5,.5],hp=vis.hardpoint||[base[0]+base[2]*anchor[0],base[1]+base[3]*anchor[1]];
+  const w=base[2],h=base[3];
+  const x=slot==='core'?coreOrigin[0]:hp[0]-anchor[0]*w;
+  const y=slot==='core'?coreOrigin[1]:hp[1]-anchor[1]*h;
+  const crop=vis.crop||[0,0,1,1],imgX=x-w*crop[0]/crop[2],imgY=y-h*crop[1]/crop[3],imgW=w/crop[2],imgH=h/crop[3];
+  return '<g class="sf-part-raster sf-slot-'+slot+'" data-part-id="'+esc(id)+'" data-sf-slot="'+slot+'" data-parent="'+esc(vis.parent||'root')+'" data-hardpoint="'+hp.join(',')+'" opacity="'+opacity[slot]+'"><svg x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" viewBox="'+x+' '+y+' '+w+' '+h+'" overflow="hidden"><image class="sf-raster-art" href="'+esc(asset(p))+'" x="'+imgX+'" y="'+imgY+'" width="'+imgW+'" height="'+imgH+'" preserveAspectRatio="none"/></svg></g>';
+ }).join('');
+ return '<svg class="shipforge-svg sf-raster-assembly sf-hardpoint-v3" viewBox="0 0 180 88" role="img" aria-label="'+esc(label)+'" preserveAspectRatio="xMidYMid meet" data-render-engine="raster-v5.4" data-visual-standard="shipforge-hardpoint-v3">'+defs(uid)+'<g class="sf-assembled-hull" filter="url(#'+uid+'shadow)">'+layers+'</g></svg>';
 }
 function renderMarkup(ship,opts={}){const cls=['shipforge-ship','shipforge-raster-v5','shipforge-'+ship.classId,opts.className||''].filter(Boolean).join(' ');return '<span class="'+esc(cls)+'" data-shipforge-id="'+esc(ship.id)+'" data-ship-class="'+esc(ship.classId)+'" data-ship-seed="'+ship.seed+'" data-render-engine="raster-v5">'+renderSVG(ship,opts)+'</span>';}
 function population(seed,count=4,classIds=['fighter','shuttle','light_freighter','freighter','cargo','patrol']){const r=rng(seed),out=[];for(let i=0;i<count;i++){const c=classIds[Math.floor(r()*classIds.length)]||'light_freighter';out.push(generate((hashSeed(seed)+Math.imul(i+1,2654435761))>>>0,c));}return out;}
 function clone(ship){return generate(ship.seed,ship.classId,{id:ship.id,palette:ship.palette,parts:{...ship.parts},markings:ship.markings,wear:ship.wear,registry:ship.registry});}
 function componentSummary(){return Object.fromEntries(slots.map(s=>[s,C.parts.filter(p=>p.slot===s).length]));}
-root.ShipForge={version:'5.3.0',presentation:'core-relative-hardpoint-three-quarter',catalog:C,generate,population,validate,signature,stats,renderSVG,renderPartSVG,renderMarkup,clone,part,candidates,compatible,mountFits,hashSeed,componentSummary};
+root.ShipForge={version:'5.4.0',presentation:'functional-core-hardpoint-three-quarter',catalog:C,generate,population,validate,signature,stats,renderSVG,renderPartSVG,renderMarkup,clone,part,candidates,compatible,mountFits,hashSeed,componentSummary};
 })(typeof window!=='undefined'?window:globalThis);
