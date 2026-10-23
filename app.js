@@ -1481,7 +1481,10 @@ function storySubmit(action="",choice=null){
   storyPush("system","Story Engine",check.success?"The check succeeds; the consequence engine applies the advantage.":"The check fails; the story continues and the failure can change the state.");
  }
  if(choice?.actionType==="encounter_option"&&choice?.encounterId){
-  const result=window.DeadlockEncounterDirector?.resolve?.(DATA,choice.encounterId,choice.id,{success:check?check.success:true,npcId:choice.npcId||DATA.story.currentNpc||null});
+  const witnessId=choice.npcId||DATA.story.currentNpc||null;
+  const result=window.DeadlockEncounterDirector?.resolve?.(DATA,choice.encounterId,choice.id,{success:check?check.success:true,npcId:witnessId});
+  const activeEncounter=window.DeadlockEncounterDirector?.ensure?.(DATA)?.active;
+  window.DeadlockSocialKnowledge?.record?.(DATA,{id:choice.encounterId+'-'+(activeEncounter?.stage||'final')+'-'+choice.id,kind:'encounter',summary:text,tone:(check&&!check.success)?'failure':'success',source:choice.source||choice.intent||'encounter',publicity:choice.source==='apex:leader'?75:choice.intent==='dialogue'?35:20,channels:choice.source==='apex:leader'?['apex','underworld']:['underworld'],witnesses:witnessId?[witnessId]:[]});
   if(result?.status==="escalated"){
    const e=result.encounter;storyPush("narration","Encounter Director",e.summary,{encounterId:e.id});
    DATA.story.choices=[...window.DeadlockEncounterDirector.choice(DATA,storyDirectorContext(contractById(DATA.story.activeContractId))),...(window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(contractById(DATA.story.activeContractId)))||[]).slice(0,2)].slice(0,5);
@@ -2306,7 +2309,13 @@ function availableComplications(){
  });
 }
 
+function syncSocialKnowledge(){
+ const K=window.DeadlockSocialKnowledge;if(!K)return;
+ const ids=(DATA.story?.npcs||[]).map(x=>x.id).filter(Boolean);K.propagate(DATA,{npcIds:ids});
+ for(const id of ids)K.react(DATA,id,(npcId,fact,knowledge,delta)=>{const n=storyNpc(npcId);if(!n)return;adjustNpcMood(n,{trust:Math.round(delta.trust||0),respect:Math.round(delta.respect||0),fear:Math.round(delta.fear||0),irritation:Math.round(delta.suspicion||0)});rememberNpc(n,'SOCIAL_'+fact.id,fact.summary,Math.max(1,Math.round((knowledge.confidence||.4)*5)))});
+}
 function advanceNpcAgendas(opts={}){
+ syncSocialKnowledge();
  const c=contractById(DATA.story.activeContractId)||activeContracts?.()[0]||null;
  const beat=window.DeadlockNpcAgendas?.advance?.(DATA,storyDirectorContext(c,{danger:Number(DATA.story.danger||0)}),opts)||null;
  if(beat&&Number(beat.attention||0)>=7){
