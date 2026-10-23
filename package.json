@@ -18,7 +18,10 @@
     "test:raven-visual-spec": "node qa/raven-visual-spec.cjs",
     "test:raven-visual": "node qa/raven-visual.cjs",
     "test:encounters": "node qa/encounter-director.cjs",
-    "test:social-knowledge": "node qa/social-knowledge.cjs"
+    "test:social-knowledge": "node qa/social-knowledge.cjs",
+    "test:social-intel": "node qa/social-intel.cjs",
+    "test:social-simulation": "node qa/social-simulation.cjs",
+    "test:phase3": "node qa/encounter-director.cjs && node qa/social-knowledge.cjs && node qa/social-intel.cjs && node qa/social-simulation.cjs"
   },
   "dependencies": {
     "@capacitor/android": "8.5.3",
