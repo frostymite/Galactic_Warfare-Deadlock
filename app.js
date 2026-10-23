@@ -620,11 +620,18 @@ async function load(){
  const local=nativeLocal||localStorage.getItem(STORAGE_KEY);
  let restored=defaults;try{if(local){restored=JSON.parse(local);if(!validCampaignSave(restored))throw new Error("Invalid save");}}catch(err){try{localStorage.setItem(STORAGE_KEY+"_recovery",local||"")}catch{}window.DEADLOCK_RECOVERED=true;restored=structuredClone(defaults);}
  DATA=migrateOfflineData(restored,defaults);ensureGalaxyState();ensureMissionLoopState();ensureEncounterState();
+ const isFirstRun=!local;
  uiSound=DATA.settings.sound!==false;
  save();document.body.classList.toggle("compact",!!DATA.settings.compact);document.body.classList.toggle("no-anim",DATA.settings.animations===false);document.body.dataset.graphics=DATA.settings.graphicsQuality||"high";window.DeadlockGPU?.setEnabled?.(DATA.settings.gpuBackdrop!==false);window.DeadlockHUD?.setEnabled?.(DATA.settings.diegeticHud!==false);lastCredits=DATA.character.credits;detectFoldLayout();buildNav();render("Overview");
  if($("#soundBtn"))$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;
  requestAnimationFrame(detectFoldLayout);
  if(DATA.combat?.active&&DATA.combat.forced)setTimeout(autoEnemyTurns,150);
+ if(isFirstRun)setTimeout(showFirstRunBriefing,650);
+}
+function showFirstRunBriefing(){
+ const active=DATA.contracts.find(x=>x.id===(DATA.story?.activeContractId||"marr"))||DATA.contracts.find(x=>x.status==="Active");
+ openModal("WELCOME TO DEADLOCK",`<div class="first-run-brief"><div class="micro">ROVAN KES // CALLSIGN DEADLOCK</div><h3>Lead the 3.2 Apex Protocol. Hunt contracts. Build the Raven. Live with the consequences.</h3><p>You are entering an established campaign. NPCs remember what happens, relationships can change without you present, and information is only revealed when Deadlock actually learns it.</p><div class="first-run-objective"><span>RECOMMENDED FIRST MOVE</span><b>${esc(active?.title||"Continue the active contract")}</b><small>${esc(DATA.story?.objective||active?.objective||"Follow the current story objective.")}</small></div><div class="controls"><button class="btn good" id="firstRunStory">Continue Current Objective</button><button class="btn" id="firstRunHQ">Visit Blackglass HQ</button><button class="btn" id="firstRunRaven">Board The Raven</button></div></div>`);
+ setTimeout(()=>{const go=p=>{$("#modal").close();render(p)};if($("#firstRunStory"))$("#firstRunStory").onclick=()=>go("Story");if($("#firstRunHQ"))$("#firstRunHQ").onclick=()=>go("HQ");if($("#firstRunRaven"))$("#firstRunRaven").onclick=()=>go("Ship")},0);
 }
 function buildNav(){
  $("#nav").innerHTML="";
@@ -668,16 +675,16 @@ function healthControls(key,maxKey,label){
  <button class="btn step" data-charstep="${key}:-10">-10</button><button class="btn step" data-charstep="${key}:-1">-1</button><button class="btn step" data-charstep="${key}:1">+1</button><button class="btn step" data-charstep="${key}:10">+10</button></div></div>`
 }
 function pageOverview(){
- let c=DATA.character,s=DATA.ship;
+ let c=DATA.character,s=DATA.ship,active=DATA.contracts.find(x=>x.id===(DATA.story?.activeContractId||"marr"))||DATA.contracts.find(x=>x.status==="Active"),objective=DATA.story?.objective||active?.objective||"Choose the next move.",danger=clamp(Number(DATA.story?.danger||0),0,100);
  return `<div class="grid">
  <div class="card hero">${characterVisual("rovan","neutral","Rovan Kes")}<div class="overlay"><div class="micro">${esc(c.species)} // ${esc(c.role)}</div><h2>${esc(c.name)}</h2><div class="cyan">CALLSIGN: ${esc(c.callsign)}</div><p>${esc(c.appearance)}</p></div></div>
- <div class="card span3"><h3>Status</h3><div class="row"><span class="muted">Level</span><b>${c.level}</b></div><div class="row"><span class="muted">XP</span><b>${c.xp}/${c.xpNext}</b></div>${meter(c.xp,c.xpNext)}
- <div class="row"><span class="muted">Credits</span><b class="reward">${money(c.credits)}</b></div><div class="controls"><button class="btn" data-open="credits">Adjust Credits</button><button class="btn" data-open="xp">Add XP</button></div></div>
- <div class="card span4"><h3>Loadout</h3>${DATA.weapons.map(w=>`<div class="tile" data-weapon="${w.id}"><div class="name">${w.name}</div><div class="sub">${w.type}</div><div class="row small"><span>Mode</span><b>${w.mode}</b></div>${meter(w.charge,w.chargeMax)}</div>`).join("")}</div>
+ <div class="card span5 mission-command"><div class="micro">CURRENT OBJECTIVE</div><h3>${esc(active?.title||DATA.story?.sessionTitle||"Open Contract")}</h3><p class="objective-copy">${esc(objective)}</p><div class="row"><span>Location</span><b>${esc(DATA.story?.location||"Unknown")}</b></div><div class="row"><span>Threat</span><b class="${danger>=70?"danger-text":danger>=40?"warn-text":"good-text"}">${danger}%</b></div><div class="controls"><button class="btn good" data-overview-action="continue">Continue Current Objective</button><button class="btn" data-overview-action="hq">Blackglass HQ</button><button class="btn" data-overview-action="ship">Board The Raven</button></div></div>
+ <div class="card span3"><h3>Deadlock</h3><div class="row"><span>Level</span><b>${c.level}</b></div><div class="row"><span>XP</span><b>${c.xp}/${c.xpNext}</b></div>${meter(c.xp,c.xpNext)}<div class="row"><span>Credits</span><b class="reward">${money(c.credits)}</b></div></div>
  ${healthControls("health","healthMax","Health")}${healthControls("stamina","staminaMax","Stamina")}
- <div class="card span4"><h3>The Raven</h3><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="controls"><button class="btn" onclick="render('Dogfight')">Dogfight HUD</button></div></div>
- <div class="card span7"><h3>Active Contracts</h3>${DATA.contracts.filter(x=>x.status==="Active").map(contractHTML).join("")}</div>
- <div class="card span5"><h3>Quick Actions</h3><div class="pill cyan">OFFLINE READY</div><div class="controls"><button class="btn" onclick="render('Combat')">Enter Combat</button><button class="btn" onclick="render('Targets')">Target Dossiers</button><button class="btn" onclick="render('Bounties')">Generate Bounty</button><button class="btn" onclick="render('Galaxy')">Galaxy Map</button></div></div>
+ <div class="card span4"><h3>The Raven</h3><div class="row"><span>Hull</span><b>${s.hull}/${s.hullMax}</b></div>${meter(s.hull,s.hullMax,statusClass(s.hull,s.hullMax))}<div class="row"><span>Shields</span><b>${s.shields}/${s.shieldsMax}</b></div>${meter(s.shields,s.shieldsMax,statusClass(s.shields,s.shieldsMax))}<div class="controls"><button class="btn" data-overview-action="ship">Open Raven Systems</button></div></div>
+ <div class="card span4"><h3>Loadout</h3>${DATA.weapons.map(w=>`<div class="tile" data-weapon="${w.id}"><div class="name">${w.name}</div><div class="sub">${w.type}</div><div class="row small"><span>Mode</span><b>${w.mode}</b></div>${meter(w.charge,w.chargeMax)}</div>`).join("")}</div>
+ <div class="card span8"><h3>Active Contracts</h3>${DATA.contracts.filter(x=>x.status==="Active").map(contractHTML).join("")}</div>
+ <div class="card span4"><h3>Apex Command</h3><p class="muted">Review headquarters activity, personnel intelligence, and emerging internal relationships.</p><div class="controls"><button class="btn" data-overview-action="hq">Open Blackglass</button><button class="btn" data-overview-action="story">Story Mode</button></div></div>
  <div class="card full"><h3>System Feed</h3><div class="notification-stack">${notificationLog.length?notificationLog.map(n=>`<div class="notif ${n.type}"><span class="small muted">${n.ts}</span> — ${esc(n.text)}</div>`).join(""):'<div class="muted">No new tactical events.</div>'}</div></div>
  </div>`
 }
@@ -979,7 +986,7 @@ function pageJournal(){return `<div class="card"><div class="row"><h3>Journal</h
 function pageFactions(){return `<div class="card"><h3>Faction Reputation</h3>${DATA.factions.map(f=>`<div class="tile no-click"><div class="row"><b>${esc(f.name)}</b><b class="${f.score<0?'danger-text':'good-text'}">${f.score>0?'+':''}${f.score}</b></div><div class="small muted">${esc(f.status)}</div>${meter(f.score+100,200)}<div class="controls"><button class="btn step" data-faction="${f.id}:-5">-5</button><button class="btn step" data-faction="${f.id}:5">+5</button></div></div>`).join("")}</div>`}
 function pageDice(){return `<div class="grid"><div class="card span5"><h3>Dice Roller</h3><div class="field"><label>Die</label><select id="dieSides">${[4,6,8,10,12,20,100].map(n=>`<option value="${n}" ${n===20?'selected':''}>d${n}</option>`).join("")}</select></div><div class="field"><label>Number of Dice</label><input id="dieCount" type="number" min="1" max="20" value="1"></div><div class="field"><label>Modifier</label><input id="dieMod" type="number" value="0"></div><button class="btn" id="rollBtn">Roll</button><div class="dice" id="diceResult">—</div></div><div class="card span7"><h3>Roll History</h3><div class="log">${diceHistory.map(r=>`<div>${r.time} — ${r.count}d${r.sides}${r.mod>=0?'+':''}${r.mod}: [${r.rolls.join(", ")}] = <b>${r.total}</b></div>`).join("")||"No rolls yet."}</div></div></div>`}
 function pageGMControls(){
- return `<div class="grid"><div class="card span6"><h3>Combat Mechanics</h3><p class="muted">${esc(DATA.meta.rulesNote)}</p>
+ return `<div class="grid"><div class="card full"><h3>Campaign Overrides</h3><p class="muted">Developer / GM controls are kept here so the main game dashboard stays focused on play.</p><div class="controls"><button class="btn" data-open="credits">Adjust Credits</button><button class="btn" data-open="xp">Add XP</button></div></div><div class="card span6"><h3>Combat Mechanics</h3><p class="muted">${esc(DATA.meta.rulesNote)}</p>
  ${DATA.weapons.map(w=>`<div class="tile no-click"><b>${w.name}</b><div class="field"><label>Attack modifier</label><input type="number" data-gmweapon="${w.id}:attackMod" value="${w.combat.attackMod}"></div><div class="field"><label>Damage formula</label><input data-gmweapon="${w.id}:damage" value="${esc(w.combat.damage)}"></div></div>`).join("")}</div>
  <div class="card span6"><h3>Raven Dogfight Mechanics</h3><div class="field"><label>Attack modifier</label><input type="number" data-gmship="attackMod" value="${DATA.ship.dogfight.attackMod}"></div><div class="field"><label>Forward cannon damage</label><input data-gmship="damage" value="${esc(DATA.ship.dogfight.damage)}"></div><div class="field"><label>Boost fuel cost</label><input type="number" data-gmship="boostFuelCost" value="${DATA.ship.dogfight.boostFuelCost}"></div><div class="field"><label>Shield overcharge fuel cost</label><input type="number" data-gmship="shieldOverchargeCost" value="${DATA.ship.dogfight.shieldOverchargeCost}"></div></div>
  <div class="card full"><h3>Raw Campaign Data</h3><p class="muted">Advanced: edit the entire save. This is the fastest way to change anything the UI does not expose yet.</p><button class="btn" id="rawEdit">Open Raw JSON Editor</button></div></div>`
@@ -995,6 +1002,7 @@ $("#closeModal").onclick=()=>$("#modal").close();
 
 function wire(){
  wireStory();
+ $("[data-overview-action]").forEach(b=>b.onclick=()=>{const a=b.dataset.overviewAction;if(a==="continue"||a==="story")render("Story");if(a==="hq")render("HQ");if(a==="ship")render("Ship")});
  $$("[data-holotx]").forEach(el=>el.onclick=()=>openHoloTransmission(el.dataset.holotx));
  if($("#generateTransmission"))$("#generateTransmission").onclick=()=>{const tx=generateHolonetTransmission();render("Holonet");setTimeout(()=>openHoloTransmission(tx.id),80)};
  if($("#holoPlotRoute"))$("#holoPlotRoute").onclick=()=>{plotHyperspaceRoute(DATA.holonet.route?.destinationId);render("Holonet")};
