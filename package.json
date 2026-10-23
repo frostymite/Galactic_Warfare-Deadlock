@@ -1,6 +1,6 @@
 {
   "name": "deadlock-tactical-os",
-  "version": "17.14.0",
+  "version": "17.15.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,7 +16,8 @@
     "test:npc-agendas": "node qa/npc-agendas.cjs",
     "test:npc-arcs": "node qa/npc-arcs.cjs",
     "test:raven-visual-spec": "node qa/raven-visual-spec.cjs",
-    "test:raven-visual": "node qa/raven-visual.cjs"
+    "test:raven-visual": "node qa/raven-visual.cjs",
+    "test:encounters": "node qa/encounter-director.cjs"
   },
   "dependencies": {
     "@capacitor/android": "8.5.3",
