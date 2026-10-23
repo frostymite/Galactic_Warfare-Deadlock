@@ -932,6 +932,7 @@ function pageHQ(){
  const g=galaxyState(),atHome=g.currentLocationId===g.homeId&&['docked','surface'].includes(g.phase),site=hqSite(g.currentSiteId)||GALAXY.hq.sites[0];
  return `<div class="grid hq-shell"><div class="card full hq-hero"><div class="hq-image">${imgTag(hqSiteAsset(site),site.name,assetEntry("blackglass","hq"),"hq-scene-img")}<div class="hq-ambient"><i></i><i></i><i></i></div></div><div class="hq-copy"><div class="micro">BLACKGLASS STATION // APEX HEADQUARTERS</div><h2>${esc(site.name)}</h2><div class="cyan">${atHome?"PHYSICAL ACCESS":"REMOTE SECURE LINK"}</div><p>${esc(site.description)}</p><div class="controls">${(site.actions||[]).map(a=>`<button class="btn" data-hq-action="${esc(a)}">${esc(a)}</button>`).join("")}</div></div></div>
  <div class="card span8"><h3>HQ Spaces</h3><div class="hq-site-grid">${GALAXY.hq.sites.map(x=>`<button class="hq-site ${x.id===site.id?"active":""}" data-hq-site="${x.id}">${imgTag(hqSiteAsset(x),x.name,assetEntry("blackglass","hq"))}<span><b>${esc(x.name)}</b><small>${esc(x.description)}</small></span></button>`).join("")}</div></div>
+ <div class="card full">${window.DeadlockSocialIntel?window.DeadlockSocialIntel.render(DATA,(DATA.story?.socialIntel?.selectedNpc||DATA.story?.currentNpc||(DATA.story?.npcs||[])[0]?.id)):""}</div>
  <div class="card span4"><h3>Blackglass Status</h3><div class="row"><span class="muted">Home Base</span><b>BLACKGLASS</b></div><div class="row"><span class="muted">Raven</span><b>${atHome?"DOCKED":"AWAY"}</b></div><div class="row"><span class="muted">Active Contracts</span><b>${activeContracts().length}</b></div><div class="row"><span class="muted">Known Systems</span><b>${g.discovered.length}/${GALAXY.locations.length}</b></div><div class="controls">${atHome?'<button class="btn good" onclick="render(\'Ship\')">Board The Raven</button>':'<button class="btn" onclick="galaxyState().selectedLocationId=galaxyState().homeId;save();render(\'Galaxy\')">Plot Course Home</button>'}<button class="btn" onclick="render('Contracts')">Contract Board</button></div><div class="holonet-mini"><div class="small muted">HQ CANON</div><p class="small">Blackglass Station belongs to The 3.2 Apex Protocol. Its lab, armory, workshop, hangar, defenses and isolated vault are established campaign assets. Open Syndicate for the full record.</p></div></div></div>`
 }
 function pageDogfight(){
@@ -1390,6 +1391,7 @@ function pageStory(){
       ${(s.interruptions||[]).length?`<h3>Active Interruptions</h3><div class="story-interruptions">${storyInterruptionButtons()}</div>`:""}
       ${storyWorldActivityHTML()}
       ${storyNpcArcHTML()}
+      ${window.DeadlockSocialIntel&&npc?window.DeadlockSocialIntel.render(DATA,npc.id):""}
       <h3>Situation-Driven Options</h3>
       <div class="small muted mission-choice-guide">These options are rebuilt from the current NPC, location, contract stage, living-world rumors, recent choices, and consequences. Ignore them anytime and type any action.</div>
       <div class="story-choices">${storyChoiceButtons()}</div>
