@@ -1,4 +1,4 @@
-const CACHE="deadlock-v17-15-2-wire-hotfix";
+const CACHE="deadlock-v17-15-3-runtime-refresh";
 const APP_SHELL=[
  "./ship-parts.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./runtime/shipforge-world.js", "./runtime/shipforge-world.css", "./runtime/raven-visual.js", "./runtime/raven-visual.css", "./assets/ships/raven/generated/raven_anchor_v17_13.svg", "./assets/ships/raven/generated/raven_current_loadout_zones.json", "./runtime/living-world.js", "./runtime/living-world.css", "./runtime/npc-agendas.js", "./runtime/npc-arcs.js", "./runtime/story-director.js", "./runtime/encounter-director.js", "./runtime/social-knowledge.js", "./runtime/social-intel.js", "./runtime/social-simulation.js", "./runtime/social-intel.css", "./runtime/visual-hotfix.css", "./component-library.html", "./component-library.css", "./component-library.js",
  "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.png", "./assets/locations/blackglass/generated/hq.webp", "./assets/locations/blackglass/generated/briefing.webp", "./assets/locations/blackglass/generated/hangar.webp", "./assets/locations/blackglass/generated/quarters.webp", "./assets/locations/blackglass/generated/contracts.webp",
@@ -139,5 +139,10 @@ self.addEventListener("fetch",event=>{
  const req=event.request;if(req.method!=="GET")return;const url=new URL(req.url);
  if(url.pathname.startsWith("/api/")){event.respondWith(fetch(req).catch(()=>new Response(JSON.stringify({ok:false,offline:true}),{status:503,headers:{"Content-Type":"application/json"}})));return;}
  if(req.mode==="navigate"){event.respondWith(fetch(req).then(resp=>{const copy=resp.clone();caches.open(CACHE).then(c=>c.put("./index.html",copy));return resp;}).catch(()=>caches.match("./index.html")));return;}
+ const core=/\.(?:js|css|json)$/.test(url.pathname)||url.pathname.endsWith("/sw.js");
+ if(core){
+  event.respondWith(fetch(req,{cache:"no-store"}).then(resp=>{const copy=resp.clone();caches.open(CACHE).then(c=>c.put(req,copy));return resp;}).catch(()=>caches.match(req)));
+  return;
+ }
  event.respondWith(caches.match(req).then(cached=>cached||fetch(req).then(resp=>{const copy=resp.clone();caches.open(CACHE).then(c=>c.put(req,copy));return resp;})));
 });
