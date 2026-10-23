@@ -1,3 +1,33 @@
+## ShipForge Catalog Scrub — v17.14.0
+
+ShipForge no longer carries an active path back to the original placeholder component vectors.
+
+The component catalog has been migrated to `deadlock.shipforge.parts.v3` / ShipForge v5. Existing component IDs are intentionally preserved so old saves, installed Raven hardware, salvage, dealers, NPC ships, and fleet records remain compatible.
+
+The active visual contract is now only:
+
+`part.render.asset -> assets/ships/generated/<slot>/<part>.webp`
+
+Removed from the live build:
+
+- legacy `visual` fields,
+- legacy `art` / `artVersion` compatibility fields,
+- `renderProfile` fallback metadata,
+- `ship-component-visuals.json`,
+- `runtime/shipforge-visuals.js`,
+- all 64 source SVG placeholder components,
+- all 64 packaged/dist copies of those placeholders.
+
+The service worker now precaches only `part.render.asset` entries and uses cache `deadlock-v17-14-shipforge-raster-only`.
+
+Validation:
+- **177 / 177** runtime/catalog compatibility checks passed,
+- all 64 replacement raster parts resolve,
+- all six ship classes generate and validate,
+- the Raven canonical seven-part loadout remains compatible,
+- no active ShipForge component render contains an `assets/ships/components/` path or `ShipForgeVisuals` dependency.
+
+
 # Deadlock v17 — The 3.2 Apex Protocol
 
 Your recovered DnD syndicate canon now lives in the game. Open **Syndicate** in the navigation, or use the command link on HQ, Overview or Factions. Blackglass is your owned asteroid headquarters; Rovan is founder and leader. The name commemorates the successful 3.2-million-credit heist.
