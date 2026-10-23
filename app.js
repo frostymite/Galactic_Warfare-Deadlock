@@ -1475,9 +1475,22 @@ function storySubmit(action="",choice=null){
  const text=(action||choice?.label||"").trim();
  window.DeadlockStoryDirector?.recordChoice?.(DATA,choice,text);
  if(text)storyPush("player","Rovan Kes",text);
+ let check=null;
  if(choice?.skill&&choice?.dc){
-  const r=storySkillCheck(choice.skill,choice.dc,choice.label);
-  storyPush("system","Story Engine",r.success?"The check succeeds; the consequence engine applies the advantage.":"The check fails; the story continues and the failure can change the state.");
+  check=storySkillCheck(choice.skill,choice.dc,choice.label);
+  storyPush("system","Story Engine",check.success?"The check succeeds; the consequence engine applies the advantage.":"The check fails; the story continues and the failure can change the state.");
+ }
+ if(choice?.actionType==="encounter_option"&&choice?.encounterId){
+  const result=window.DeadlockEncounterDirector?.resolve?.(DATA,choice.encounterId,choice.id,{success:check?check.success:true,npcId:choice.npcId||DATA.story.currentNpc||null});
+  if(result?.status==="escalated"){
+   const e=result.encounter;storyPush("narration","Encounter Director",e.summary,{encounterId:e.id});
+   DATA.story.choices=[...window.DeadlockEncounterDirector.choice(DATA,storyDirectorContext(contractById(DATA.story.activeContractId))),...(window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(contractById(DATA.story.activeContractId)))||[]).slice(0,2)].slice(0,5);
+   DATA.story.lastPlayerAction=text;DATA.story.director.turn=Number(DATA.story.director.turn||0)+1;save();return render("Story");
+  }
+  if(result?.status==="resolved"){
+   storyPush("narration","Encounter Director",result.encounter.resolution.success?"The encounter breaks in Deadlock’s favor and the situation opens up.":"The encounter closes, but the opposition leaves pressure behind.");
+   DATA.story.director.turn=Number(DATA.story.director.turn||0)+1;const ac=contractById(DATA.story.activeContractId);if(ac)DATA.story.choices=missionChoices(ac);DATA.story.lastPlayerAction=text;save();return render("Story");
+  }
  }
  DATA.story.lastPlayerAction=text;
  if(choice?.npcId)DATA.story.currentNpc=choice.npcId;
@@ -1616,7 +1629,14 @@ function storyDirectorContext(contract=null,extra={}){
 function missionChoices(contract){
  if(!contract)return [];
  const s=DATA.story,st=contractStageInfo(contract),t=targetById(contract.targetId),name=t?.name||"the objective",cid=contract.id;
- const procedural=window.DeadlockStoryDirector?.missionChoices?.(DATA,storyDirectorContext(contract,{stage:st,target:t}));
+ const ctx=storyDirectorContext(contract,{stage:st,target:t});
+ const encounter=window.DeadlockEncounterDirector?.choice?.(DATA,ctx)||[];
+ const procedural=window.DeadlockStoryDirector?.missionChoices?.(DATA,ctx)||[];
+ if(encounter.length){
+  const live=window.DeadlockEncounterDirector?.ensure?.(DATA)?.active;
+  if(live&&!DATA.story.history?.slice(-4).some(h=>h.encounterId===live.id))storyPush("narration","Encounter Director",live.summary,{encounterId:live.id});
+  return [...encounter.slice(0,3),...procedural.slice(0,2)].slice(0,5);
+ }
  if(procedural?.length)return procedural;
  if(contract.status==="Completed")return [
   {id:uid("choice"),label:"Review the next active contract.",intent:"bounty",purpose:"NEXT JOB"},
