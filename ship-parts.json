@@ -1,6 +1,6 @@
 {
   "schema": "deadlock.shipforge.parts.v3",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "classes": {
     "fighter": {
       "label": "Fighter",
@@ -257,9 +257,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -279,7 +279,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -315,9 +320,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -337,7 +342,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -372,9 +382,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -394,7 +404,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -429,9 +444,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -451,7 +466,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -487,9 +507,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -509,7 +529,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -543,9 +568,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -565,7 +590,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -600,9 +630,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -622,7 +652,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -659,9 +694,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -681,7 +716,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -716,9 +756,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -738,7 +778,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -773,9 +818,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -795,7 +840,12 @@
           "anchor": [
             0.5,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            90,
+            46
+          ],
+          "parent": null
         }
       }
     },
@@ -829,9 +879,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -851,7 +901,12 @@
           "anchor": [
             0.18,
             0.56
-          ]
+          ],
+          "hardpoint": [
+            124,
+            45
+          ],
+          "parent": "core"
         }
       }
     },
@@ -885,9 +940,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -907,7 +962,12 @@
           "anchor": [
             0.18,
             0.56
-          ]
+          ],
+          "hardpoint": [
+            124,
+            45
+          ],
+          "parent": "core"
         }
       }
     },
@@ -942,9 +1002,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -964,7 +1024,12 @@
           "anchor": [
             0.18,
             0.56
-          ]
+          ],
+          "hardpoint": [
+            124,
+            45
+          ],
+          "parent": "core"
         }
       }
     },
@@ -997,9 +1062,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1019,7 +1084,12 @@
           "anchor": [
             0.18,
             0.56
-          ]
+          ],
+          "hardpoint": [
+            124,
+            45
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1054,9 +1124,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1076,7 +1146,12 @@
           "anchor": [
             0.18,
             0.56
-          ]
+          ],
+          "hardpoint": [
+            124,
+            45
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1111,9 +1186,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1133,7 +1208,12 @@
           "anchor": [
             0.18,
             0.56
-          ]
+          ],
+          "hardpoint": [
+            124,
+            45
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1167,9 +1247,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1189,7 +1269,12 @@
           "anchor": [
             0.18,
             0.56
-          ]
+          ],
+          "hardpoint": [
+            124,
+            45
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1226,9 +1311,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1248,7 +1333,12 @@
           "anchor": [
             0.18,
             0.56
-          ]
+          ],
+          "hardpoint": [
+            124,
+            45
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1282,9 +1372,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1304,7 +1394,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1339,9 +1434,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1361,7 +1456,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1394,9 +1494,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1416,7 +1516,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1450,9 +1555,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1472,7 +1577,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1505,9 +1615,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1527,7 +1637,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1561,9 +1676,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1583,7 +1698,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1616,9 +1736,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1638,7 +1758,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1673,9 +1798,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1695,7 +1820,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1728,9 +1858,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1750,7 +1880,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1785,9 +1920,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1807,7 +1942,12 @@
           "anchor": [
             0.5,
             0.54
-          ]
+          ],
+          "hardpoint": [
+            88,
+            48
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1844,9 +1984,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1866,7 +2006,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1902,9 +2047,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1924,7 +2069,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -1958,9 +2108,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -1980,7 +2130,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2016,9 +2171,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2038,7 +2193,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2072,9 +2232,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2094,7 +2254,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2130,9 +2295,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2152,7 +2317,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2187,9 +2357,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2209,7 +2379,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2244,9 +2419,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2266,7 +2441,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2301,9 +2481,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2323,7 +2503,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2358,9 +2543,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2380,7 +2565,12 @@
           "anchor": [
             0.82,
             0.52
-          ]
+          ],
+          "hardpoint": [
+            55,
+            47
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2415,9 +2605,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2437,7 +2627,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2471,9 +2666,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2493,7 +2688,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2527,9 +2727,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2549,7 +2749,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2582,9 +2787,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2604,7 +2809,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2637,9 +2847,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2659,7 +2869,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2694,9 +2909,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2716,7 +2931,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2754,9 +2974,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2776,7 +2996,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2812,9 +3037,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2834,7 +3059,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2869,9 +3099,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2891,7 +3121,12 @@
           "anchor": [
             0.42,
             0.68
-          ]
+          ],
+          "hardpoint": [
+            102,
+            34
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2925,9 +3160,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -2947,7 +3182,12 @@
           "anchor": [
             0.5,
             0.48
-          ]
+          ],
+          "hardpoint": [
+            88,
+            54
+          ],
+          "parent": "core"
         }
       }
     },
@@ -2981,9 +3221,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3003,7 +3243,12 @@
           "anchor": [
             0.5,
             0.48
-          ]
+          ],
+          "hardpoint": [
+            88,
+            54
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3036,9 +3281,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3058,7 +3303,12 @@
           "anchor": [
             0.5,
             0.48
-          ]
+          ],
+          "hardpoint": [
+            88,
+            54
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3091,9 +3341,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3113,7 +3363,12 @@
           "anchor": [
             0.5,
             0.48
-          ]
+          ],
+          "hardpoint": [
+            88,
+            54
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3148,9 +3403,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3170,7 +3425,12 @@
           "anchor": [
             0.5,
             0.48
-          ]
+          ],
+          "hardpoint": [
+            88,
+            54
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3203,9 +3463,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3225,7 +3485,12 @@
           "anchor": [
             0.5,
             0.48
-          ]
+          ],
+          "hardpoint": [
+            88,
+            54
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3261,9 +3526,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3283,7 +3548,12 @@
           "anchor": [
             0.5,
             0.48
-          ]
+          ],
+          "hardpoint": [
+            88,
+            54
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3320,9 +3590,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3342,7 +3612,12 @@
           "anchor": [
             0.5,
             0.48
-          ]
+          ],
+          "hardpoint": [
+            88,
+            54
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3376,9 +3651,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3398,7 +3673,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3432,9 +3712,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3454,7 +3734,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3489,9 +3774,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3511,7 +3796,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3545,9 +3835,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3567,7 +3857,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3602,9 +3897,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3624,7 +3919,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3658,9 +3958,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3680,7 +3980,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3716,9 +4021,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3738,7 +4043,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3775,9 +4085,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3797,7 +4107,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     },
@@ -3834,9 +4149,9 @@
         "view": "three_quarter",
         "transparent": true,
         "fidelity": "generated-detail",
-        "version": "17.15.9",
+        "version": "17.15.10",
         "visual": {
-          "standard": "shipforge-anchor-v1",
+          "standard": "shipforge-hardpoint-v2",
           "canvas": [
             180,
             88
@@ -3856,7 +4171,12 @@
           "anchor": [
             0.5,
             0.72
-          ]
+          ],
+          "hardpoint": [
+            82,
+            31
+          ],
+          "parent": "core"
         }
       }
     }

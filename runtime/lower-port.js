@@ -1,6 +1,6 @@
 /* v16 district UI and authoritative bridge to campaign state. */
 (()=>{'use strict';
-const E=window.PortEngine,art={landing:'assets/scenes/veyra_port_v14.png',market:'assets/scenes/port_market_v16.png',cantina:'assets/scenes/port_cantina_v16.png',tunnels:'assets/scenes/port_tunnels_v16.png',hideout:'assets/scenes/port_hideout_v16.png'};
+const E=window.PortEngine,art={landing:'assets/scenes/veyra_port_v14.svg',market:'assets/scenes/port_market_v16.svg',cantina:'assets/scenes/port_cantina_v16.svg',tunnels:'assets/scenes/port_tunnels_v16.svg',hideout:'assets/scenes/port_hideout_v16.svg'};
 const descriptions={landing:'Freighters descend through the gantries. The Raven waits beside a row of tired flood pumps.',market:'Parts traders, night-shift crews and off-world couriers share a narrow strip of shelter.',cantina:'Copper lamps soften the rain outside. Information travels quietly between the booths.',tunnels:'Pipes and cable runs connect the port below street level. Every sound carries.',hideout:'An old cargo bay has become a working salvage shop. Nothing here stays unclaimed for long.'};
 function available(){return currentGalaxyLocation()?.id==='veyra_prime'&&['docked','surface'].includes(galaxyState().phase)&&!forcedEncounterPage();}
 function state(){if(!DATA.lowerPort||DATA.lowerPort.version!==1){DATA.lowerPort=E.create(crypto.getRandomValues(new Uint32Array(1))[0]);save();}return DATA.lowerPort;}
