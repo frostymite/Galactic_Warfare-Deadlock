@@ -5,7 +5,7 @@
  */
 (function(root){
 'use strict';
-const VERSION='1.3.0';
+const VERSION='1.4.0';
 const ANCHOR='assets/raven_dedicated.jpg';
 const BASE={
  core:'core_twinboom_09',
@@ -192,13 +192,8 @@ function overlayMarkup(F,b){
 function render(data,state='flight',alt='The Raven'){
  const F=root.ShipForge,b=build(data);if(!F||!b)return null;
  const label=alt||b.ship.name||'The Raven';
- const partSig=Object.entries(b.bp.parts||{}).map(([slot,id])=>slot+':'+id).join('|');
- const refits=overlayMarkup(F,b);
- return '<span class="raven-visual raven-dynamic raven-anchor-live raven-state-'+esc(state)+' raven-condition-'+esc(b.conditionBand)+'" data-raven-renderer="generated-raster-plus-native-refit" data-raven-signature="'+esc(b.ship.signature||partSig)+'" data-raven-condition="'+b.avgCondition+'" data-raven-refits="'+b.changed.length+'" data-raven-palette="'+esc(b.bp.palette||'black_copper')+'" aria-label="'+esc(label)+'">'+
-   '<img class="raven-anchor-art" src="'+ANCHOR+'" alt="'+esc(label)+'" draggable="false">'+
-   '<span class="raven-refit-layer" aria-hidden="true">'+refits+'</span>'+
-   '<span class="raven-dynamic-glow" aria-hidden="true"></span>'+
-  '</span>';
+ const assembly=F.renderMarkup(b.bp,{label,className:'raven-installed-shipforge'});
+ return '<span class="raven-visual raven-dynamic raven-shipforge-live raven-state-'+esc(state)+' raven-condition-'+esc(b.conditionBand)+'" data-raven-renderer="installed-shipforge-raster" data-raven-signature="'+esc(b.ship.signature||F.signature(b.bp))+'" data-raven-condition="'+b.avgCondition+'" aria-label="'+esc(label)+'"><span class="raven-dynamic-stage">'+assembly+'</span><span class="raven-dynamic-glow" aria-hidden="true"></span></span>';
 }
 function fallback(data,state='flight',alt='The Raven'){
  const F=root.ShipForge,b=build(data);if(!F||!b)return null;
