@@ -601,7 +601,7 @@ const HQ_GENERATED_ART={
  blackglass_contracts:"assets/locations/blackglass/generated/contracts.webp"
 };
 function hqSiteAsset(site){if(!site)return HQ_GENERATED_ART.blackglass_hq;return HQ_GENERATED_ART[site.id]||assetEntry("blackglass",site.asset?.replace("blackglass_","")||"hq")||HQ_GENERATED_ART.blackglass_hq}
-function handleHqSite(id){const g=galaxyState();g.currentSiteId=id;save();render("HQ")}
+function handleHqSite(id){const g=galaxyState(),site=hqSite(id);if(!site)return toast("HQ space unavailable");g.currentSiteId=id;save();render("HQ");requestAnimationFrame(()=>{document.querySelector(".hq-hero")?.scrollIntoView({behavior:"smooth",block:"start"});toast(site.name+" selected")})}
 function handleHqAction(action){
  if(action==='Open Syndicate command')return render('Syndicate');
  const a=String(action).toLowerCase();if(/contract/.test(a))return render("Contracts");if(/target/.test(a))return render("Targets");if(/journal/.test(a))return render("Journal");if(/identity/.test(a))return render("Identities");if(/gear/.test(a))return render("Gear");if(/diagnostic|repair|raven/.test(a))return render("Ship");if(/contact|call/.test(a))return render("Holonet");if(/galaxy|intel/.test(a))return render("Galaxy");return toast(action)
@@ -613,8 +613,13 @@ function galaxyMapSvg(){
  return `<div class="living-galaxy-map"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${nodes}<div class="galaxy-map-legend"><span><i class="legend-dot home"></i>HQ</span><span><i class="legend-dot current"></i>Raven</span><span><i class="legend-dot unknown"></i>Unverified</span></div></div>`
 }
 
+async function loadJsonAsset(path){
+ const url=new URL(path,location.href).href;
+ try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw new Error(path+" HTTP "+r.status);return await r.json()}
+ catch(primary){try{const cached=await caches?.match?.(url);if(cached)return await cached.json()}catch{}throw new Error("BOOT_ASSET_FAILED:"+path+":"+primary.message)}
+}
 async function load(){
- const [defaults,galaxy,assets,scenes]=await Promise.all([fetch("character-data.json").then(r=>r.json()),fetch("galaxy-data.json").then(r=>r.json()),fetch("asset-manifest.json").then(r=>r.json()),fetch("scene-data.json").then(r=>r.json())]);
+ const [defaults,galaxy,assets,scenes]=await Promise.all(["character-data.json","galaxy-data.json","asset-manifest.json","scene-data.json"].map(loadJsonAsset));
  GALAXY=galaxy;ASSET_MANIFEST=assets;SCENES=scenes;
  const nativeLocal=await window.DeadlockNative?.readSave?.(STORAGE_KEY);
  const local=nativeLocal||localStorage.getItem(STORAGE_KEY);
@@ -1231,7 +1236,7 @@ document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement
 
 $("#soundBtn").onclick=()=>{uiSound=!uiSound;if(DATA?.settings)DATA.settings.sound=uiSound;$("#soundBtn").textContent=`Sound: ${uiSound?"On":"Off"}`;if(uiSound){unlockGameAudio();uiBeep(560,.06,.025)}syncAudioState();save()};
 
-load().catch(()=>{document.getElementById("content").innerHTML='<div class="card"><h3>Unable to load the game</h3><p>Check your connection for the first launch, then reload. Your saved campaign has not been reset.</p><button class="btn" onclick="location.reload()">Retry</button></div>';});
+load().catch(err=>{console.error("Deadlock boot failed",err);document.getElementById("content").innerHTML='<div class="card boot-recovery"><h3>Deadlock startup interrupted</h3><p>The packaged game data did not finish initializing. This is not necessarily a connection problem.</p><div class="controls"><button class="btn good" onclick="location.reload()">Retry Startup</button><button class="btn" onclick="render(\'Overview\')">Open Cached Interface</button></div><small class="muted">'+esc(err?.message||"Unknown startup error")+'</small></div>';});
 function storyNpc(id){
  return (DATA.story?.npcs||[]).find(x=>x.id===id) || DATA.contacts.find(x=>x.id===id) || null;
 }
