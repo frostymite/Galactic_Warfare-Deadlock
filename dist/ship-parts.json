@@ -1,6 +1,6 @@
 {
-  "schema": "deadlock.shipforge.parts.v2",
-  "version": "4.0.0",
+  "schema": "deadlock.shipforge.parts.v3",
+  "version": "5.0.0",
   "classes": {
     "fighter": {
       "label": "Fighter",
@@ -53,7 +53,7 @@
     },
     "light_freighter": {
       "label": "Light Freighter",
-      "scale": 1.0,
+      "scale": 1,
       "slots": [
         "core",
         "cockpit",
@@ -249,24 +249,16 @@
         "agile",
         "compact"
       ],
-      "visual": "assets/ships/components/core/core_dart_01.svg",
       "mass": 2,
       "armor": 2,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_dart_01.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_dart_01.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_spear_02",
@@ -292,24 +284,16 @@
         "military",
         "narrow"
       ],
-      "visual": "assets/ships/components/core/core_spear_02.svg",
       "mass": 3,
       "armor": 3,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_spear_02.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_spear_02.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_kite_03",
@@ -334,24 +318,16 @@
       "tags": [
         "stable"
       ],
-      "visual": "assets/ships/components/core/core_kite_03.svg",
       "mass": 4,
       "armor": 4,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_kite_03.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_kite_03.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_skiff_04",
@@ -376,24 +352,16 @@
       "tags": [
         "utility"
       ],
-      "visual": "assets/ships/components/core/core_skiff_04.svg",
       "mass": 7,
       "armor": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_skiff_04.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_skiff_04.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_hauler_05",
@@ -419,24 +387,16 @@
         "cargo",
         "rugged"
       ],
-      "visual": "assets/ships/components/core/core_hauler_05.svg",
       "mass": 11,
       "armor": 8,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_hauler_05.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_hauler_05.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_barge_06",
@@ -460,24 +420,16 @@
       "tags": [
         "heavy"
       ],
-      "visual": "assets/ships/components/core/core_barge_06.svg",
       "mass": 18,
       "armor": 11,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_barge_06.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_barge_06.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_container_07",
@@ -502,24 +454,16 @@
         "modular",
         "cargo"
       ],
-      "visual": "assets/ships/components/core/core_container_07.svg",
       "mass": 21,
       "armor": 9,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_container_07.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_container_07.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_crescent_08",
@@ -546,24 +490,16 @@
         "balanced",
         "curved"
       ],
-      "visual": "assets/ships/components/core/core_crescent_08.svg",
       "mass": 5,
       "armor": 4,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_crescent_08.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_crescent_08.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_twinboom_09",
@@ -588,24 +524,16 @@
         "military",
         "redundant"
       ],
-      "visual": "assets/ships/components/core/core_twinboom_09.svg",
       "mass": 9,
       "armor": 8,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_twinboom_09.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_twinboom_09.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "core_spine_10",
@@ -630,24 +558,16 @@
         "reinforced",
         "retrofit"
       ],
-      "visual": "assets/ships/components/core/core_spine_10.svg",
       "mass": 17,
       "armor": 14,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/core/core_spine_10.webp",
         "view": "three_quarter",
-        "material": "armored_hull",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/core/core_spine_10.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cockpit_arrow_01",
@@ -672,23 +592,15 @@
       "tags": [
         "visibility"
       ],
-      "visual": "assets/ships/components/cockpit/cockpit_arrow_01.svg",
       "visibility": 7,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cockpit/cockpit_arrow_01.webp",
         "view": "three_quarter",
-        "material": "glass_armored",
-        "depth": 5,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cockpit/cockpit_arrow_01.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cockpit_bubble_02",
@@ -713,23 +625,15 @@
       "tags": [
         "panoramic"
       ],
-      "visual": "assets/ships/components/cockpit/cockpit_bubble_02.svg",
       "visibility": 9,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cockpit/cockpit_bubble_02.webp",
         "view": "three_quarter",
-        "material": "glass_armored",
-        "depth": 5,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cockpit/cockpit_bubble_02.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cockpit_offset_03",
@@ -755,23 +659,15 @@
       "tags": [
         "freight"
       ],
-      "visual": "assets/ships/components/cockpit/cockpit_offset_03.svg",
       "visibility": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cockpit/cockpit_offset_03.webp",
         "view": "three_quarter",
-        "material": "glass_armored",
-        "depth": 5,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cockpit/cockpit_offset_03.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cockpit_bridge_04",
@@ -795,23 +691,15 @@
       "tags": [
         "crew"
       ],
-      "visual": "assets/ships/components/cockpit/cockpit_bridge_04.svg",
       "visibility": 8,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cockpit/cockpit_bridge_04.webp",
         "view": "three_quarter",
-        "material": "glass_armored",
-        "depth": 5,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cockpit/cockpit_bridge_04.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cockpit_armored_05",
@@ -836,24 +724,16 @@
         "military",
         "armored"
       ],
-      "visual": "assets/ships/components/cockpit/cockpit_armored_05.svg",
       "visibility": 5,
       "armor": 2,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cockpit/cockpit_armored_05.webp",
         "view": "three_quarter",
-        "material": "glass_armored",
-        "depth": 5,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cockpit/cockpit_armored_05.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cockpit_canopy_06",
@@ -879,23 +759,15 @@
       "tags": [
         "fast"
       ],
-      "visual": "assets/ships/components/cockpit/cockpit_canopy_06.svg",
       "visibility": 8,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cockpit/cockpit_canopy_06.webp",
         "view": "three_quarter",
-        "material": "glass_armored",
-        "depth": 5,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cockpit/cockpit_canopy_06.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cockpit_split_07",
@@ -920,23 +792,15 @@
       "tags": [
         "redundant"
       ],
-      "visual": "assets/ships/components/cockpit/cockpit_split_07.svg",
       "visibility": 7,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cockpit/cockpit_split_07.webp",
         "view": "three_quarter",
-        "material": "glass_armored",
-        "depth": 5,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cockpit/cockpit_split_07.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cockpit_command_08",
@@ -963,24 +827,16 @@
         "command",
         "sensor-rich"
       ],
-      "visual": "assets/ships/components/cockpit/cockpit_command_08.svg",
       "visibility": 7,
       "sensors": 2,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cockpit/cockpit_command_08.webp",
         "view": "three_quarter",
-        "material": "glass_armored",
-        "depth": 5,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cockpit/cockpit_command_08.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_swept_01",
@@ -1005,23 +861,15 @@
       "tags": [
         "fast"
       ],
-      "visual": "assets/ships/components/wing/wing_swept_01.svg",
       "lift": 8,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_swept_01.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_swept_01.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_delta_02",
@@ -1047,23 +895,15 @@
       "tags": [
         "stable"
       ],
-      "visual": "assets/ships/components/wing/wing_delta_02.svg",
       "lift": 7,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_delta_02.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_delta_02.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_stub_03",
@@ -1087,23 +927,15 @@
       "tags": [
         "compact"
       ],
-      "visual": "assets/ships/components/wing/wing_stub_03.svg",
       "lift": 4,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_stub_03.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_stub_03.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_fork_04",
@@ -1128,23 +960,15 @@
       "tags": [
         "weapon-mount"
       ],
-      "visual": "assets/ships/components/wing/wing_fork_04.svg",
       "lift": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_fork_04.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_fork_04.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_cargo_05",
@@ -1167,24 +991,16 @@
       "tags": [
         "cargo"
       ],
-      "visual": "assets/ships/components/wing/wing_cargo_05.svg",
       "lift": 3,
       "capacity": 2,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_cargo_05.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_cargo_05.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_blade_06",
@@ -1209,23 +1025,15 @@
       "tags": [
         "interceptor"
       ],
-      "visual": "assets/ships/components/wing/wing_blade_06.svg",
       "lift": 9,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_blade_06.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_blade_06.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_gull_07",
@@ -1249,23 +1057,15 @@
       "tags": [
         "landing"
       ],
-      "visual": "assets/ships/components/wing/wing_gull_07.svg",
       "lift": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_gull_07.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_gull_07.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_interceptor_08",
@@ -1291,23 +1091,15 @@
         "military",
         "agile"
       ],
-      "visual": "assets/ships/components/wing/wing_interceptor_08.svg",
       "lift": 10,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_interceptor_08.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_interceptor_08.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_outrigger_09",
@@ -1331,23 +1123,15 @@
       "tags": [
         "utility"
       ],
-      "visual": "assets/ships/components/wing/wing_outrigger_09.svg",
       "lift": 5,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_outrigger_09.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_outrigger_09.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "wing_solar_10",
@@ -1372,24 +1156,16 @@
       "tags": [
         "power-assist"
       ],
-      "visual": "assets/ships/components/wing/wing_solar_10.svg",
       "lift": 5,
       "power": 2,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/wing/wing_solar_10.webp",
         "view": "three_quarter",
-        "material": "aero_structure",
-        "depth": 3,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/wing/wing_solar_10.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_twin_ion_01",
@@ -1416,24 +1192,16 @@
       "tags": [
         "ion"
       ],
-      "visual": "assets/ships/components/engine/engine_twin_ion_01.svg",
       "speed": 8,
       "power": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_twin_ion_01.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_twin_ion_01.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_quad_ion_02",
@@ -1459,24 +1227,16 @@
         "ion",
         "fast"
       ],
-      "visual": "assets/ships/components/engine/engine_quad_ion_02.svg",
       "speed": 10,
       "power": 8,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_quad_ion_02.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_quad_ion_02.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_ring_03",
@@ -1500,24 +1260,16 @@
       "tags": [
         "efficient"
       ],
-      "visual": "assets/ships/components/engine/engine_ring_03.svg",
       "speed": 7,
       "power": 5,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_ring_03.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_ring_03.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_heavy_04",
@@ -1543,24 +1295,16 @@
       "tags": [
         "heavy"
       ],
-      "visual": "assets/ships/components/engine/engine_heavy_04.svg",
       "speed": 5,
       "power": 9,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_heavy_04.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_heavy_04.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_cluster_05",
@@ -1584,24 +1328,16 @@
       "tags": [
         "redundant"
       ],
-      "visual": "assets/ships/components/engine/engine_cluster_05.svg",
       "speed": 4,
       "power": 11,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_cluster_05.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_cluster_05.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_military_06",
@@ -1627,24 +1363,16 @@
       "tags": [
         "military"
       ],
-      "visual": "assets/ships/components/engine/engine_military_06.svg",
       "speed": 9,
       "power": 9,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_military_06.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_military_06.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_needle_07",
@@ -1669,24 +1397,16 @@
       "tags": [
         "interceptor"
       ],
-      "visual": "assets/ships/components/engine/engine_needle_07.svg",
       "speed": 11,
       "power": 7,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_needle_07.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_needle_07.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_slab_08",
@@ -1711,24 +1431,16 @@
       "tags": [
         "torque"
       ],
-      "visual": "assets/ships/components/engine/engine_slab_08.svg",
       "speed": 6,
       "power": 10,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_slab_08.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_slab_08.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_trident_09",
@@ -1753,24 +1465,16 @@
       "tags": [
         "responsive"
       ],
-      "visual": "assets/ships/components/engine/engine_trident_09.svg",
       "speed": 9,
       "power": 8,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_trident_09.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_trident_09.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "engine_recycler_10",
@@ -1795,24 +1499,16 @@
         "efficient",
         "salvage"
       ],
-      "visual": "assets/ships/components/engine/engine_recycler_10.svg",
       "speed": 5,
       "power": 13,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/engine/engine_recycler_10.webp",
         "view": "three_quarter",
-        "material": "thruster_mechanical",
-        "depth": 5,
-        "animation": "engine_pulse",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/engine/engine_recycler_10.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_laser_pair_01",
@@ -1838,23 +1534,15 @@
       "tags": [
         "laser"
       ],
-      "visual": "assets/ships/components/weapon/weapon_laser_pair_01.svg",
       "damage": 5,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_laser_pair_01.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_laser_pair_01.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_chin_02",
@@ -1879,23 +1567,15 @@
       "tags": [
         "laser"
       ],
-      "visual": "assets/ships/components/weapon/weapon_chin_02.svg",
       "damage": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_chin_02.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_chin_02.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_dorsal_03",
@@ -1920,23 +1600,15 @@
       "tags": [
         "turret"
       ],
-      "visual": "assets/ships/components/weapon/weapon_dorsal_03.svg",
       "damage": 7,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_dorsal_03.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_dorsal_03.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_defense_04",
@@ -1960,23 +1632,15 @@
       "tags": [
         "point-defense"
       ],
-      "visual": "assets/ships/components/weapon/weapon_defense_04.svg",
       "damage": 3,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_defense_04.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_defense_04.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_heavy_05",
@@ -2000,23 +1664,15 @@
         "heavy",
         "turret"
       ],
-      "visual": "assets/ships/components/weapon/weapon_heavy_05.svg",
       "damage": 9,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_heavy_05.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_heavy_05.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_pulse_06",
@@ -2042,23 +1698,15 @@
       "tags": [
         "pulse"
       ],
-      "visual": "assets/ships/components/weapon/weapon_pulse_06.svg",
       "damage": 7,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_pulse_06.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_pulse_06.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_ion_07",
@@ -2086,24 +1734,16 @@
         "ion",
         "disable"
       ],
-      "visual": "assets/ships/components/weapon/weapon_ion_07.svg",
       "damage": 5,
       "utility": 2,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_ion_07.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_ion_07.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_missile_08",
@@ -2130,23 +1770,15 @@
       "tags": [
         "missile"
       ],
-      "visual": "assets/ships/components/weapon/weapon_missile_08.svg",
       "damage": 10,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_missile_08.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_missile_08.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "weapon_rotary_09",
@@ -2172,23 +1804,15 @@
         "rotary",
         "suppressive"
       ],
-      "visual": "assets/ships/components/weapon/weapon_rotary_09.svg",
       "damage": 11,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/weapon/weapon_rotary_09.webp",
         "view": "three_quarter",
-        "material": "turret_mechanical",
-        "depth": 6,
-        "animation": "turret_track",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/weapon/weapon_rotary_09.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cargo_sidepods_01",
@@ -2213,23 +1837,15 @@
       "tags": [
         "cargo"
       ],
-      "visual": "assets/ships/components/cargo/cargo_sidepods_01.svg",
       "capacity": 8,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cargo/cargo_sidepods_01.webp",
         "view": "three_quarter",
-        "material": "industrial_container",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cargo/cargo_sidepods_01.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cargo_belly_02",
@@ -2254,23 +1870,15 @@
       "tags": [
         "cargo"
       ],
-      "visual": "assets/ships/components/cargo/cargo_belly_02.svg",
       "capacity": 12,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cargo/cargo_belly_02.webp",
         "view": "three_quarter",
-        "material": "industrial_container",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cargo/cargo_belly_02.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cargo_container_03",
@@ -2294,23 +1902,15 @@
       "tags": [
         "containerized"
       ],
-      "visual": "assets/ships/components/cargo/cargo_container_03.svg",
       "capacity": 20,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cargo/cargo_container_03.webp",
         "view": "three_quarter",
-        "material": "industrial_container",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cargo/cargo_container_03.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cargo_spine_04",
@@ -2334,23 +1934,15 @@
       "tags": [
         "high-capacity"
       ],
-      "visual": "assets/ships/components/cargo/cargo_spine_04.svg",
       "capacity": 24,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cargo/cargo_spine_04.webp",
         "view": "three_quarter",
-        "material": "industrial_container",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cargo/cargo_spine_04.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cargo_clamps_05",
@@ -2376,23 +1968,15 @@
       "tags": [
         "external"
       ],
-      "visual": "assets/ships/components/cargo/cargo_clamps_05.svg",
       "capacity": 16,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cargo/cargo_clamps_05.webp",
         "view": "three_quarter",
-        "material": "industrial_container",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cargo/cargo_clamps_05.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cargo_drums_06",
@@ -2416,23 +2000,15 @@
       "tags": [
         "liquid"
       ],
-      "visual": "assets/ships/components/cargo/cargo_drums_06.svg",
       "capacity": 22,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cargo/cargo_drums_06.webp",
         "view": "three_quarter",
-        "material": "industrial_container",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cargo/cargo_drums_06.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cargo_saddle_07",
@@ -2459,23 +2035,15 @@
       "tags": [
         "modular"
       ],
-      "visual": "assets/ships/components/cargo/cargo_saddle_07.svg",
       "capacity": 14,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cargo/cargo_saddle_07.webp",
         "view": "three_quarter",
-        "material": "industrial_container",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cargo/cargo_saddle_07.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "cargo_modular_08",
@@ -2502,24 +2070,16 @@
         "modular",
         "secure"
       ],
-      "visual": "assets/ships/components/cargo/cargo_modular_08.svg",
       "capacity": 18,
       "armor": 2,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/cargo/cargo_modular_08.webp",
         "view": "three_quarter",
-        "material": "industrial_container",
-        "depth": 4,
-        "animation": "idle_float",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/cargo/cargo_modular_08.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_sensor_01",
@@ -2544,23 +2104,15 @@
       "tags": [
         "sensor"
       ],
-      "visual": "assets/ships/components/utility/utility_sensor_01.svg",
       "sensors": 4,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_sensor_01.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_sensor_01.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_comms_02",
@@ -2585,23 +2137,15 @@
       "tags": [
         "comms"
       ],
-      "visual": "assets/ships/components/utility/utility_comms_02.svg",
       "sensors": 3,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_comms_02.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_comms_02.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_radar_03",
@@ -2627,23 +2171,15 @@
       "tags": [
         "radar"
       ],
-      "visual": "assets/ships/components/utility/utility_radar_03.svg",
       "sensors": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_radar_03.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_radar_03.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_armor_04",
@@ -2668,23 +2204,15 @@
       "tags": [
         "armor"
       ],
-      "visual": "assets/ships/components/utility/utility_armor_04.svg",
       "armor": 4,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_armor_04.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_armor_04.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_tow_05",
@@ -2710,23 +2238,15 @@
       "tags": [
         "tow"
       ],
-      "visual": "assets/ships/components/utility/utility_tow_05.svg",
       "utility": 5,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_tow_05.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_tow_05.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_smuggler_06",
@@ -2751,23 +2271,15 @@
       "tags": [
         "concealed"
       ],
-      "visual": "assets/ships/components/utility/utility_smuggler_06.svg",
       "utility": 7,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_smuggler_06.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_smuggler_06.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_jammer_07",
@@ -2793,24 +2305,16 @@
       "tags": [
         "electronic-warfare"
       ],
-      "visual": "assets/ships/components/utility/utility_jammer_07.svg",
       "sensors": 2,
       "utility": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_jammer_07.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_jammer_07.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_repair_08",
@@ -2838,23 +2342,15 @@
       "tags": [
         "repair"
       ],
-      "visual": "assets/ships/components/utility/utility_repair_08.svg",
       "utility": 6,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_repair_08.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_repair_08.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     },
     {
       "id": "utility_tractor_09",
@@ -2881,25 +2377,25 @@
       "tags": [
         "tractor"
       ],
-      "visual": "assets/ships/components/utility/utility_tractor_09.svg",
       "utility": 8,
       "power": 2,
-      "renderProfile": {
+      "render": {
+        "engine": "raster",
+        "asset": "assets/ships/generated/utility/utility_tractor_09.webp",
         "view": "three_quarter",
-        "material": "sensor_mechanical",
-        "depth": 6,
-        "animation": "sensor_sweep",
-        "layers": [
-          "extrusion",
-          "surface",
-          "detail",
-          "emissive"
-        ]
-      },
-      "art": "assets/ships/generated/utility/utility_tractor_09.webp",
-      "artType": "generated-raster",
-      "artVersion": "17.6.0"
+        "transparent": true,
+        "fidelity": "generated-detail",
+        "version": "17.14.0"
+      }
     }
   ],
-  "presentation": "generated-art-2.5d"
+  "presentation": "generated-art-2.5d",
+  "rendering": {
+    "engine": "generated-raster-only",
+    "contract": "part.render.asset",
+    "legacyVectorFallback": false,
+    "legacyFragmentCatalog": false,
+    "assetVersion": "17.14.0",
+    "note": "Part IDs are preserved for save compatibility; all active visual references point only to generated raster component assets."
+  }
 }
