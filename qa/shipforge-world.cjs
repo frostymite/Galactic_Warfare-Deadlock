@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm');
 const sandbox={console,Intl,Date};vm.createContext(sandbox);
-for(const file of ['runtime/shipforge-catalog.js','runtime/shipforge-visuals.js','runtime/shipforge.js','runtime/shipforge-world.js'])vm.runInContext(fs.readFileSync(file,'utf8'),sandbox,{filename:file});
+for(const file of ['runtime/shipforge-catalog.js','runtime/shipforge.js','runtime/shipforge-world.js'])vm.runInContext(fs.readFileSync(file,'utf8'),sandbox,{filename:file});
 const F=sandbox.ShipForge,W=sandbox.DeadlockShipForge,results=[];
 const check=(label,pass,detail)=>{results.push({label,pass:!!pass,detail});if(!pass)throw Error(label+': '+JSON.stringify(detail))};
 const data=()=>({character:{name:'Rovan Kes',credits:358400},ship:{name:'The Raven',class:'Unique Light Freighter / Fighter Hybrid',hull:100,hullMax:100,shields:100,shieldsMax:100,fuel:100,fuelMax:100,dogfight:{}},galaxyState:{currentLocationId:'veyra_prime'}});
