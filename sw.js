@@ -1,6 +1,6 @@
-const CACHE="deadlock-v17-13-1-raven-native-refits";
+const CACHE="deadlock-v17-14-shipforge-raster-only";
 const APP_SHELL=[
- "./ship-parts.json", "./ship-component-visuals.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge-visuals.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./runtime/shipforge-world.js", "./runtime/shipforge-world.css", "./runtime/raven-visual.js", "./runtime/raven-visual.css", "./assets/ships/raven/generated/raven_anchor_v17_13.svg", "./assets/ships/raven/generated/raven_current_loadout_zones.json", "./runtime/living-world.js", "./runtime/living-world.css", "./runtime/npc-agendas.js", "./runtime/npc-arcs.js", "./runtime/story-director.js", "./runtime/visual-hotfix.css", "./component-library.html", "./component-library.css", "./component-library.js",
+ "./ship-parts.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./runtime/shipforge-world.js", "./runtime/shipforge-world.css", "./runtime/raven-visual.js", "./runtime/raven-visual.css", "./assets/ships/raven/generated/raven_anchor_v17_13.svg", "./assets/ships/raven/generated/raven_current_loadout_zones.json", "./runtime/living-world.js", "./runtime/living-world.css", "./runtime/npc-agendas.js", "./runtime/npc-arcs.js", "./runtime/story-director.js", "./runtime/visual-hotfix.css", "./component-library.html", "./component-library.css", "./component-library.js",
  "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.png", "./assets/locations/blackglass/generated/hq.webp", "./assets/locations/blackglass/generated/briefing.webp", "./assets/locations/blackglass/generated/hangar.webp", "./assets/locations/blackglass/generated/quarters.webp", "./assets/locations/blackglass/generated/contracts.webp",
  "./runtime/port-engine.js", "./runtime/lower-port.js", "./runtime/lower-port.css", "./assets/scenes/port_market_v16.png", "./assets/scenes/port_cantina_v16.png", "./assets/scenes/port_tunnels_v16.png", "./assets/scenes/port_hideout_v16.png",
  "./assets/ships/beacon_vector_v15.svg", "./runtime/engagement.js", "./runtime/engagement.css", "./assets/ships/raven_cutout_v15.svg", "./assets/scenes/veyra_orbit_v15.png", "./assets/ships/raven_vector_v15.svg", "./assets/ships/courier_vector_v15.svg", "./assets/ships/patrol_vector_v15.svg",
@@ -125,7 +125,7 @@ self.addEventListener("install",event=>{
   await cache.addAll(APP_SHELL);
   try{
    const response=await cache.match("./ship-parts.json");
-   if(response){const catalog=await response.clone().json();const assets=[...new Set((catalog.parts||[]).flatMap(p=>[p.visual,p.art]).filter(Boolean).map(x=>"./"+x))];if(assets.length)await cache.addAll(assets);}
+   if(response){const catalog=await response.clone().json();const assets=[...new Set((catalog.parts||[]).map(p=>p.render?.asset).filter(Boolean).map(x=>"./"+x))];if(assets.length)await cache.addAll(assets);}
   }catch(err){console.warn("ShipForge component precache skipped",err);}
   await self.skipWaiting();
  })());
