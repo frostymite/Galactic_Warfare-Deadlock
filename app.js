@@ -2823,13 +2823,13 @@ function livingSceneMarkup(ctx){
 }
 function enhanceLivingScene(page){
  if(!SCENES||!DATA)return;
- const allowed=["Story","HQ","Galaxy","Ship","Combat","Dogfight"];
+ const allowed=["Story","Galaxy","Ship","Combat","Dogfight"];
  if(!allowed.includes(page))return stopSceneRuntime();
  if(page==="Galaxy"&&!['transit','orbit'].includes(galaxyState?.()?.phase))return stopSceneRuntime();
  const content=$("#content"),ctx=sceneContext(page);if(!content||!ctx)return;document.body.dataset.sceneTheme=ctx.preset?.theme||ctx.presetId||'unknown';
  const wrap=document.createElement("div");wrap.className="living-scene-card";wrap.innerHTML=livingSceneMarkup(ctx);
  if(page==="Story")content.querySelector(".story-topbar")?.after(wrap);
- else {if(page==="HQ")content.querySelector(".hq-shell")?.classList.add("scene-enhanced");const root=content.firstElementChild; if(root)root.insertBefore(wrap,root.firstChild); else content.prepend(wrap)}
+ else {const root=content.firstElementChild; if(root)root.insertBefore(wrap,root.firstChild); else content.prepend(wrap)}
  const liveScene=wrap.querySelector("[data-living-scene]");startSceneRuntime(liveScene);
  window.DeadlockLivingWorld?.mount?.(liveScene,DATA,ctx);liveScene?.addEventListener('deadlock:living-world-dirty',()=>{if(window.DeadlockLivingWorld?.consumeDirty?.(DATA))save()});if(window.DeadlockLivingWorld?.consumeDirty?.(DATA))save();
  if(DATA.settings.worldFx!==false&&DATA.settings.animations!==false&&!matchMedia('(prefers-reduced-motion: reduce)').matches)window.DeadlockWorldFX?.attach?.(liveScene,ctx.preset);else window.DeadlockWorldFX?.detach?.();
