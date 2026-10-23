@@ -23,7 +23,7 @@ const sandbox={console};vm.createContext(sandbox);
 vm.runInContext(catalogJs,sandbox);
 vm.runInContext(runtimeJs,sandbox);
 const F=sandbox.ShipForge;
-if(!F||F.version!=='5.0.0')throw new Error('ShipForge v5 runtime did not initialize.');
+if(!F||!/^5\\.[1-9]\\d*\\./.test(F.version))throw new Error('ShipForge v5.1+ runtime did not initialize.');
 for(const p of data.parts){
  const svg=F.renderPartSVG(p.id,{palette:p.family==='apex'?'black_copper':'slate_cyan'});
  if(!svg.includes(p.render.asset)||svg.includes('assets/ships/components/'))throw new Error('Part render contract failed for '+p.id);
