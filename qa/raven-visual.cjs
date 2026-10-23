@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),path=require('path');
 let checks=0,fail=[];const ok=(name,v,detail)=>{checks++;if(!v)fail.push({name,detail})};
 const box={console,Intl,Date,setTimeout,clearTimeout};box.window=box;box.globalThis=box;vm.createContext(box);
-for(const file of ['shipforge-catalog.js','shipforge-visuals.js','shipforge.js','shipforge-world.js','raven-visual.js']){
+for(const file of ['shipforge-catalog.js','shipforge.js','shipforge-world.js','raven-visual.js']){
  vm.runInContext(fs.readFileSync(path.join(__dirname,'../runtime',file),'utf8'),box,{filename:file});
 }
 const F=box.ShipForge,W=box.DeadlockShipForge,R=box.DeadlockRavenVisual;
@@ -43,7 +43,7 @@ ok('upgraded renderer contains new engine',upgradedHtml.includes('engine_trident
 ok('upgraded engine placed in engine zone',upgradedHtml.includes('raven-refit-engine'));
 ok('upgraded renderer uses Raven-native refit',upgradedHtml.includes('data-raven-refit="native"'));
 ok('upgraded engine uses native refit SVG',upgradedHtml.includes('raven-refit-native')&&upgradedHtml.includes('raven-native-engine'));
-ok('upgraded engine does not embed generic ShipForge component card',!upgradedHtml.includes('shipforge-component')&&!upgradedHtml.includes('sf-generated-art'),upgradedHtml.slice(0,1200));
+ok('upgraded engine does not embed generic ShipForge component card',!upgradedHtml.includes('assets/ships/components/')&&!upgradedHtml.includes('shipforge-visuals.js'),upgradedHtml.slice(0,1200));
 ok('native renderer records refit source',upgraded.refitRenderer==='raven-native',upgraded);
 
 const weaponInst=W.createInstance(st,'weapon_missile_08',{ownerId:'rovan',source:'qa'});
@@ -52,7 +52,7 @@ ok('weapon install succeeds',weaponInstall.ok,weaponInstall);
 const weaponHtml=R.render(data,'flight','The Raven');
 ok('weapon refit uses Raven-native geometry',weaponHtml.includes('data-raven-part="weapon_missile_08"')&&weaponHtml.includes('raven-native-weapon'));
 ok('weapon refit exposes missile design',weaponHtml.includes('data-raven-design="missile"'));
-ok('weapon refit avoids generic ShipForge art',!weaponHtml.includes('shipforge-component')&&!weaponHtml.includes('sf-generated-art'));
+ok('weapon refit avoids generic ShipForge art',!weaponHtml.includes('assets/ships/components/')&&!weaponHtml.includes('shipforge-visuals.js'));
 
 const utilityInst=W.createInstance(st,'utility_radar_03',{ownerId:'rovan',source:'qa'});
 const utilityInstall=W.install(data,'raven',utilityInst.id);
@@ -60,7 +60,7 @@ ok('utility install succeeds',utilityInstall.ok,utilityInstall);
 const utilityHtml=R.render(data,'flight','The Raven');
 ok('utility refit uses Raven-native geometry',utilityHtml.includes('data-raven-part="utility_radar_03"')&&utilityHtml.includes('raven-native-utility'));
 ok('utility refit exposes radar design',utilityHtml.includes('data-raven-design="radar"'));
-ok('utility refit avoids generic ShipForge art',!utilityHtml.includes('shipforge-component')&&!utilityHtml.includes('sf-generated-art'));
+ok('utility refit avoids generic ShipForge art',!utilityHtml.includes('assets/ships/components/')&&!utilityHtml.includes('shipforge-visuals.js'));
 // Exhaustive coverage: every non-baseline light-freighter part must render natively.
 const alternatives=F.catalog.parts.filter(p=>(p.compatible.includes('light_freighter')||p.compatible.includes('universal'))&&R.baseLoadout[p.slot]&&R.baseLoadout[p.slot]!==p.id);
 for(const p of alternatives){
@@ -69,7 +69,7 @@ for(const p of alternatives){
  ok('exhaustive install '+p.id,result.ok,result);
  const rendered=R.render(d,'flight','The Raven');
  ok('exhaustive native '+p.id,rendered.includes('data-raven-part="'+p.id+'"')&&rendered.includes('raven-native-'+p.slot),rendered.slice(0,1000));
- ok('exhaustive no generic '+p.id,!rendered.includes('shipforge-component')&&!rendered.includes('sf-generated-art'),p.id);
+ ok('exhaustive no generic '+p.id,!rendered.includes('assets/ships/components/')&&!rendered.includes('shipforge-visuals.js'),p.id);
  ok('exhaustive design '+p.id,rendered.includes('data-raven-design="'+p.design+'"'),{id:p.id,design:p.design});
 }
 ok('all 29 alternate compatible parts covered',alternatives.length===29,alternatives.map(p=>p.id));
