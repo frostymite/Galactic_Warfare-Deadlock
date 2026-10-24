@@ -1,0 +1,6 @@
+#pragma once
+#include "CoreMinimal.h"
+#include "DeadlockGameTypes.generated.h"
+USTRUCT(BlueprintType) struct FDeadlockCharacterState{GENERATED_BODY() UPROPERTY(EditAnywhere,BlueprintReadWrite) FName CharacterId; UPROPERTY(EditAnywhere,BlueprintReadWrite) FString DisplayName; UPROPERTY(EditAnywhere,BlueprintReadWrite) FString Callsign; UPROPERTY(EditAnywhere,BlueprintReadWrite) int32 Credits=0; UPROPERTY(EditAnywhere,BlueprintReadWrite) TMap<FName,int32> Reputation;};
+USTRUCT(BlueprintType) struct FDeadlockShipLoadout{GENERATED_BODY() UPROPERTY(EditAnywhere,BlueprintReadWrite) FName ShipId=TEXT("raven"); UPROPERTY(EditAnywhere,BlueprintReadWrite) FString ShipName=TEXT("The Raven"); UPROPERTY(EditAnywhere,BlueprintReadWrite) TMap<FName,FName> InstalledParts; UPROPERTY(EditAnywhere,BlueprintReadWrite) float Hull=100.f; UPROPERTY(EditAnywhere,BlueprintReadWrite) float Shields=100.f; UPROPERTY(EditAnywhere,BlueprintReadWrite) float Fuel=100.f;};
+USTRUCT(BlueprintType) struct FDeadlockWorldState{GENERATED_BODY() UPROPERTY(EditAnywhere,BlueprintReadWrite) FName CurrentLocation=TEXT("blackglass_station"); UPROPERTY(EditAnywhere,BlueprintReadWrite) TArray<FName> DiscoveredLocations; UPROPERTY(EditAnywhere,BlueprintReadWrite) TArray<FName> ActiveContracts;};
