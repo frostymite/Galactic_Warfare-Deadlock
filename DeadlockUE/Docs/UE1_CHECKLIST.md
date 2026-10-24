@@ -1,0 +1,18 @@
+# UE-1 Blackglass vertical slice
+- [x] Playable third-person character class
+- [x] Camera foundation
+- [x] Enhanced Input controller hooks
+- [x] Generic interaction interface
+- [x] Dialogue event component
+- [x] Deadlock GameMode
+- [x] 3D character presentation/data contract
+- [x] Rovan animation/equipment/LOD production spec
+- [ ] Compile project in Unreal 5.8
+- [ ] Create L_Blackglass_Prototype .umap
+- [ ] Author Enhanced Input .uassets
+- [ ] Create/import Rovan skeletal mesh
+- [ ] Create ABP_Rovan
+- [ ] Create cinematic HUD/dialogue UMG
+- [ ] Create first NPC and terminal Blueprint
+- [ ] Place Raven actor in hangar
+- [ ] Physical Razr Fold profiling/playtest
