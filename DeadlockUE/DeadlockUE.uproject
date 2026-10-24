@@ -1,0 +1,1 @@
+{"FileVersion":3,"EngineAssociation":"5.8","Category":"Games","Description":"Deadlock Unreal rebuild - offline-first cinematic sci-fi RPG.","Modules":[{"Name":"DeadlockUE","Type":"Runtime","LoadingPhase":"Default"}],"TargetPlatforms":["Android","Windows"]}
