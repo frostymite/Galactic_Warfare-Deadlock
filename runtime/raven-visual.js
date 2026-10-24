@@ -5,7 +5,7 @@
  */
 (function(root){
 'use strict';
-const VERSION='1.4.0';
+const VERSION='2.0.0';
 const ANCHOR='assets/raven_dedicated.jpg';
 const BASE={
  core:'core_twinboom_09',
@@ -203,7 +203,7 @@ function fallback(data,state='flight',alt='The Raven'){
 }
 function partState(data){
  const b=build(data);if(!b)return null;
- return{version:VERSION,shipId:b.ship.id,signature:b.ship.signature||root.ShipForge.signature(b.bp),palette:b.bp.palette,parts:{...b.bp.parts},baseParts:{...BASE},changed:b.changed.map(x=>({...x})),installed:b.installed,avgCondition:b.avgCondition,minCondition:b.minCondition,conditionBand:b.conditionBand,anchor:ANCHOR,refitRenderer:'generated-raster-plus-native'};
+ return{version:VERSION,shipId:b.ship.id,signature:b.ship.signature||root.ShipForge.signature(b.bp),palette:b.bp.palette,parts:{...b.bp.parts},baseParts:{...BASE},changed:b.changed.map(x=>({...x})),installed:b.installed,avgCondition:b.avgCondition,minCondition:b.minCondition,conditionBand:b.conditionBand,anchor:ANCHOR,refitRenderer:'shipforge-authoritative'};
 }
 root.DeadlockRavenVisual={version:VERSION,anchor:ANCHOR,baseLoadout:BASE,zones:ZONES,render,fallback,build,partState,conditionBand,nativeSvg};
 })(typeof window!=='undefined'?window:globalThis);

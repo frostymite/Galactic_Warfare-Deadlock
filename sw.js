@@ -1,12 +1,12 @@
-const CACHE="deadlock-v17-15-10-hardpoint-dogfight-port";
+const CACHE="deadlock-v17-16-0-cinematic-foundation";
 const APP_SHELL=[
  "./ship-parts.json", "./runtime/shipforge-catalog.js", "./runtime/shipforge.js", "./runtime/shipforge.css", "./runtime/shipforge-world.js", "./runtime/shipforge-world.css", "./runtime/raven-visual.js", "./runtime/raven-visual.css", "./assets/ships/raven/generated/raven_anchor_v17_13.svg", "./assets/raven_dedicated.jpg", "./assets/ships/raven/generated/raven_current_loadout_zones.json", "./runtime/living-world.js", "./runtime/living-world.css", "./runtime/npc-agendas.js", "./runtime/npc-arcs.js", "./runtime/story-director.js", "./runtime/encounter-director.js", "./runtime/social-knowledge.js", "./runtime/social-intel.js", "./runtime/social-simulation.js", "./runtime/social-intel.css", "./runtime/visual-hotfix.css", "./component-library.html", "./component-library.css", "./component-library.js",
  "./runtime/apex-engine.js", "./runtime/apex.js", "./runtime/apex.css", "./assets/scenes/blackglass_asteroid_v17.png", "./assets/locations/blackglass/generated/hq.webp", "./assets/locations/blackglass/generated/briefing.webp", "./assets/locations/blackglass/generated/hangar.webp", "./assets/locations/blackglass/generated/quarters.webp", "./assets/locations/blackglass/generated/contracts.webp",
- "./runtime/port-engine.js", "./runtime/lower-port.js", "./runtime/lower-port.css", "./assets/scenes/port_market_v16.png", "./assets/scenes/port_cantina_v16.png", "./assets/scenes/port_tunnels_v16.png", "./assets/scenes/port_hideout_v16.png",
+ "./runtime/port-engine.js", "./runtime/lower-port.js", "./runtime/lower-port.css", "./assets/scenes/port_market_v16.svg", "./assets/scenes/port_cantina_v16.svg", "./assets/scenes/port_tunnels_v16.svg", "./assets/scenes/port_hideout_v16.svg",
  "./assets/ships/beacon_vector_v15.svg", "./runtime/engagement.js", "./runtime/engagement.css", "./assets/ships/raven_cutout_v15.svg", "./assets/scenes/veyra_orbit_v15.png", "./assets/ships/raven_vector_v15.svg", "./assets/ships/courier_vector_v15.svg", "./assets/ships/patrol_vector_v15.svg",
  "./runtime/world-polish.js", "./assets/scenes/veyra_upper_v14.png", "./assets/scenes/veyra_undercity_v14.png",
  "./assets/scenes/raven_cockpit_v14.png",
- "./runtime/polish.js", "./runtime/polish.css", "./assets/scenes/blackglass_command_v14.png", "./assets/scenes/veyra_port_v14.png",
+ "./runtime/polish.js", "./runtime/polish.css", "./assets/scenes/blackglass_command_v14.png", "./assets/scenes/veyra_port_v14.svg",
  './',
  './app.js',
  './asset-packs.json',
